@@ -8,6 +8,20 @@
 #   4. Place SSL certificates in nginx/ssl/ if enabling HTTPS
 
 services:
+  init-permissions:
+    image: alpine
+    command: >
+      sh -c "
+      mkdir -p /opt/storytune/cards /opt/storytune/inspiration &&
+      chown -R 1001:1001 /opt/storytune
+      "
+    volumes:
+      - card_data:/opt/storytune/cards
+      - inspiration_data:/opt/storytune/inspiration
+    user: root
+    networks:
+      - internal
+
   app:
     env_file: .env
     environment:
@@ -18,6 +32,8 @@ services:
       - inspiration_data:/opt/storytune/inspiration
       - ./emails/templates:/opt/storytune/emails/templates:ro
     depends_on:
+      init-permissions:
+        condition: service_completed_successfully
       mongo:
         condition: service_healthy
     networks:
