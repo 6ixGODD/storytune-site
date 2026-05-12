@@ -23,7 +23,13 @@ import { config } from '@/lib/config';
 import { createLogger } from '@/lib/logger';
 
 const log = createLogger('infra.mail');
-const resend = new Resend(config.resend.apiKey);
+
+function getResend(): Resend {
+    if (!config.resend.apiKey) {
+        throw new Error('Resend API key is not configured (STORYTUNE__RESEND_API_KEY)');
+    }
+    return new Resend(config.resend.apiKey);
+}
 
 /**
  * Read a Handlebars template file from the configured template directory and
@@ -93,7 +99,7 @@ export async function sendRsvpNotification(data: RsvpEmailData): Promise<void> {
         renderTemplate('rsvp-notification.subject.hbs', templateData),
     ]);
 
-    await resend.emails.send({
+    await getResend().emails.send({
         from: `${config.resend.fromName} <${config.resend.fromEmail}>`,
         to: data.clientEmail,
         subject: subject.trim(),
