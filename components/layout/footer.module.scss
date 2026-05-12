@@ -1,0 +1,27 @@
+.footer {
+    padding-block: 2rem;
+    border-top: 1px solid color-mix(in lch, var(--fg) 15%, transparent);
+    font-size: 0.8125rem;
+    font-weight: 300;
+    color: color-mix(in lch, var(--fg) 40%, var(--bg));
+}
+
+.inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.brand {
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--fg);
+}
+
+.copy {
+    font-size: 0.75rem;
+}
