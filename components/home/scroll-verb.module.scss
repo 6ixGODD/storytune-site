@@ -53,12 +53,13 @@
 }
 
 .item {
+    // Each verb has --verb-color set inline; falls back to --fg
+    --dimmed: color-mix(in oklch, var(--verb-color, var(--fg)), #0000 80%);
     // Fixed-attachment gradient: bright at 50svh, dim above and below
-    --dimmed: color-mix(in oklch, var(--fg), #0000 80%);
     background: linear-gradient(
         180deg,
         var(--dimmed) 0 calc(50svh - 0.5lh),
-        var(--fg) calc(50svh - 0.55lh) calc(50svh + 0.55lh),
+        var(--verb-color, var(--fg)) calc(50svh - 0.55lh) calc(50svh + 0.55lh),
         var(--dimmed) calc(50svh + 0.5lh)
     );
     background-attachment: fixed;
@@ -67,4 +68,20 @@
     background-clip: text;
     // Snap the active verb to the center of the viewport
     scroll-snap-align: center;
+}
+
+// ── Mobile: shift bright zone below "we help you" line ─────────────────────────
+// On narrow screens the track wraps: prefix on line 1, verbs on line 2.
+// The prefix occupies 50svh-0.5lh → 50svh+0.5lh; bright zone must start below it.
+// Dim zones become fully transparent so no ghost verbs bleed over the prefix.
+@media (max-width: 640px) {
+    .item {
+        background: linear-gradient(
+            180deg,
+            transparent 0 calc(50svh + 0.5lh),
+            var(--verb-color, var(--fg)) calc(50svh + 0.5lh) calc(50svh + 1.5lh),
+            transparent calc(50svh + 1.5lh)
+        );
+        background-attachment: fixed;
+    }
 }
