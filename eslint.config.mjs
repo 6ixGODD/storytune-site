@@ -25,6 +25,7 @@ export default [
             '**/__pycache__/**',
             '**/*.min.js',
             '**/public/**',
+            'examples/**',
             'docs/reference/**',
             'deps/**',
             'data/**',
