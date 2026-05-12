@@ -130,6 +130,25 @@ export async function listInspirationSlugs(): Promise<string[]> {
 }
 
 /**
+ * Move a directory from `src` to `dest`, handling cross-device scenarios.
+ *
+ * `fs.rename` fails with `EXDEV` when source and destination are on different
+ * filesystems or drives (common on Windows when the temp dir and the project
+ * storage are on different volumes). On `EXDEV`, we fall back to a recursive
+ * copy followed by deletion of the source.
+ */
+async function moveDir(src: string, dest: string): Promise<void> {
+    try {
+        await fs.rename(src, dest);
+    } catch (err) {
+        if ((err as NodeJS.ErrnoException).code !== 'EXDEV') throw err;
+        await fs.cp(src, dest, { recursive: true });
+        await fs.rm(src, { recursive: true, force: true });
+    }
+}
+
+
+/**
  * Atomically replace (or create) a dist directory from a source temp directory.
  *
  * Strategy:
@@ -158,7 +177,7 @@ export async function replaceDistDir(type: CardStorageType, slug: string, source
     }
 
     try {
-        await fs.rename(sourceTempDir, targetDir);
+        await moveDir(sourceTempDir, targetDir);
         if (existingExists) {
             await fs.rm(backupDir, { recursive: true, force: true });
         }

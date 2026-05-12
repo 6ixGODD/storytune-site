@@ -31,19 +31,43 @@ export async function extractZip(buffer: Buffer): Promise<string> {
 }
 
 /**
- * Validate that an extracted dist directory is a valid invitation card package.
- * Currently checks for the presence of `index.html` at the directory root.
+ * Validate that an extracted dist directory is a valid invitation card package
+ * and return the effective root path.
  *
- * @param dirPath - Path to the extracted directory.
- * @throws `Error` if `index.html` is not found.
+ * Many build tools (Vite, webpack, etc.) create a ZIP where all files sit inside
+ * a single top-level subfolder rather than at the archive root. This function
+ * detects that pattern and returns the subfolder as the effective root, so callers
+ * can deploy the correct directory without requiring the uploader to re-zip.
+ *
+ * @param dirPath - Path to the extracted temporary directory.
+ * @returns The effective root path — either `dirPath` itself (index.html at root)
+ *   or a single immediate subdirectory (index.html one level deep).
+ * @throws `Error` if `index.html` cannot be found at the root or one level deep.
  */
-export async function validateDistDir(dirPath: string): Promise<void> {
-    const indexPath = path.join(dirPath, 'index.html');
+export async function validateDistDir(dirPath: string): Promise<string> {
+    // Happy path: index.html is directly inside dirPath.
     try {
-        await fs.access(indexPath);
+        await fs.access(path.join(dirPath, 'index.html'));
+        return dirPath;
     } catch {
-        throw new Error('Invalid ZIP: missing index.html at root');
+        // fall through to unwrap check
     }
+
+    // Unwrap: exactly one subdirectory and no loose files at root.
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
+    const dirs = entries.filter((e) => e.isDirectory());
+    const files = entries.filter((e) => !e.isDirectory());
+    if (dirs.length === 1 && files.length === 0) {
+        const subDir = path.join(dirPath, dirs[0].name);
+        try {
+            await fs.access(path.join(subDir, 'index.html'));
+            return subDir;
+        } catch {
+            // fall through to error
+        }
+    }
+
+    throw new Error('Invalid ZIP: missing index.html at root');
 }
 
 /**
