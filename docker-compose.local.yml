@@ -1,0 +1,54 @@
+# Local integration test overlay — use together with the base file:
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml up --build -d
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml down -v
+#
+# MongoDB runs without external auth; credentials are fixed for local use only.
+# Port 3000 is exposed directly (in addition to nginx on 80) for easier debugging.
+
+services:
+  app:
+    env_file: .env.local
+    environment:
+      - NODE_ENV=production
+      - STORYTUNE__MONGODB_URI=mongodb://storytune:${MONGO_LOCAL_PASSWORD:-storytune-local}@mongo:27017/storytune?authSource=admin
+    volumes:
+      - card_data:/opt/storytune/cards
+      - inspiration_data:/opt/storytune/inspiration
+      - ./emails/templates:/opt/storytune/emails/templates:ro
+    ports:
+      - '3000:3000'
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - internal
+
+  mongo:
+    image: mongo:7
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=storytune
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_LOCAL_PASSWORD:-storytune-local}
+      - MONGO_INITDB_DATABASE=storytune
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - internal
+      - external

@@ -1,0 +1,53 @@
+# Dependencies (reinstalled in Docker)
+node_modules
+.pnpm-store
+
+# Next.js build output
+.next
+out
+
+# Local dev environment
+.env
+.env.*
+!.env.example
+local-storage
+
+# Version control
+.git
+.gitignore
+
+# Editor / IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Codepen experiments (UI reference only, not part of build)
+.codepen
+
+# Sample assets (dev/test only)
+samples
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Scripts (only needed locally)
+scripts
+
+# Docker files themselves
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# CI/CD
+.github
+
+# Docs
+README.md
+REQUIREMENTS.md

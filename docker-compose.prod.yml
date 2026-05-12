@@ -1,0 +1,56 @@
+# Production overlay — use together with the base file:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Prerequisites on the server:
+#   1. docker load -i images/storytune-app.tar   (load the pre-built image)
+#   2. Fill in .env from .env.example
+#   3. Set MONGO_PASSWORD in .env (used by both mongo service and MONGODB_URI)
+#   4. Place SSL certificates in nginx/ssl/ if enabling HTTPS
+
+services:
+  app:
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+      - STORYTUNE__MONGODB_URI=mongodb://storytune:${MONGO_PASSWORD}@mongo:27017/storytune?authSource=admin
+    volumes:
+      - card_data:/opt/storytune/cards
+      - inspiration_data:/opt/storytune/inspiration
+      - ./emails/templates:/opt/storytune/emails/templates:ro
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - internal
+
+  mongo:
+    image: mongo:7
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=storytune
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_DATABASE=storytune
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - internal
+      - external
