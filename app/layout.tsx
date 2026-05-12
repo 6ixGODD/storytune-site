@@ -1,10 +1,25 @@
 import '@/app/styles/main.scss';
 
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
+import localFont from 'next/font/local';
 import { ReactNode } from 'react';
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
+const geist = localFont({
+    src: [
+        {
+            path: '../public/fonts/geist-latin.woff2',
+            weight: '100 900',
+            style: 'normal',
+        },
+        {
+            path: '../public/fonts/geist-latin-ext.woff2',
+            weight: '100 900',
+            style: 'normal',
+        },
+    ],
+    variable: '--font-sans',
+    display: 'swap',
+});
 
 export const metadata: Metadata = {
     title: 'StoryTune — Digital Invitations',
