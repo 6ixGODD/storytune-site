@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:local": "node scripts/dev.js",
-    "build": "next build",
+    "dev": "node scripts/dev.js",
+    "build:next": "next build",
+    "build": "docker compose build",
+    "local": "docker compose -f docker-compose.yml -f docker-compose.local.yml up --build -d",
+    "local:down": "docker compose -f docker-compose.yml -f docker-compose.local.yml down",
     "start": "next start",
     "lint": "eslint",
     "prepare": "husky install",
+    "pack": "node scripts/pack.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
