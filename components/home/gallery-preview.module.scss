@@ -28,107 +28,200 @@
     line-height: 1.1;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: color-mix(in lch, var(--fg) 10%, transparent);
-    border: 1px solid color-mix(in lch, var(--fg) 10%, transparent);
+/* ─────────── Carousel ─────────── */
 
-    @media (max-width: 700px) {
-        grid-template-columns: 1fr;
+.carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    background: #111;
+    // Aspect-ratio matches typical 1900×1080 covers; clamp prevents it going huge
+    aspect-ratio: 16 / 9;
+    max-height: 75vh;
+
+    @media (max-width: 600px) {
+        aspect-ratio: 4 / 3;
+        max-height: none;
     }
 }
 
-.card {
-    background: var(--bg);
-    aspect-ratio: 3 / 4;
-    overflow: hidden;
-    position: relative;
+.track {
+    list-style: none;
     display: flex;
-    flex-direction: column;
-    text-decoration: none;
-    color: inherit;
+    height: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    // No `position` set here intentionally — keeps img absolute-position
+    // bubbling up to .carousel (nearest positioned ancestor).
 }
 
-.thumb {
-    flex: 1;
-    width: 100%;
-    overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-    padding: 1.25rem;
-    // Subtle animated shimmer (shown when no cover image loads)
-    background: linear-gradient(
-        135deg,
-        transparent 40%,
-        color-mix(in lch, var(--fg) 3%, transparent) 50%,
-        transparent 60%
-    );
-    background-size: 200% 200%;
-    animation: shimmer 3s ease-in-out infinite;
-    animation-delay: var(--i, 0s);
-    position: relative;
-}
-
-.cover {
-    position: absolute;
-    inset: 0;
+.slide {
+    flex-shrink: 0;
     width: 100%;
     height: 100%;
+    scroll-snap-align: start;
+
+    // CSS view-timeline drives the crossfade animation.
+    // Each slide tracks its own inline (horizontal) scroll visibility.
+    view-timeline-name: --gallery-slide;
+    view-timeline-axis: inline;
+
+    // No `position` set — images escape to .carousel for stacking.
+}
+
+.coverImg {
+    // Next.js <Image fill> sets position:absolute;inset:0 inline.
+    // These override its default intrinsic sizing.
+    width: 100% !important;
+    height: 100% !important;
     object-fit: cover;
-    display: block;
+    object-position: top;
+
+    // Default: visible (fallback for browsers without view-timeline support)
+    opacity: 1;
+
+    @media (prefers-reduced-motion: no-preference) {
+        @supports (view-timeline-name: --test) {
+            opacity: 0;
+            animation: galleryFade both linear;
+            animation-timeline: --gallery-slide;
+            animation-range: cover;
+        }
+    }
 }
 
-.cardMeta {
-    padding: 0.75rem 1rem;
+@keyframes galleryFade {
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ─── Caption overlay ─── */
+
+.carouselCaption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 2rem 1.5rem 1.25rem;
+    background: linear-gradient(to top, hsl(20 5% 4% / 0.85) 0%, transparent 100%);
     display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    background: color-mix(in lch, var(--fg) 4%, var(--bg));
-    border-top: 1px solid color-mix(in lch, var(--fg) 8%, transparent);
+    align-items: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
-.cardLabel {
-    font-size: 0.8rem;
+.captionTitle {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
     font-weight: 500;
-    letter-spacing: 0.06em;
-    color: color-mix(in lch, var(--fg) 70%, var(--bg));
+    color: hsl(30 10% 90%);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #fff;
+        text-decoration: underline;
+    }
 }
 
-.cardCategory {
+.captionCategory {
     font-size: 0.7rem;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: hsl(35 25% 55%);
+    color: hsl(35 25% 60%);
 }
+
+/* ─── Dots ─── */
+
+.dots {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: hsl(0 0% 100% / 0.35);
+    transition:
+        background 0.2s,
+        transform 0.2s;
+
+    &:hover {
+        background: hsl(0 0% 100% / 0.65);
+    }
+}
+
+.dotActive {
+    background: #fff;
+    transform: scale(1.4);
+}
+
+/* ─── Prev / Next buttons ─── */
+
+.navBtn {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    // Dark semi-opaque fill + shadow ensures visibility on any image tone
+    background: hsl(0 0% 8% / 0.72);
+    box-shadow:
+        0 0 0 1.5px hsl(0 0% 100% / 0.18),
+        0 4px 16px hsl(0 0% 0% / 0.55);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    font-size: 1.6rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        background 0.18s,
+        box-shadow 0.18s;
+
+    &:hover:not(:disabled) {
+        background: hsl(0 0% 18% / 0.88);
+        box-shadow:
+            0 0 0 1.5px hsl(0 0% 100% / 0.35),
+            0 4px 20px hsl(0 0% 0% / 0.65);
+    }
+
+    &:disabled {
+        opacity: 0.3;
+        cursor: default;
+    }
+}
+
+.navPrev {
+    left: 1rem;
+}
+
+.navNext {
+    right: 1rem;
+}
+
+/* ─── Section footer ─── */
 
 .empty {
-    grid-column: 1 / -1;
     padding: 4rem 2rem;
     text-align: center;
     color: color-mix(in lch, var(--fg) 35%, transparent);
     font-size: 0.9rem;
-}
-
-.card:nth-child(1) .thumb {
-    --i: 0s;
-}
-.card:nth-child(2) .thumb {
-    --i: 0.5s;
-}
-.card:nth-child(3) .thumb {
-    --i: 1s;
-}
-
-@keyframes shimmer {
-    0%,
-    100% {
-        background-position: 200% 200%;
-    }
-    50% {
-        background-position: 0 0;
-    }
 }
 
 .footer {
