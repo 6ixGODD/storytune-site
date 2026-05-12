@@ -31,6 +31,7 @@ export default [
             'venv/**',
             '.venv/**',
             '**/package-lock.json',
+            '.codepen/**',
         ],
     },
 
