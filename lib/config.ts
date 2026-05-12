@@ -51,6 +51,8 @@ const envSchema = z.object({
     STORYTUNE__MONGODB_TLS_CA_FILE: z.string().optional(),
     /** Database used for credential authentication (typically "admin"). */
     STORYTUNE__MONGODB_AUTH_SOURCE: z.string().default('admin'),
+    /** Connect directly to the specified host, bypassing topology discovery (useful for testcontainers). */
+    STORYTUNE__MONGODB_DIRECT_CONNECTION: z.coerce.boolean().default(false),
 
     // ── JWT ───────────────────────────────────────────────────────────────────
     /** Secret key used for signing and verifying JWTs. Use a long random string in production. */
@@ -153,6 +155,8 @@ export const config = {
         tlsCAFile: env['STORYTUNE__MONGODB_TLS_CA_FILE'],
         /** Authentication database, typically `"admin"` for URI-based auth. */
         authSource: env['STORYTUNE__MONGODB_AUTH_SOURCE'],
+        /** Bypass topology discovery and connect directly to the given host. */
+        directConnection: env['STORYTUNE__MONGODB_DIRECT_CONNECTION'],
     },
 
     /** JSON Web Token configuration. */

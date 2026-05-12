@@ -37,6 +37,7 @@ const mongoOptions: MongoClientOptions = {
     tls: config.mongo.tls,
     ...(config.mongo.tlsCAFile && { tlsCAFile: config.mongo.tlsCAFile }),
     authSource: config.mongo.authSource,
+    ...(config.mongo.directConnection && { directConnection: true }),
 };
 
 async function createClient(): Promise<MongoClient> {
