@@ -46,13 +46,17 @@ const envSchema = z.object({
     /** Milliseconds of socket inactivity before closing (0 = no timeout). */
     STORYTUNE__MONGODB_SOCKET_TIMEOUT_MS: z.coerce.number().int().min(0).default(0),
     /** Whether to use TLS for the MongoDB connection. */
-    STORYTUNE__MONGODB_TLS: z.coerce.boolean().default(false),
+    STORYTUNE__MONGODB_TLS: z
+        .union([z.boolean(), z.string().transform((v) => v.toLowerCase() === 'true')])
+        .default(false),
     /** Absolute path to the TLS CA certificate file (PEM), when TLS is enabled. */
     STORYTUNE__MONGODB_TLS_CA_FILE: z.string().optional(),
     /** Database used for credential authentication (typically "admin"). */
     STORYTUNE__MONGODB_AUTH_SOURCE: z.string().default('admin'),
     /** Connect directly to the specified host, bypassing topology discovery (useful for testcontainers). */
-    STORYTUNE__MONGODB_DIRECT_CONNECTION: z.coerce.boolean().default(false),
+    STORYTUNE__MONGODB_DIRECT_CONNECTION: z
+        .union([z.boolean(), z.string().transform((v) => v.toLowerCase() === 'true')])
+        .default(false),
 
     // ── JWT ───────────────────────────────────────────────────────────────────
     /** Secret key used for signing and verifying JWTs. Use a long random string in production. */
