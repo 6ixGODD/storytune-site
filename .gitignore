@@ -37,6 +37,7 @@ yarn-error.log*
 .env*
 !.env.example
 !.env.dev
+!.env.local.example
 
 # local development card/inspiration storage
 /local-storage/cards/*
