@@ -79,8 +79,8 @@ export const inspirationService = {
 
         try {
             tempDir = await extractZip(zipBuffer);
-            await validateDistDir(tempDir);
-            await replaceDistDir('inspiration', slug, tempDir);
+            const effectiveDir = await validateDistDir(tempDir);
+            await replaceDistDir('inspiration', slug, effectiveDir);
             tempDir = null;
             const inspiration = await inspirationRepository.upsert({ ...input, slug });
             logger.info({ slug }, 'inspiration uploaded successfully');

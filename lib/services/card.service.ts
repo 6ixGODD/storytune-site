@@ -66,8 +66,8 @@ export const cardService = {
 
         try {
             tempDir = await extractZip(zipBuffer);
-            await validateDistDir(tempDir);
-            await replaceCardDir(slug, tempDir);
+            const effectiveDir = await validateDistDir(tempDir);
+            await replaceCardDir(slug, effectiveDir);
             tempDir = null;
             const card = await cardRepository.upsert({ ...input, slug, invitees });
             logger.info({ slug }, 'card uploaded successfully');
