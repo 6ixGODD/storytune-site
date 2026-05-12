@@ -8,6 +8,9 @@ import TextReveal from '@/components/home/text-reveal';
 import Footer from '@/components/layout/footer';
 import Navbar from '@/components/layout/navbar';
 
+// GalleryPreview fetches from MongoDB; opt out of static generation.
+export const dynamic = 'force-dynamic';
+
 export default function HomePage() {
     return (
         <>
