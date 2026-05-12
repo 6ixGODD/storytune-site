@@ -1,0 +1,120 @@
+<html lang='en'>
+    <head>
+        <meta charset='UTF-8' /><meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <title>New RSVP Received</title>
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                font-family: Georgia, 'Times New Roman', serif;
+                background: #f8f6f1;
+                color: #1a1814;
+            }
+            .wrapper {
+                max-width: 600px;
+                margin: 40px auto;
+                background: #fff;
+                border: 1px solid #e8e4dc;
+            }
+            .header {
+                background: #1a1814;
+                color: #f3f1ec;
+                padding: 40px 48px;
+            }
+            .header h1 {
+                font-size: 22px;
+                font-weight: 400;
+                letter-spacing: 0.04em;
+            }
+            .header p {
+                margin-top: 8px;
+                font-size: 14px;
+                color: rgba(243, 241, 236, 0.6);
+                font-family: 'Courier New', monospace;
+            }
+            .body {
+                padding: 48px;
+            }
+            .greeting {
+                font-size: 18px;
+                margin-bottom: 24px;
+                font-style: italic;
+            }
+            .card-title {
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+                color: #b94a3a;
+                margin-bottom: 32px;
+                font-family: 'Courier New', monospace;
+            }
+            .section {
+                margin-bottom: 32px;
+                padding-bottom: 32px;
+                border-bottom: 1px solid #e8e4dc;
+            }
+            .section:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+            .label {
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.14em;
+                color: #888;
+                font-family: 'Courier New', monospace;
+                margin-bottom: 6px;
+            }
+            .value {
+                font-size: 16px;
+            }
+            .cta {
+                display: inline-block;
+                margin-top: 32px;
+                padding: 14px 28px;
+                background: #1a1814;
+                color: #f3f1ec;
+                text-decoration: none;
+                font-family: 'Courier New', monospace;
+                font-size: 12px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+            }
+            .footer {
+                padding: 24px 48px;
+                border-top: 1px solid #e8e4dc;
+                font-family: 'Courier New', monospace;
+                font-size: 11px;
+                color: #aaa;
+                letter-spacing: 0.06em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class='wrapper'>
+            <div class='header'><h1>New RSVP Received</h1><p>StoryTune · Digital Invitation Studio</p></div>
+            <div class='body'>
+                <p class='greeting'>Hello {{clientName}},</p>
+                <p class='card-title'>{{cardTitle}}</p>
+                <div class='section'><div class='label'>Guest</div><div class='value'>{{guestName}}</div><div
+                        style="margin-top:4px;font-size:13px;color:#888;font-family:'Courier New',monospace;"
+                    >{{guestEmail}}</div></div>
+                <div class='section'><div class='label'>Attendance</div><div
+                        class='value'
+                        style='font-weight:600;'
+                    >{{attendingLabel}}</div>{{#if extraGuests}}<div
+                            style='margin-top:8px;font-size:13px;color:#888;'
+                        >+{{extraGuests}} additional guest{{#if multipleGuests}}s{{/if}}</div>{{/if}}</div>
+                {{#if message}}<div class='section'><div class='label'>Message</div><div
+                            style='background:#f8f6f1;padding:20px 24px;font-style:italic;font-size:15px;line-height:1.6;border-left:3px solid #b94a3a;'
+                        >"{{message}}"</div></div>{{/if}}
+                <a href='{{cardUrl}}' class='cta'>View Invitation Card →</a>
+            </div>
+            <div class='footer'>This notification was sent via StoryTune. Do not reply to this email.</div>
+        </div>
+    </body>
+</html>
