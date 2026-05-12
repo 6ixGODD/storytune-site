@@ -45,17 +45,21 @@
     aspect-ratio: 3 / 4;
     overflow: hidden;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
 }
 
 .thumb {
+    flex: 1;
     width: 100%;
-    height: 100%;
-    background: color-mix(in lch, var(--fg) 4%, var(--bg));
+    overflow: hidden;
     display: flex;
     align-items: flex-end;
     padding: 1.25rem;
-    // Subtle animated shimmer
-    background-image: linear-gradient(
+    // Subtle animated shimmer (shown when no cover image loads)
+    background: linear-gradient(
         135deg,
         transparent 40%,
         color-mix(in lch, var(--fg) 3%, transparent) 50%,
@@ -64,14 +68,47 @@
     background-size: 200% 200%;
     animation: shimmer 3s ease-in-out infinite;
     animation-delay: var(--i, 0s);
+    position: relative;
+}
+
+.cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.cardMeta {
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    background: color-mix(in lch, var(--fg) 4%, var(--bg));
+    border-top: 1px solid color-mix(in lch, var(--fg) 8%, transparent);
 }
 
 .cardLabel {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 500;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
+    color: color-mix(in lch, var(--fg) 70%, var(--bg));
+}
+
+.cardCategory {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: color-mix(in lch, var(--fg) 40%, var(--bg));
+    color: hsl(35 25% 55%);
+}
+
+.empty {
+    grid-column: 1 / -1;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: color-mix(in lch, var(--fg) 35%, transparent);
+    font-size: 0.9rem;
 }
 
 .card:nth-child(1) .thumb {
@@ -90,7 +127,7 @@
         background-position: 200% 200%;
     }
     50% {
-        background-position: 0% 0%;
+        background-position: 0 0;
     }
 }
 
