@@ -45,7 +45,7 @@ services:
     ports:
       - '80:80'
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/conf.d/local:/etc/nginx/conf.d:ro
     depends_on:
       - app
     restart: unless-stopped

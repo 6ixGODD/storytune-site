@@ -109,7 +109,7 @@ docker load -i images/storytune-app.tar
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-deps app
 ```
 
-nginx config: `nginx/conf.d/storytune.conf` — HTTP→HTTPS redirect, www→apex, TLS 1.2/1.3, HSTS, gzip, `/_next/static/` immutable cache, proxy → app:3000.
+nginx config: `nginx/conf.d/prod/storytune.conf` — HTTP→HTTPS redirect, www→apex, TLS 1.2/1.3, HSTS, gzip, `/_next/static/` immutable cache, proxy → app:3000.
 
 ---
 
@@ -179,7 +179,9 @@ lib/
   validators/                           # Zod schemas
 
 emails/templates/                       # Handlebars HTML email templates
-nginx/conf.d/                           # storytune.conf (prod), storytune.local.conf (local)
+nginx/conf.d/
+  local/storytune.conf                  # HTTP-only, port 80 (docker-compose.local.yml)
+  prod/storytune.conf                   # HTTPS, TLS 1.2/1.3, HSTS (docker-compose.prod.yml)
 nginx/ssl/                              # certs (gitignored; .gitkeep tracks dir)
 scripts/
   dev.js                                # pnpm dev launcher
