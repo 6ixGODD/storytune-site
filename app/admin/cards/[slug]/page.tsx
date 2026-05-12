@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { FormEvent, useEffect, useState } from 'react';
+import { SubmitEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { AdminShell } from '@/components/admin/admin-shell';
@@ -45,7 +45,7 @@ export default function CardDetailPage() {
             .catch(() => setError('Failed to load card'));
     }, [slug]);
 
-    async function handleSave(e: FormEvent<HTMLFormElement>) {
+    async function handleSave(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -106,67 +106,83 @@ export default function CardDetailPage() {
 
     return (
         <AdminShell title={`Card · ${slug}`}>
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <h1 className="text-2xl font-semibold font-mono">{slug}</h1>
+            <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-3'>
+                    <h1 className='text-2xl font-semibold font-mono'>{slug}</h1>
                     {card && <Badge variant={card.status === 'active' ? 'default' : 'secondary'}>{card.status}</Badge>}
                 </div>
-                <div className="flex gap-2">
+                <div className='flex gap-2'>
                     {card && (
-                        <Button asChild variant="outline" size="sm">
-                            <a href={card.cardUrl} target="_blank" rel="noopener noreferrer">View ↗</a>
+                        <Button asChild variant='outline' size='sm'>
+                            <a href={card.cardUrl} target='_blank' rel='noopener noreferrer'>
+                                View ↗
+                            </a>
                         </Button>
                     )}
-                    <Button variant="ghost" size="sm" onClick={() => router.back()}>← Back</Button>
+                    <Button variant='ghost' size='sm' onClick={() => router.back()}>
+                        ← Back
+                    </Button>
                 </div>
             </div>
 
-            {!card && !error && <p className="text-muted-foreground">Loading…</p>}
-            {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
+            {!card && !error && <p className='text-muted-foreground'>Loading…</p>}
+            {error && (
+                <Alert variant='destructive'>
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            )}
 
             {card && (
-                <div className="max-w-2xl">
-                    <form onSubmit={handleSave} className="flex flex-col gap-5">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="flex flex-col gap-1.5">
-                                <Label htmlFor="clientName">Client Name *</Label>
-                                <Input id="clientName" name="clientName" defaultValue={card.clientName} required />
+                <div className='max-w-2xl'>
+                    <form onSubmit={handleSave} className='flex flex-col gap-5'>
+                        <div className='grid grid-cols-2 gap-4'>
+                            <div className='flex flex-col gap-1.5'>
+                                <Label htmlFor='clientName'>Client Name *</Label>
+                                <Input id='clientName' name='clientName' defaultValue={card.clientName} required />
                             </div>
-                            <div className="flex flex-col gap-1.5">
-                                <Label htmlFor="clientEmail">Client Email *</Label>
-                                <Input id="clientEmail" name="clientEmail" type="email" defaultValue={card.clientEmail} required />
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="flex flex-col gap-1.5">
-                                <Label htmlFor="title">Title</Label>
-                                <Input id="title" name="title" defaultValue={card.title ?? ''} />
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                                <Label htmlFor="eventType">Event Type</Label>
-                                <Input id="eventType" name="eventType" defaultValue={card.eventType ?? ''} />
+                            <div className='flex flex-col gap-1.5'>
+                                <Label htmlFor='clientEmail'>Client Email *</Label>
+                                <Input
+                                    id='clientEmail'
+                                    name='clientEmail'
+                                    type='email'
+                                    defaultValue={card.clientEmail}
+                                    required
+                                />
                             </div>
                         </div>
-                        <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="notes">Notes</Label>
-                            <Textarea id="notes" name="notes" rows={3} defaultValue={card.notes ?? ''} />
+                        <div className='grid grid-cols-2 gap-4'>
+                            <div className='flex flex-col gap-1.5'>
+                                <Label htmlFor='title'>Title</Label>
+                                <Input id='title' name='title' defaultValue={card.title ?? ''} />
+                            </div>
+                            <div className='flex flex-col gap-1.5'>
+                                <Label htmlFor='eventType'>Event Type</Label>
+                                <Input id='eventType' name='eventType' defaultValue={card.eventType ?? ''} />
+                            </div>
                         </div>
-                        <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="invitees">Invitees <span className="text-muted-foreground text-xs">(JSON)</span></Label>
+                        <div className='flex flex-col gap-1.5'>
+                            <Label htmlFor='notes'>Notes</Label>
+                            <Textarea id='notes' name='notes' rows={3} defaultValue={card.notes ?? ''} />
+                        </div>
+                        <div className='flex flex-col gap-1.5'>
+                            <Label htmlFor='invitees'>
+                                Invitees <span className='text-muted-foreground text-xs'>(JSON)</span>
+                            </Label>
                             <Textarea
-                                id="invitees"
-                                name="invitees"
+                                id='invitees'
+                                name='invitees'
                                 rows={6}
-                                className="font-mono text-xs"
+                                className='font-mono text-xs'
                                 defaultValue={JSON.stringify(card.invitees, null, 2)}
                             />
                         </div>
-                        <div className="flex gap-3 pt-2">
-                            <Button type="submit" disabled={loading || card.status === 'deleted'}>
+                        <div className='flex gap-3 pt-2'>
+                            <Button type='submit' disabled={loading || card.status === 'deleted'}>
                                 {loading ? 'Saving…' : 'Save Changes'}
                             </Button>
                             {card.status === 'active' && (
-                                <Button type="button" variant="destructive" onClick={handleDelete} disabled={deleting}>
+                                <Button type='button' variant='destructive' onClick={handleDelete} disabled={deleting}>
                                     {deleting ? 'Deleting…' : 'Delete Card'}
                                 </Button>
                             )}

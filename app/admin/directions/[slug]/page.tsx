@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { FormEvent, useEffect, useState } from 'react';
+import { SubmitEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { AdminShell } from '@/components/admin/admin-shell';
@@ -44,7 +44,7 @@ export default function DirectionDetailPage() {
             .catch(() => setError('Failed to load direction'));
     }, [slug]);
 
-    async function handleSave(e: FormEvent<HTMLFormElement>) {
+    async function handleSave(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         setError('');
         setLoading(true);

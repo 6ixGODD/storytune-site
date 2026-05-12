@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from 'react';
+import { SubmitEvent, useState } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -43,38 +43,38 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-muted/30">
-            <Card className="w-full max-w-sm shadow-lg">
-                <CardHeader className="pb-4">
-                    <div className="flex flex-col items-center gap-1 mb-2">
+        <div className='min-h-screen flex items-center justify-center bg-muted/30'>
+            <Card className='w-full max-w-sm shadow-lg'>
+                <CardHeader className='pb-4'>
+                    <div className='flex flex-col items-center gap-1 mb-2'>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/logo.svg" alt="StoryTune" className="h-8 mb-1" />
-                        <span className="text-xs text-muted-foreground">Admin Console</span>
+                        <img src='/logo.svg' alt='StoryTune' className='h-8 mb-1' />
+                        <span className='text-xs text-muted-foreground'>Admin Console</span>
                     </div>
-                    <CardTitle className="text-center text-lg">Sign in</CardTitle>
+                    <CardTitle className='text-center text-lg'>Sign in</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+                    <form onSubmit={handleSubmit} noValidate className='flex flex-col gap-4'>
                         {error && (
-                            <Alert variant="destructive">
+                            <Alert variant='destructive'>
                                 <AlertDescription>{error}</AlertDescription>
                             </Alert>
                         )}
-                        <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="username">Username</Label>
-                            <Input id="username" name="username" type="text" autoComplete="username" required />
+                        <div className='flex flex-col gap-1.5'>
+                            <Label htmlFor='username'>Username</Label>
+                            <Input id='username' name='username' type='text' autoComplete='username' required />
                         </div>
-                        <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="password">Password</Label>
+                        <div className='flex flex-col gap-1.5'>
+                            <Label htmlFor='password'>Password</Label>
                             <Input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="current-password"
+                                id='password'
+                                name='password'
+                                type='password'
+                                autoComplete='current-password'
                                 required
                             />
                         </div>
-                        <Button type="submit" disabled={loading} className="w-full mt-1">
+                        <Button type='submit' disabled={loading} className='w-full mt-1'>
                             {loading ? 'Signing in…' : 'Sign in'}
                         </Button>
                     </form>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { DragEvent, FormEvent, useRef, useState } from 'react';
+import { DragEvent, SubmitEvent, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { AdminShell } from '@/components/admin/admin-shell';
@@ -44,7 +44,7 @@ export default function DirectionsUploadPage() {
         acceptFile(e.dataTransfer.files?.[0] ?? null);
     }
 
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         if (!zipFile) {
             setError('Please select or drop a ZIP file.');
