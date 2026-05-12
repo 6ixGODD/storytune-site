@@ -61,7 +61,7 @@ export const InspirationsListQuerySchema = z.object({
     pageSize: z.coerce.number().int().min(1).max(100).default(20),
     /** Filter to a specific category when provided. */
     category: z.string().optional(),
-    includeDeleted: z.coerce.boolean().default(false),
+    includeDeleted: z.union([z.boolean(), z.string().transform((v) => v.toLowerCase() === 'true')]).default(false),
 });
 
 export type InspirationUploadInput = z.infer<typeof InspirationUploadSchema>;

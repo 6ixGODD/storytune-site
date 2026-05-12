@@ -50,7 +50,7 @@ export const CardUpdateSchema = z.object({
 export const CardsListQuerySchema = z.object({
     page: z.coerce.number().int().min(1).default(1),
     pageSize: z.coerce.number().int().min(1).max(100).default(20),
-    includeDeleted: z.coerce.boolean().default(false),
+    includeDeleted: z.union([z.boolean(), z.string().transform((v) => v.toLowerCase() === 'true')]).default(false),
 });
 
 export type CardUploadInput = z.infer<typeof CardUploadSchema>;
