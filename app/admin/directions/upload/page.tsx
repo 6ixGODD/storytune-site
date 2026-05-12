@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { DragEvent, FormEvent, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import { AdminShell } from '@/components/admin/admin-shell';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -13,7 +14,6 @@ import { Textarea } from '@/components/ui/textarea';
 export default function DirectionsUploadPage() {
     const router = useRouter();
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const [zipFile, setZipFile] = useState<File | null>(null);
     const [dragging, setDragging] = useState(false);
@@ -51,7 +51,6 @@ export default function DirectionsUploadPage() {
             return;
         }
         setError('');
-        setSuccess('');
         setLoading(true);
 
         const form = e.currentTarget;
@@ -66,9 +65,11 @@ export default function DirectionsUploadPage() {
             });
             const data = await res.json();
             if (data.success) {
-                setSuccess(`Uploaded! Slug: ${data.data.slug} — ${data.data.inspirationUrl}`);
-                setZipFile(null);
-                form.reset();
+                toast.success('Direction uploaded!', {
+                    description: `Slug: ${data.data.slug}`,
+                });
+                router.push('/admin/directions');
+                router.refresh();
             } else {
                 const details = data.details
                     ? Object.entries(data.details as Record<string, string[]>)
@@ -101,11 +102,6 @@ export default function DirectionsUploadPage() {
                     {error && (
                         <Alert variant="destructive">
                             <AlertDescription>{error}</AlertDescription>
-                        </Alert>
-                    )}
-                    {success && (
-                        <Alert>
-                            <AlertDescription>{success}</AlertDescription>
                         </Alert>
                     )}
 
