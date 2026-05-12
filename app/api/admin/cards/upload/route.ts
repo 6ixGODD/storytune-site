@@ -19,7 +19,10 @@ export async function POST(req: NextRequest) {
 
     const fields: Record<string, unknown> = {};
     for (const [key, value] of formData.entries()) {
-        if (key !== 'zip') fields[key] = value;
+        if (key === 'zip') continue;
+        // Treat blank slug as absent so the service auto-generates a UUID.
+        if (key === 'slug' && typeof value === 'string' && value.trim() === '') continue;
+        fields[key] = value;
     }
 
     const parsed = CardUploadSchema.safeParse(fields);
