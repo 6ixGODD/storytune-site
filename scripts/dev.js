@@ -23,14 +23,26 @@ const root = path.resolve(__dirname, '..');
 const envDev = path.join(root, '.env.dev');
 const envFile = path.join(root, '.env');
 
-// ── 1. Copy .env.dev → .env ───────────────────────────────────────────────────
+// ── 1. Copy .env.dev → .env (unless .env already has NODE_ENV=development) ────
 if (!fs.existsSync(envDev)) {
     console.error('[dev] ERROR: .env.dev not found. Create it from .env.example.');
     process.exit(1);
 }
-fs.copyFileSync(envDev, envFile);
-// eslint-disable-next-line no-console
-console.log('[dev] Copied .env.dev → .env');
+
+let skip = false;
+if (fs.existsSync(envFile)) {
+    const existing = fs.readFileSync(envFile, 'utf-8');
+    if (/^\s*NODE_ENV\s*=\s*development\s*$/m.test(existing)) {
+        skip = true;
+        // eslint-disable-next-line no-console
+        console.log('[dev] .env already has NODE_ENV=development — skipping overwrite.');
+    }
+}
+if (!skip) {
+    fs.copyFileSync(envDev, envFile);
+    // eslint-disable-next-line no-console
+    console.log('[dev] Copied .env.dev → .env');
+}
 
 // ── 2. Start Docker Compose dev services ──────────────────────────────────────
 // eslint-disable-next-line no-console
