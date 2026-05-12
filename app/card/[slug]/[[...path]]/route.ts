@@ -21,6 +21,19 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 
         const { buffer, mimeType } = await readCardFile('uploaded', slug, filePath);
 
+        if (mimeType === 'text/html') {
+            let html = buffer.toString('utf-8');
+            const base = `<base href="/card/${slug}/">`;
+            if (!html.includes('<base')) {
+                html = /<head([^>]*)>/i.test(html)
+                    ? html.replace(/<head([^>]*)>/i, `<head$1>${base}`)
+                    : `${base}${html}`;
+            }
+            return new Response(html, {
+                headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' },
+            });
+        }
+
         return new Response(new Uint8Array(buffer), {
             headers: {
                 'Content-Type': mimeType,
