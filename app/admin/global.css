@@ -116,14 +116,19 @@
     --sidebar-ring: oklch(0.556 0 0);
 }
 
+/*
+ * Scoped overrides for admin pages only.
+ * The root layout sets `html { color-scheme: dark only; scroll-snap-type: y proximity; }`
+ * for the public site; `:root:has(.admin-root)` resets these when we're inside admin.
+ */
+:root:has(.admin-root) {
+    scroll-snap-type: none;
+    scroll-behavior: auto;
+}
+
 @layer base {
-    * {
+    /* Scope base resets to the admin wrapper so they don't affect public pages. */
+    .admin-root * {
         @apply border-border outline-ring/50;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
-    html {
-        @apply font-sans;
     }
 }
