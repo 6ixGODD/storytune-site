@@ -44,10 +44,20 @@ if (!skip) {
     console.log('[dev] Copied .env.dev → .env');
 }
 
-// ── 2. Start Docker Compose dev services ──────────────────────────────────────
+const composeFile = path.join(root, 'docker-compose.dev.yml');
+
+// ── 2. Wipe & restart Docker Compose dev services ────────────────────────────
+// Tear down with volumes so the seed always runs on a clean DB.
+// eslint-disable-next-line no-console
+console.log('[dev] Tearing down existing dev services (volumes included)…');
+spawnSync('docker', ['compose', '-f', composeFile, 'down', '-v'], {
+    stdio: 'inherit',
+    cwd: root,
+    shell: true,
+});
+
 // eslint-disable-next-line no-console
 console.log('[dev] Starting Docker Compose dev services…');
-const composeFile = path.join(root, 'docker-compose.dev.yml');
 const compose = spawnSync(
     'docker',
     ['compose', '-f', composeFile, 'up', '-d', '--wait'],
