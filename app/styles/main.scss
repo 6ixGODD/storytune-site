@@ -1,77 +1,82 @@
 // StoryTune — Global Styles
 // B&W minimalist, sans-serif, digital art aesthetic
+//
+// Wrapped in @layer site so Tailwind utility classes (from the admin panel's
+// global.css) take precedence. CSS Cascade Layers: unlayered > later layers >
+// earlier layers, so Tailwind's base/components/utilities beat this layer.
+@layer site {
+    html {
+        color-scheme: dark only;
+        scroll-behavior: smooth;
+        scroll-snap-type: y proximity;
+    }
 
-html {
-    color-scheme: dark only;
-    scroll-behavior: smooth;
-    scroll-snap-type: y proximity;
-}
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+    body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--font-sans), 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
 
-body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--font-sans), 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-}
+    img {
+        display: block;
+        max-width: 100%;
+    }
 
-img {
-    display: block;
-    max-width: 100%;
-}
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
 
-a {
-    color: inherit;
-    text-decoration: none;
-}
+    button {
+        font-family: inherit;
+        cursor: pointer;
+        background: none;
+        border: none;
+    }
 
-button {
-    font-family: inherit;
-    cursor: pointer;
-    background: none;
-    border: none;
-}
+    ul,
+    ol {
+        list-style: none;
+    }
 
-ul,
-ol {
-    list-style: none;
-}
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0;
+    }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    margin: 0;
-}
+    :root {
+        --bg: hsl(20 5% 5%);
+        --fg: hsl(30 10% 92%);
+        --max: 1200px;
+        --gutter: clamp(20px, 5vw, 60px);
+        --section-pad: clamp(80px, 10vw, 140px);
+    }
 
-:root {
-    --bg: hsl(20 5% 5%);
-    --fg: hsl(30 10% 92%);
-    --max: 1200px;
-    --gutter: clamp(20px, 5vw, 60px);
-    --section-pad: clamp(80px, 10vw, 140px);
-}
-
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
 }
