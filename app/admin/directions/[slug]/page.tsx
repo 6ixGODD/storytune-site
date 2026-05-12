@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { AdminShell } from '@/components/admin/admin-shell';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -30,7 +31,6 @@ export default function DirectionDetailPage() {
     const router = useRouter();
     const [item, setItem] = useState<Inspiration | null>(null);
     const [error, setError] = useState('');
-    const [saveMsg, setSaveMsg] = useState('');
     const [loading, setLoading] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
@@ -46,7 +46,6 @@ export default function DirectionDetailPage() {
 
     async function handleSave(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        setSaveMsg('');
         setError('');
         setLoading(true);
         const form = e.currentTarget;
@@ -71,8 +70,9 @@ export default function DirectionDetailPage() {
             });
             const data = await res.json();
             if (data.success) {
-                setItem(data.data);
-                setSaveMsg('Saved successfully.');
+                toast.success('Direction saved!');
+                router.push('/admin/directions');
+                router.refresh();
             } else {
                 setError(data.error ?? 'Save failed');
             }
@@ -118,7 +118,6 @@ export default function DirectionDetailPage() {
 
             {!item && !error && <p className="text-muted-foreground">Loading…</p>}
             {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
-            {saveMsg && <Alert><AlertDescription>{saveMsg}</AlertDescription></Alert>}
 
             {item && (
                 <div className="max-w-2xl">
