@@ -5,12 +5,12 @@ import React, { useEffect, useRef } from 'react';
 import styles from './scroll-verb.module.scss';
 
 const VERBS = [
-    { text: 'design.', color: 'hsl(38 42% 70%)' },
-    { text: 'animate.', color: 'hsl(162 28% 62%)' },
-    { text: 'delight.', color: 'hsl(338 30% 70%)' },
-    { text: 'personalise.', color: 'hsl(252 28% 72%)' },
-    { text: 'surprise.', color: 'hsl(18 40% 68%)' },
-    { text: 'remember.', color: 'hsl(207 28% 66%)' },
+    { text: 'design.', color: 'hsl(38 18% 72%)' },
+    { text: 'animate.', color: 'hsl(162 22% 62%)' },
+    { text: 'delight.', color: 'hsl(338 24% 68%)' },
+    { text: 'personalise.', color: 'hsl(252 22% 72%)' },
+    { text: 'surprise.', color: 'hsl(18 22% 66%)' },
+    { text: 'remember.', color: 'hsl(207 22% 66%)' },
 ];
 
 export default function ScrollVerb() {

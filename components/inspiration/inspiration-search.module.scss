@@ -1,0 +1,49 @@
+.form {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 480px;
+}
+
+.input {
+    flex: 1;
+    background: hsl(0 0% 10%);
+    border: 1px solid hsl(0 0% 22%);
+    border-radius: 5px;
+    color: hsl(0 0% 88%);
+    font-size: 0.875rem;
+    padding: 0.55rem 1rem;
+    outline: none;
+    transition: border-color 0.15s;
+
+    &::placeholder {
+        color: hsl(0 0% 35%);
+    }
+
+    &:focus {
+        border-color: hsl(0 0% 45%);
+    }
+
+    // Remove the native search clear button (X)
+    &::-webkit-search-cancel-button {
+        display: none;
+    }
+}
+
+.button {
+    background: hsl(0 0% 14%);
+    border: 1px solid hsl(0 0% 22%);
+    border-radius: 5px;
+    color: hsl(0 0% 72%);
+    font-size: 0.875rem;
+    padding: 0.55rem 1.25rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        background 0.15s,
+        color 0.15s;
+
+    &:hover {
+        background: hsl(0 0% 22%);
+        color: hsl(0 0% 90%);
+    }
+}

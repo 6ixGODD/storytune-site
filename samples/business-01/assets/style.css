@@ -1,0 +1,682 @@
+@import url('https://unpkg.com/normalize.css') layer(normalize);
+
+@font-face {
+  font-family: 'Geist Sans';
+  src: url('https://assets.codepen.io/605876/GeistVF.ttf') format('truetype');
+}
+
+@layer normalize, base, cooking, glow, canvas-date, button, form, layout;
+
+/* ─────────────────────────────────────────
+   BASE
+───────────────────────────────────────── */
+@layer base {
+  :root {
+    --font-size-min: 16;
+    --font-size-max: 20;
+    --font-ratio-min: 1.2;
+    --font-ratio-max: 1.33;
+    --font-width-min: 375;
+    --font-width-max: 1500;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    transform-style: preserve-3d;
+  }
+
+  html {
+    color-scheme: dark only;
+  }
+
+  body {
+    background: #000;
+    color: #fff;
+    margin: 0;
+    font-family: 'Geist Sans', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 160;
+    overflow-x: hidden;
+  }
+
+  :where(.fluid) {
+    --fluid-min: calc(var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0)));
+    --fluid-max: calc(var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0)));
+    --fluid-preferred: calc(
+      (var(--fluid-max) - var(--fluid-min)) / (var(--font-width-max) - var(--font-width-min))
+    );
+    --fluid-type: clamp(
+      (var(--fluid-min) / 16) * 1rem,
+      ((var(--fluid-min) / 16) * 1rem) -
+        (((var(--fluid-preferred) * var(--font-width-min)) / 16) * 1rem) +
+        (var(--fluid-preferred) * 100vi),
+      (var(--fluid-max) / 16) * 1rem
+    );
+    font-size: var(--fluid-type);
+  }
+
+  .label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    margin: 0;
+  }
+}
+
+/* ─────────────────────────────────────────
+   COOKING LETTERS
+   Default: static. Animates only while hovering hero.
+───────────────────────────────────────── */
+@layer cooking {
+  .words, .word,
+  .char, .char::before, .char::after {
+    transform-style: preserve-3d;
+    display: inline-block;
+  }
+
+  .cooking {
+    --font-level: 6;
+    margin: 0;
+    font-weight: 120;
+    line-height: 1;
+    width: fit-content;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .cooking .char {
+    --duration: 2.4s;
+    --delay: calc(
+      (sin((var(--char-index) / var(--char-total)) * 90deg) * (var(--duration) * 0.25)) -
+        (var(--idx, 0) * -0.28s)
+    );
+    display: inline-block;
+    /* no animation by default — chars rest in their original position */
+    animation: none;
+    color: transparent;
+    position: relative;
+    height: 0.9lh;
+    line-height: 1;
+    vertical-align: middle;
+
+    &::before,
+    &::after {
+      color: white;
+      content: attr(data-char);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      height: 1lh;
+      width: 100%;
+      animation: none;
+    }
+
+    &::before {
+      transform-origin: 50% 50%;
+      translate: -50% -50%;
+      transform: rotateX(-90deg) translate3d(0, 0, 0.45lh);
+      opacity: 0;
+      --opacity: 1;
+    }
+
+    &::after {
+      translate: -50% -50%;
+      transform: translate3d(0, 0, 0.45lh);
+    }
+  }
+
+  /* Hover: full animation declaration starts fresh each hover */
+  .s-hero:hover .cooking .char {
+    animation: ck-flip var(--duration) var(--delay) infinite ease;
+  }
+  .s-hero:hover .cooking .char::before {
+    animation: ck-fade var(--duration) var(--delay) infinite ease;
+  }
+  .s-hero:hover .cooking .char::after {
+    animation: ck-fade var(--duration) var(--delay) infinite ease;
+  }
+
+  @keyframes ck-flip {
+    25%, 100% { transform: rotateX(90deg); }
+  }
+
+  @keyframes ck-fade {
+    30%, 100% { opacity: var(--opacity, 0); }
+  }
+}
+
+/* ─────────────────────────────────────────
+   GLOW TEXT
+   Fades in from zero when section enters view
+───────────────────────────────────────── */
+@layer glow {
+  .glow-heading {
+    --font-level: 5;
+    position: relative;
+    margin: 0;
+    font-weight: 120;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-align: center;
+
+    span:first-child {
+      display: block;
+      color: transparent;
+    }
+
+    span[aria-hidden='true'] {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* start invisible — transition to glow on .in-view */
+      color: rgba(255, 255, 255, 0);
+      filter: none;
+      transform: translateZ(0);
+      transition:
+        color 0.9s ease-out,
+        filter 1.4s ease-out;
+    }
+  }
+
+  /* Triggered by IntersectionObserver */
+  .s-glow.in-view .glow-heading span[aria-hidden='true'] {
+    color: white;
+    filter:
+      drop-shadow(0 0 4px  rgba(255, 255, 255, 0.95))
+      drop-shadow(0 0 10px rgba(255, 255, 255, 0.75))
+      drop-shadow(0 0 22px rgba(255, 255, 255, 0.45))
+      drop-shadow(0 0 48px rgba(255, 255, 255, 0.2));
+  }
+
+  .glow-sub {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0);
+    text-transform: uppercase;
+    margin: 2.5rem 0 0;
+    text-align: center;
+    transition: color 1.2s ease-out 0.5s;
+  }
+
+  .s-glow.in-view .glow-sub {
+    color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* ─────────────────────────────────────────
+   CANVAS DATE
+───────────────────────────────────────── */
+@layer canvas-date {
+  .date-wrap {
+    font-size: clamp(3rem, 14vw + 0.5rem, 15rem);
+    font-weight: 120;
+    line-height: 1;
+  }
+
+  .text-block {
+    display: inline-block;
+    position: relative;
+  }
+
+  .date-str {
+    display: block;
+    color: transparent;
+    white-space: nowrap;
+  }
+
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    filter: brightness(1.6);
+  }
+
+  .date-year {
+    font-size: clamp(0.9rem, 2.5vw, 2.5rem);
+    letter-spacing: 0.55em;
+    color: rgba(255, 255, 255, 0.2);
+    margin: 1.5rem 0 0;
+    text-transform: uppercase;
+  }
+}
+
+/* ─────────────────────────────────────────
+   RAINBOW BORDER BUTTON
+───────────────────────────────────────── */
+@layer button {
+  @property --complete {
+    initial-value: 0;
+    inherits: true;
+    syntax: '<number>';
+  }
+
+  .btn-wrap {
+    position: relative;
+    display: inline-flex;
+    margin-top: 2rem;
+  }
+
+  .atc {
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    border-radius: 100px;
+    color: white;
+    font-family: inherit;
+    font-weight: 400;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    padding: 0;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    background: #000;
+    transition-property: translate, scale;
+    transition-duration: 0.16s;
+    transition-timing-function: ease-out;
+
+    &[data-adding='false']:active { translate: 0 1px; scale: 0.99; }
+    &[disabled] { cursor: default; opacity: 0.7; }
+  }
+
+  .atc__content {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 2.5rem;
+    border-radius: inherit;
+    position: relative;
+    z-index: 2;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: #000;
+      z-index: -1;
+    }
+  }
+
+  .atc__check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    opacity: 0;
+    stroke: hsl(140 90% 55%);
+
+    svg { width: 100%; height: 100%; }
+  }
+
+  .atc__border {
+    position: absolute;
+    inset: -2px;
+    container-type: inline-size;
+    border: 2px solid transparent;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0) border-box;
+    mask-composite: exclude;
+    border-radius: inherit;
+
+    &.atc__border--static   { opacity: 0; border-color: white; }
+    &.atc__border--complete { opacity: 0; border-color: hsl(140 90% 55%); }
+
+    &.atc__border--animated::after {
+      content: '';
+      width: calc(100cqi + 4px);
+      height: calc(100cqi + 4px);
+      background: conic-gradient(
+        from calc(var(--complete, 0) * 180deg) in hsl increasing hue,
+        #0000 0 calc((1 - var(--complete)) * 20%),
+        hsl(0 100% 65%)   calc((1 - var(--complete)) * 30%),
+        hsl(339 100% 65%) calc(100% - ((1 - var(--complete)) * 30%)),
+        #0000             calc(100% - ((1 - var(--complete)) * 20%)) 100%
+      );
+      position: absolute;
+      top: 50%; left: 50%;
+      translate: -50% -50%;
+      z-index: -1;
+      animation: btn-spin 2.4s infinite linear;
+      transition: --complete 0.22s ease-out;
+    }
+  }
+
+  [data-complete='true'] .atc__border::after { --complete: 1; }
+
+  @keyframes btn-spin { to { rotate: 360deg; } }
+}
+
+/* ─────────────────────────────────────────
+   RSVP FORM
+───────────────────────────────────────── */
+@layer form {
+  .rsvp-form {
+    display: flex;
+    flex-direction: column;
+    width: min(400px, 100%);
+  }
+
+  .rsvp-field {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px 0;
+    transition: border-color 0.3s;
+
+    &:focus-within { border-bottom-color: rgba(255, 255, 255, 0.3); }
+  }
+
+  .rsvp-field--row { gap: 14px; }
+
+  .rsvp-field-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .rsvp-form input,
+  .rsvp-form textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 160;
+    padding: 4px 0;
+    letter-spacing: 0.03em;
+    caret-color: #fff;
+
+    &::placeholder { color: rgba(255, 255, 255, 0.2); font-style: italic; }
+  }
+
+  .rsvp-form input[type='number'] {
+    flex: 0 0 auto;
+    width: 44px;
+    -moz-appearance: textfield;
+    appearance: textfield;
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button { -webkit-appearance: none; }
+  }
+
+  .rsvp-form textarea {
+    resize: none;
+    line-height: 1.5;
+  }
+
+  .btn-decline {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    font-family: inherit;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: rgba(255, 255, 255, 0.15);
+    margin-top: 0.5rem;
+    transition: color 0.2s;
+    text-align: left;
+
+    &:hover { color: rgba(255, 255, 255, 0.7); }
+  }
+
+  .form-note {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.38);
+    letter-spacing: 0.04em;
+    min-height: 1.2em;
+    margin: 0.8rem 0 0;
+    transition: color 0.3s;
+  }
+
+  .rsvp-form.submitted .rsvp-field,
+  .rsvp-form.submitted .btn-wrap,
+  .rsvp-form.submitted .btn-decline {
+    opacity: 0.25;
+    pointer-events: none;
+    transition: opacity 0.5s;
+  }
+}
+
+/* ─────────────────────────────────────────
+   LAYOUT — Sections & Page Structure
+───────────────────────────────────────── */
+@layer layout {
+
+  /* All sections */
+  .s-hero, .s-glow, .s-date, .s-details, .s-rsvp {
+    min-height: 100svh;
+  }
+
+  /* ── Hero ── */
+  .s-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px 60px) 0 0 / 60px 60px,
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px 60px) 0 0 / 60px 60px;
+      mask: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+      pointer-events: none;
+    }
+  }
+
+  .eyebrow {
+    font-size: 0.6rem;
+    letter-spacing: 0.28em;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+    margin: 0 0 3rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-titles {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-hint {
+    margin: 2rem 0 0;
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    color: rgba(255, 255, 255, 0.18);
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    translate: -50% 0;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.18);
+    margin: 0;
+    animation: hint-bob 2.4s ease-in-out infinite;
+  }
+
+  @keyframes hint-bob {
+    0%, 100% { translate: -50% 0;    opacity: 0.18; }
+    50%       { translate: -50% 10px; opacity: 0.45; }
+  }
+
+  /* ── Glow ── */
+  .s-glow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    gap: 0.3rem;
+  }
+
+  /* ── Date ── */
+  .s-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    gap: 0.6rem;
+    text-align: center;
+  }
+
+  /* ── Details ── */
+  .s-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    gap: 4rem;
+  }
+
+  .divider {
+    width: min(560px, 88vw);
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 3rem;
+    width: min(620px, 88vw);
+    text-align: center;
+  }
+
+  .detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+
+    .label { margin-bottom: 0.3rem; }
+
+    strong {
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      color: white;
+    }
+
+    span:not(.label) {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.38);
+      letter-spacing: 0.04em;
+    }
+  }
+
+  /* ── RSVP — two column ── */
+  .s-rsvp {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 4vw;
+    padding: 4rem clamp(2rem, 5vw, 5rem);
+  }
+
+  .rsvp-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    justify-self: end;
+    max-width: 380px;
+  }
+
+  .rsvp-heading {
+    font-weight: 120;
+    font-size: clamp(1.8rem, 4vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: white;
+  }
+
+  .rsvp-note {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.06em;
+    line-height: 2;
+    margin: 0;
+
+    strong { color: rgba(255, 255, 255, 0.85); font-weight: 400; }
+  }
+
+  .rsvp-hint {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.08em;
+    line-height: 1.8;
+    margin: 0;
+
+    em { font-style: normal; color: rgba(255, 255, 255, 0.5); }
+  }
+
+  /* ── Footer — NOT a snap target, tight compact ── */
+  .s-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    text-align: center;
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.22);
+    letter-spacing: 0.12em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    p { margin: 0; }
+  }
+
+  .brand {
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 680px) {
+    .s-rsvp {
+      grid-template-columns: 1fr;
+      padding: 3rem 1.5rem;
+      gap: 2.5rem;
+      align-content: center;
+    }
+    .rsvp-left { text-align: center; align-items: center; justify-self: center; max-width: 100%; }
+    .rsvp-form { width: 100%; }
+  }
+}

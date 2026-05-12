@@ -17,7 +17,7 @@
     font-weight: 400;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: hsl(35 25% 55%);
+    color: hsl(0 0% 52%);
     margin-bottom: 0.75rem;
 }
 
@@ -35,15 +35,217 @@
     overflow: hidden;
     border-radius: 4px;
     background: #111;
-    // Aspect-ratio matches typical 1900×1080 covers; clamp prevents it going huge
+    // width: 100% + margin: 0 auto ensures it always fills the inner container
+    // even when aspect-ratio constrains the height (which would otherwise shrink
+    // the block width and leave the element left-aligned).
+    width: 100%;
+    // 16:9 matches typical 1900×1080 covers
     aspect-ratio: 16 / 9;
-    max-height: 75vh;
 
     @media (max-width: 600px) {
         aspect-ratio: 4 / 3;
-        max-height: none;
     }
 }
+
+.track {
+    list-style: none;
+    width: 100%;
+    display: flex;
+    height: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    // No `position` set here intentionally — images bubble up to .carousel.
+}
+
+.slide {
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: start;
+
+    // view-timeline drives the per-slide crossfade animation (Chrome 115+).
+    view-timeline-name: --gallery-slide;
+    view-timeline-axis: inline;
+
+    // No `position` — images escape to .carousel and stack for the crossfade.
+}
+
+.coverImg {
+    // Next.js <Image fill> sets position:absolute;inset:0 on the img.
+    // Force explicit sizing so the image covers the full carousel area.
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    object-position: top center;
+
+    // Fallback: fully visible for browsers without view-timeline support.
+    opacity: 1;
+
+    @media (prefers-reduced-motion: no-preference) {
+        @supports (view-timeline-name: --test) {
+            opacity: 0;
+            animation: galleryFade both linear;
+            animation-timeline: --gallery-slide;
+            animation-range: cover;
+        }
+    }
+}
+
+@keyframes galleryFade {
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ─── Caption overlay ─── */
+
+.carouselCaption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 3rem 1.5rem 1.25rem;
+    background: linear-gradient(to top, hsl(0 0% 4% / 0.82) 0%, transparent 100%);
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.captionTitle {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    font-weight: 500;
+    color: hsl(0 0% 88%);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #fff;
+        text-decoration: underline;
+    }
+}
+
+.captionCategory {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: hsl(0 0% 55%);
+}
+
+/* ─── Dots ─── */
+
+.dots {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: hsl(0 0% 100% / 0.32);
+    transition:
+        background 0.2s,
+        transform 0.2s;
+
+    &:hover {
+        background: hsl(0 0% 100% / 0.65);
+    }
+}
+
+.dotActive {
+    background: #fff;
+    transform: scale(1.4);
+}
+
+/* ─── Prev / Next buttons ─── */
+
+.navBtn {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    z-index: 10;
+    // Square container so the circular border is symmetric
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    // Dark fill visible on any image tone; thin white ring adds definition
+    background: hsl(0 0% 6% / 0.78);
+    box-shadow:
+        0 0 0 1px hsl(0 0% 100% / 0.22),
+        0 4px 14px hsl(0 0% 0% / 0.5);
+    backdrop-filter: blur(8px) saturate(0.8);
+    // Flexbox centres the SVG icon precisely in the circle
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition:
+        background 0.18s,
+        box-shadow 0.18s;
+
+    &:hover:not(:disabled) {
+        background: hsl(0 0% 16% / 0.92);
+        box-shadow:
+            0 0 0 1px hsl(0 0% 100% / 0.4),
+            0 4px 18px hsl(0 0% 0% / 0.6);
+    }
+
+    &:disabled {
+        opacity: 0.28;
+        cursor: default;
+    }
+}
+
+.navPrev {
+    left: 1rem;
+}
+
+.navNext {
+    right: 1rem;
+}
+
+/* ─── Section footer ─── */
+
+.empty {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: color-mix(in lch, var(--fg) 35%, transparent);
+    font-size: 0.9rem;
+}
+
+.footer {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.galleryLink {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--fg);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    padding-bottom: 2px;
+    border-bottom: 1px solid color-mix(in lch, var(--fg) 30%, transparent);
+    transition: border-color 0.2s;
+
+    &:hover {
+        border-color: var(--fg);
+    }
+}
+
 
 .track {
     list-style: none;

@@ -54,6 +54,11 @@ export const inspirationService = {
         return inspirationRepository.update(slug, input);
     },
 
+    /** Return all distinct active categories for the sidebar filter. */
+    async getCategories(): Promise<string[]> {
+        return inspirationRepository.findCategories();
+    },
+
     /** Soft-delete an inspiration by slug. Returns `false` if not found. */
     async softDelete(slug: string): Promise<boolean> {
         return inspirationRepository.softDelete(slug);

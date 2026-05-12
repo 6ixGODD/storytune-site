@@ -60,7 +60,10 @@ const col = async () => {
 export interface ListInspirationsOptions {
     page: number;
     pageSize: number;
+    /** Filter by category (exact match). */
     category?: string;
+    /** Keyword search across title, category, tags, and description. */
+    q?: string;
     includeDeleted?: boolean;
 }
 
@@ -102,9 +105,17 @@ const SUMMARY_PROJECTION = {
 export const inspirationRepository = {
     /** Fetch a paginated, sorted list of inspirations. Active-only by default. */
     async list(opts: ListInspirationsOptions): Promise<{ items: InspirationSummary[]; total: number }> {
-        const { page, pageSize, category, includeDeleted } = opts;
+        const { page, pageSize, category, q, includeDeleted } = opts;
         const filter: Record<string, unknown> = includeDeleted ? {} : { status: INSPIRATION_STATUS.ACTIVE };
         if (category) filter.category = category;
+        if (q) {
+            filter.$or = [
+                { title: { $regex: q, $options: 'i' } },
+                { category: { $regex: q, $options: 'i' } },
+                { tags: { $elemMatch: { $regex: q, $options: 'i' } } },
+                { description: { $regex: q, $options: 'i' } },
+            ];
+        }
 
         const skip = (page - 1) * pageSize;
         logger.debug({ page, pageSize, category, includeDeleted }, 'list inspirations');
@@ -198,5 +209,12 @@ export const inspirationRepository = {
         );
         if (result.matchedCount > 0) logger.info({ slug }, 'inspiration soft-deleted');
         return result.matchedCount > 0;
+    },
+
+    /** Return all distinct active categories, sorted alphabetically. */
+    async findCategories(): Promise<string[]> {
+        const c = await col();
+        const cats = await c.distinct('category', { status: INSPIRATION_STATUS.ACTIVE });
+        return (cats as string[]).filter(Boolean).sort();
     },
 };

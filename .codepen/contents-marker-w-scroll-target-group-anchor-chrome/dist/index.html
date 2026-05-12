@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>contents marker w/ scroll-target-group + anchor [chrome]</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1.0"
+    />
+    <title>toc-scroll-markers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"><link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <div class="container">
+    <table-of-contents></table-of-contents>
+    <header id="pre">
+      <h1 class="fluid">Where Product Design Meets Systems Thinking</h1>
+      <div class="author">
+        <div class="author-info">
+          <img src="https://assets.codepen.io/605876/headshot--square.jpeg" alt="Jhey Tompkins" />
+          <span>
+            Jhey Tompkins
+          </span>
+        </div>
+      </div>
+    </header>
+    <main>
+      <article>
+        <p class="intro">Design engineering bridges design and engineering in web development, ensuring products are visually appealing, performant, and user-centered. By combining systematic thinking, reusable components, and careful attention to UX, teams can deliver experiences that feel cohesive, polished, and responsive across platforms. This article explores the principles, workflows, and tools that help teams create high-quality products at scale while keeping collaboration seamless.</p>
+        <section id="overview">
+          <h2>Interpretation</h2>
+          <p>Design engineering represents the intersection of design and engineering disciplines, where teams work together to create digital products that are functional, delightful, and maintainable. This discipline goes beyond traditional handoffs and focuses on building a shared understanding of both design intent and technical constraints. By applying systems thinking, teams ensure that individual components not only function independently but also integrate harmoniously within larger products, providing consistency and scalability.</p>
+          <p>In practice, design engineering involves iterative prototyping, rapid testing, and continuous feedback between designers and engineers. Each decision, from layout to interaction, is informed by both visual design principles and technical feasibility, reducing the chances of rework or misalignment. Teams also consider the long-term evolution of the product, making sure that new features can be added without compromising system integrity.</p>
+          <p>By bridging the gap between design and engineering, teams can maintain high visual fidelity while ensuring robust technical implementation. Designers gain insight into performance, accessibility, and maintainability constraints, while engineers develop empathy for user experience priorities. This shared knowledge fosters a culture of collaboration and reduces friction across disciplines, creating a more predictable workflow and higher-quality end products.</p>
+          <p>Ultimately, design engineering ensures that every component, interaction, and workflow contributes to a cohesive and scalable system, aligning with both user needs and business objectives. It’s a holistic approach that emphasizes long-term product health and adaptability while delivering immediate value through polished, functional experiences.</p>
+        </section>
+        <section id="difference">
+          <h2>Difference</h2>
+          <p>Unlike traditional design handoffs where static mockups are passed to engineers, design engineering emphasizes shared ownership of both components and system behaviors. Designers conceptualize reusable elements with clear patterns, while engineers focus on code structure, performance, and scalability. This collaboration reduces misinterpretation, avoids redundant work, and ensures that components are built to withstand future changes without breaking design consistency.</p>
+          <p>Interactive prototypes play a key role in this process. By iterating in a shared environment, teams can test assumptions, identify edge cases, and validate user experience choices before committing to production code. This approach drastically reduces the gap between the initial design vision and the final implementation, resulting in products that are both beautiful and technically sound.</p>
+          <p>This methodology also fosters empathy across roles. Designers better understand performance limitations, technical debt, and implementation trade-offs, while engineers gain a deeper appreciation for usability, aesthetics, and accessibility considerations. This mutual understanding improves decision-making, encourages collaboration, and builds a sense of collective ownership over the product’s success.</p>
+          <p>By shifting from page-centric workflows to component- and system-centric thinking, design engineering ensures that individual parts align with the broader product vision. Each element is not only functional in isolation but contributes meaningfully to the overall user experience, making the product scalable, adaptable, and resilient.</p>
+        </section>
+        <section id="importance">
+          <h2>Importance</h2>
+          <p>Design engineering is critical because it directly impacts product quality, development speed, and team efficiency. By maintaining alignment between design intent and implementation, teams can avoid costly iterations and miscommunications. Products built through design engineering are generally more consistent, easier to maintain, and more adaptable to changing requirements or platform updates.</p>
+          <p>Furthermore, a design engineering approach enables the creation of scalable design systems. By standardizing patterns, components, and workflows, organizations can deliver coherent experiences across multiple teams, products, and platforms. This level of standardization ensures brand consistency, reduces duplicated effort, and fosters a shared language between designers and engineers.</p>
+          <p>In dynamic web development environments, the ability to iterate quickly while maintaining quality is crucial. Teams leveraging design engineering principles can respond to user feedback faster, implement updates more efficiently, and reduce the friction between prototyping and production deployment. This speed-to-market advantage is increasingly important in competitive industries where user expectations evolve rapidly.</p>
+          <p>Ultimately, design engineering creates measurable value. It enhances usability, improves performance, ensures accessibility, and increases overall user satisfaction. By embedding these principles into daily workflows, organizations can build robust, high-quality products that delight users and provide long-term business benefits.</p>
+        </section>
+        <section id="quality">
+          <h2>Quality</h2>
+          <p>Quality is a defining feature of user experience in web development. Design engineers ensure that every component is consistent, performant, and accessible, embedding these principles from the earliest stages of design and development. This approach guarantees that products feel polished, responsive, and reliable across all devices and user scenarios.</p>
+      
+          <h3>Performance</h3>
+          <p>Performance is a critical aspect of user satisfaction. Teams focus on optimizing load times, minimizing rendering delays, and ensuring smooth transitions. Techniques such as lazy loading, code splitting, and modular component structures reduce unnecessary computational overhead. By addressing performance from the outset, design engineers prevent slow interactions that can frustrate users and reduce engagement, ensuring a product feels responsive and intuitive.</p>
+      
+          <h3>Accessibility</h3>
+          <p>Accessibility ensures that products are usable by people of all abilities. Design engineers integrate semantic HTML, ARIA attributes, keyboard navigation, and high-contrast visuals into every component. Beyond compliance, inclusive design considers a variety of user needs, including different devices, contexts, and abilities, creating experiences that are genuinely welcoming and equitable. Accessibility is embedded as a core principle rather than an afterthought, improving usability for all users while enhancing the product’s overall quality.</p>
+        </section>
+        <section id="iteration">
+          <h2>Iteration</h2>
+          <p>Rapid iteration is at the heart of effective design engineering. Component-driven development allows designers to modify visual elements while engineers implement functional changes in parallel. This parallel workflow reduces bottlenecks, speeds up feature delivery, and enables teams to test and refine ideas in real time.</p>
+          <p>Tools like Storybook, Figma, and automated testing frameworks facilitate this process by providing a shared environment where components can be visualized, tested, and documented. Teams can quickly identify inconsistencies, ensure visual fidelity, and maintain functional integrity across multiple contexts and platforms.</p>
+          <p>Frequent iteration also encourages experimentation. Teams can explore alternative layouts, animations, or interaction patterns without committing to full-scale implementation. Feedback loops with real users or internal stakeholders help validate design decisions, reducing the risk of costly changes later in the development cycle.</p>
+          <p>By embedding iteration into the workflow, teams can achieve a balance between creativity and reliability. Products evolve faster, user satisfaction increases, and both designers and engineers develop a stronger understanding of the system’s behavior and constraints.</p>
+        </section>
+        <section id="components">
+          <h2>Components</h2>
+          <p>Modern design engineering emphasizes building reusable components rather than individual pages. Each component is a self-contained unit with defined behavior, styling, and accessibility considerations. This approach ensures visual consistency and reduces repetitive work across projects.</p>
+          <p>Reusable components allow teams to scale efficiently. Designers define usage guidelines while engineers implement modular code, creating a system that can adapt to new requirements without breaking existing functionality. This structured approach also simplifies onboarding new team members and fosters a common understanding across disciplines.</p>
+          <p>Components act as building blocks for larger products, supporting both iterative development and long-term maintainability. By treating components as first-class elements, teams can design, implement, and refine systems in a cohesive, systematic manner.</p>
+          <p>Ultimately, component-driven workflows create a foundation for predictable, scalable, and high-quality digital products that maintain both aesthetic and functional consistency across the system.</p>
+        </section>
+        <section id="motion">
+          <h2>Motion</h2>
+          <p>Motion is a powerful tool in web interfaces, providing users with cues about hierarchy, status, and interactivity. Thoughtfully applied animations guide attention, enhance feedback, and make interfaces feel responsive. When used intentionally, motion communicates meaning without distracting from primary content or functionality.</p>
+          <p>Design engineers develop reusable motion patterns for consistency across components. Timing, easing, and visual weight are carefully considered to ensure that transitions feel natural and purposeful. Motion is integrated into design systems, allowing both designers and engineers to iterate rapidly while maintaining coherence and usability.</p>
+          <p>By applying motion with intent, teams create experiences that feel alive, responsive, and intuitive, enhancing user understanding and engagement without compromising performance or accessibility.</p>
+        </section>
+        <section id="collaboration">
+          <h2>Collaboration</h2>
+          <p>Effective design engineering relies on deep collaboration between designers and engineers. Shared tools, regular reviews, and transparent communication help identify issues early and align the team on goals. Collaboration also fosters mutual respect, where designers understand technical constraints and engineers appreciate UX priorities.</p>
+          <p>Cross-functional collaboration extends beyond the immediate team to include product managers, QA, and stakeholders. This alignment ensures the final product meets business goals, technical requirements, and user expectations, reducing friction during development and launch.</p>
+          <p>Collaborative practices enable faster iteration, fewer mistakes, and a stronger sense of ownership across disciplines, creating an environment where teams can deliver high-quality, cohesive experiences consistently.</p>
+        </section>
+        <hr />
+        <section>
+          <p>Design engineering empowers teams to build scalable, consistent, and user-centered products by bridging design intent with functional implementation. It integrates systems thinking, reusable components, motion with intent, and UX-focused quality to create cohesive experiences that delight users and meet technical requirements.</p>
+          <p>Collaboration, tooling, and continuous iteration remain central, ensuring that designers and engineers operate as a unified team rather than separate silos. This shared approach improves product quality, speeds delivery, and creates a foundation for long-term success.</p>
+          <p>Ultimately, design engineering shapes the way digital products are created, balancing creativity, technical skill, and systems-level thinking. By embedding these principles into workflows, teams deliver products that are not only functional and reliable but also elegant, intuitive, and impactful for users across platforms.</p>
+        </section>
+      </article>
+    </main>
+    <hr/>
+    <footer>
+      <div data-waitlist-form="" id="waitlist">
+        <div data-waitlist-content="">
+          <p>
+            You want to build exceptional user interfaces, I want to empower you to do so.<br>
+            <strong>Join the waitlist to learn more and get course launch updates.</strong>
+          </p>
+          <form>
+            <div data-controls="">
+              <div>
+                <label class="sr-only" for="waitlist-name">Preferred name</label>
+                <input autocomplete="off" id="waitlist-name" name="name" type="text" placeholder="Your name [optional]">
+              </div>
+              <div>
+                <label class="sr-only" for="waitlist-email">Email Address</label>
+                <input autocomplete="off" id="waitlist-email" name="email" type="email" placeholder="Email" required="">
+              </div>
+              <button aria-label="Join" type="submit">
+                Join
+              </button>
+            </div>
+            <div>
+              <input type="checkbox" name="newsletter" id="newsletter" checked="">
+              <label for="newsletter">Also sign up for Jhey's newsletter. Update your preferences or unsubscribe at any time.</label>
+            </div>
+          </form>
+        </div>
+      </div>
+      <hr/>
+      <p>ʕ•ᴥ•ʔ © Jhey Tompkins 2025</p>
+    </footer>
+  </div>
+    <a
+      aria-label="Follow Jhey"
+      class="bear-link"
+      href="https://twitter.com/intent/follow?screen_name=jh3yy"
+      target="_blank"
+      rel="noreferrer noopener"
+    >
+      <svg
+        class="w-9"
+        viewBox="0 0 969 955"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="161.191"
+          cy="320.191"
+          r="133.191"
+          stroke="currentColor"
+          stroke-width="20"
+        ></circle>
+        <circle
+          cx="806.809"
+          cy="320.191"
+          r="133.191"
+          stroke="currentColor"
+          stroke-width="20"
+        ></circle>
+        <circle
+          cx="695.019"
+          cy="587.733"
+          r="31.4016"
+          fill="currentColor"
+        ></circle>
+        <circle
+          cx="272.981"
+          cy="587.733"
+          r="31.4016"
+          fill="currentColor"
+        ></circle>
+        <path
+          d="M564.388 712.083C564.388 743.994 526.035 779.911 483.372 779.911C440.709 779.911 402.356 743.994 402.356 712.083C402.356 680.173 440.709 664.353 483.372 664.353C526.035 664.353 564.388 680.173 564.388 712.083Z"
+          fill="currentColor"
+        ></path>
+        <rect
+          x="310.42"
+          y="448.31"
+          width="343.468"
+          height="51.4986"
+          fill="#FF1E1E"
+        ></rect>
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M745.643 288.24C815.368 344.185 854.539 432.623 854.539 511.741H614.938V454.652C614.938 433.113 597.477 415.652 575.938 415.652H388.37C366.831 415.652 349.37 433.113 349.37 454.652V511.741L110.949 511.741C110.949 432.623 150.12 344.185 219.845 288.24C289.57 232.295 384.138 200.865 482.744 200.865C581.35 200.865 675.918 232.295 745.643 288.24Z"
+          fill="currentColor"
+        ></path>
+      </svg>
+    </a>
+
+<!-- <aside>
+  <a href="#pre" aria-hidden="true"></a>
+  <a href="#one">One</a>
+  <a href="#two">Two</a>
+  <a href="#three">Three</a>
+  <a href="#four">Four</a>
+  <a href="#five">Five</a>
+</aside>
+<aside>
+  <a href="#pre" aria-hidden="true"></a>
+  <a href="#one">One</a>
+  <a href="#two">Two</a>
+  <a href="#three">Three</a>
+  <a href="#four">Four</a>
+  <a href="#five">Five</a>
+</aside>
+<main>
+  <section id="pre">
+    <h1>An intro to scroll markers.</h1>
+  </section>
+  <section id="one">
+    <h2>One.</h2>
+    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perferendis quo nobis error illum suscipit dignissimos, expedita eveniet dolore officia? Nihil necessitatibus velit voluptas, perferendis provident officiis fuga quo deserunt accusantium!</p>
+    <p>Illo, veniam excepturi, quos velit beatae neque temporibus tempore, officiis tenetur provident consequatur accusantium? Harum fuga, ab aperiam neque labore id eaque, quis ut nostrum iusto hic amet vitae repellendus!</p>
+    <p>Molestiae debitis corporis atque animi odit dolores maxime eaque minima repudiandae repellat iste, dolore officiis tempora assumenda consequuntur consectetur? Cum, sit debitis. Deserunt dolore amet totam vero, minus laborum dicta.</p>
+    <p>Nostrum laborum ut consectetur officia, architecto suscipit in est impedit molestiae quam excepturi laudantium voluptate fuga sed incidunt magni asperiores provident, inventore porro! Debitis quo qui assumenda ipsum, minima molestias.</p>
+    <p>Laboriosam, facere, nulla ducimus voluptates sit et animi ab iusto, tempore accusantium tempora. Enim unde adipisci reiciendis recusandae quidem, alias quasi consequuntur atque quia qui eligendi blanditiis eaque. Magnam, quo.</p>
+    <p>Laborum, ducimus, fugit sit quae maiores, odit amet recusandae porro aliquam rerum praesentium sint neque cupiditate vel quia temporibus ullam quibusdam explicabo est dolore ea soluta at nisi aliquid. Alias.</p>
+    <p>Quas sequi velit unde laboriosam fugiat quo, qui modi earum placeat vitae odit harum quae culpa neque dolor dolore ab iure libero, amet nobis? Veritatis ea vitae voluptatum provident blanditiis!</p>
+    <p>Necessitatibus suscipit ut perspiciatis aspernatur maiores distinctio nihil sed maxime blanditiis dignissimos, consequuntur, recusandae atque officia ullam quia nostrum eos. Possimus unde repellat ratione quibusdam beatae sapiente dolore nihil sint.</p>
+    <p>Sunt et quos obcaecati similique molestias accusantium doloremque veritatis laborum architecto alias. Ad labore consequuntur architecto accusamus et ullam dignissimos, beatae nesciunt, officia perspiciatis incidunt, odio possimus modi nihil maxime.</p>
+    <p>Facilis obcaecati assumenda laboriosam molestias odio repellendus corrupti architecto, minima blanditiis porro velit vitae excepturi. Soluta deleniti placeat commodi, debitis odio id cumque enim, in eaque illo rerum officiis delectus!</p>
+  </section>
+  <section id="two">
+    <h2>Two.</h2>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab molestiae repellat qui eum natus rem, possimus inventore a provident, hic laboriosam cupiditate, sequi reiciendis placeat eveniet. Est voluptatem libero repellendus.</p>
+    <p>Error, ducimus? Nam ipsum sunt fugit aliquid consequatur voluptatum inventore laudantium laborum itaque totam? Sunt fuga magni nesciunt amet! Ut possimus debitis sit, ducimus eius voluptatum nobis perspiciatis nemo repellat.</p>
+    <p>Cum aut sint nam adipisci cumque ad quas placeat distinctio! Alias commodi at magnam tempora culpa sapiente doloribus harum a earum enim odio officiis quo sunt facilis dolores, fugit corporis!</p>
+    <p>Minus necessitatibus aspernatur maiores? Corrupti animi illum omnis, quo aspernatur dolor at, saepe a, ex unde quam perspiciatis porro labore accusamus. Illo error voluptatum aperiam quos eligendi laboriosam, aliquam voluptate.</p>
+    <p>Distinctio consectetur dolore, exercitationem at autem earum! Rem ad aperiam quae, libero nobis voluptatibus animi porro sed veniam culpa unde expedita explicabo vel voluptatum perspiciatis, ipsum, odit accusamus? Tempore, harum.</p>
+    <p>Tempore praesentium eum id delectus ipsam, sed tenetur doloremque reprehenderit perspiciatis, numquam voluptatum nulla labore magni accusamus ipsum aut! Eum deserunt reiciendis suscipit fuga placeat pariatur nisi aliquid, explicabo exercitationem.</p>
+    <p>Ut cupiditate eius odio inventore iure exercitationem voluptates nisi possimus maiores id fuga deleniti, excepturi earum porro facilis ipsam dicta corporis quisquam commodi quibusdam ducimus quia itaque eligendi quis! Consequuntur.</p>
+    <p>Dolores repellat eum natus, consequatur error expedita sint laboriosam incidunt provident mollitia voluptate magnam aspernatur quam quo corporis nostrum iure neque fuga tenetur dolorem velit quae possimus? Ut, maxime quasi!</p>
+    <p>Dignissimos illo magnam odio architecto suscipit voluptatibus in mollitia facilis iusto, voluptas harum exercitationem. Aperiam quis, quia doloremque iure explicabo quos eveniet corrupti, nostrum animi molestias est necessitatibus, officia ducimus.</p>
+    <p>Beatae obcaecati porro dolores nemo, tenetur accusamus nam eveniet, ab voluptas, consequuntur ipsam voluptatem quo culpa velit odio tempora. Repellat, reprehenderit. Est voluptatem dolor quia facilis, quas vel veritatis autem!</p>
+  </section>
+  <section id="three">
+    <h2>Three.</h2>
+    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde nobis eveniet voluptate facere ullam ut doloribus nulla iure. Asperiores inventore aliquam saepe nam architecto tempora sed accusantium, perspiciatis nulla cum!</p>
+    <p>Vitae possimus, earum est distinctio, amet minima blanditiis consequatur rerum quis, fugiat magni. Ducimus architecto, sunt aliquid beatae perspiciatis facere! Tenetur voluptates a, saepe quis corporis eos facere! Odio, quae?</p>
+    <p>Nulla, aliquid dignissimos. Perspiciatis ad commodi enim, tempore odit culpa dolorum laudantium. Velit expedita, dicta sed perferendis dignissimos vero nisi explicabo sit et ducimus commodi libero natus! Soluta, obcaecati nostrum.</p>
+    <p>Cumque neque, labore nisi qui debitis dicta provident? Soluta consequatur aliquid in excepturi beatae iusto maiores. Illum ducimus deserunt incidunt totam provident quo quidem deleniti est, repellat et tenetur id.</p>
+    <p>Iste, eveniet suscipit blanditiis omnis fuga sunt autem optio tempora ut molestias explicabo incidunt tempore facilis, eligendi distinctio quis perferendis voluptas deserunt libero rerum voluptate impedit veniam pariatur! Dicta, pariatur!</p>
+    <p>Temporibus commodi voluptatibus quos in placeat! Unde inventore repellendus ipsam ratione veniam eum, consectetur veritatis dolorem alias. Fugit totam quis, dolor veritatis cumque debitis ab, ipsum rem odio facilis quia?</p>
+    <p>Earum, in eveniet modi unde perspiciatis aliquam, explicabo debitis ipsam obcaecati temporibus error veniam delectus tempore sequi deserunt doloremque odit nostrum neque! Incidunt sit blanditiis nostrum repudiandae tempora quasi vero.</p>
+    <p>Deleniti odio veniam ipsum dolore doloribus iusto ipsam aperiam dolor incidunt ex! Ab itaque dignissimos aliquam, sint inventore molestias facilis quisquam unde repellat autem eos! Et quibusdam doloribus eius laborum?</p>
+    <p>Explicabo, sapiente. Repudiandae aliquam a quaerat asperiores magni unde enim pariatur consequatur id excepturi inventore nulla non corrupti voluptatum quidem odio tempora obcaecati totam, distinctio repellendus sint placeat facere vitae?</p>
+    <p>Nemo aliquam quisquam laboriosam velit fuga laudantium exercitationem, accusamus similique tempora adipisci rerum eaque quod dolore earum obcaecati quos, voluptates animi itaque illo placeat! Eaque sint praesentium hic doloribus debitis!</p>
+  </section>
+  <section id="four">
+    <h2>Four.</h2>
+    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sunt, sit vero, quidem dolore temporibus magni animi, magnam obcaecati inventore adipisci non ullam fugit tenetur. Officia aliquid ex sequi similique suscipit!</p>
+    <p>Doloremque id nisi delectus beatae totam ut, aliquam fuga dignissimos optio reiciendis quisquam culpa adipisci numquam, possimus dicta soluta ex iure ipsam pariatur facilis eveniet assumenda eos vero sapiente. Assumenda?</p>
+    <p>Impedit quibusdam esse veniam? Enim magni sapiente dignissimos hic vitae quod suscipit inventore laborum laboriosam maiores eum accusantium deleniti explicabo, optio asperiores earum, est quia cupiditate similique beatae. Reprehenderit, laboriosam!</p>
+    <p>Nobis cupiditate expedita officia architecto illum nesciunt minus laboriosam quam inventore enim voluptatem provident, tempora vel deleniti et pariatur aliquam mollitia dicta natus eos hic sapiente quis obcaecati. Vero, quam.</p>
+    <p>Porro suscipit cumque nesciunt. Aspernatur fuga omnis inventore eaque sunt porro nulla sequi, ipsam obcaecati a pariatur quidem repellendus error veritatis in, dolor expedita adipisci eveniet. Voluptas laboriosam corrupti quas!</p>
+    <p>Deleniti quisquam unde eveniet non inventore magni. Repudiandae, rem? Rerum, vero. Deserunt eaque dolorum ipsum, exercitationem quidem voluptatem ab. Accusantium vitae quaerat cumque voluptatum enim ad quis dicta, quae odit!</p>
+    <p>Molestias officiis quas voluptate quae eligendi, maiores blanditiis quaerat sed. Enim non nemo laboriosam facilis deleniti sed natus perspiciatis id officiis, voluptatum, odio alias nostrum quisquam eos ipsum porro eaque!</p>
+    <p>Accusantium, quis molestias! Natus consequatur nam atque porro tempore blanditiis sapiente consequuntur cumque itaque doloremque similique corrupti, vero enim temporibus odio labore, eos accusantium quae repudiandae laudantium, necessitatibus iure dolor.</p>
+    <p>Repellendus cumque libero exercitationem voluptatem in nihil quam laborum neque, odit voluptates quasi eligendi asperiores nisi, eveniet corporis animi quo sapiente ut ea ipsum vero obcaecati officiis numquam dicta! Iure!</p>
+    <p>Veniam modi perspiciatis accusantium velit consectetur eveniet voluptate qui cumque praesentium eos. Asperiores, odio modi perspiciatis cumque alias omnis inventore velit magni sed dolor cupiditate fugit recusandae accusamus temporibus repellendus.</p>
+  </section>
+  <section id="five">
+    <h2>Five.</h2>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere enim numquam impedit incidunt voluptate corrupti amet adipisci dolor. Fuga, accusamus eum nostrum tenetur modi suscipit repudiandae quia quae similique? Nemo.</p>
+    <p>Sed saepe odit architecto repellendus libero ratione eveniet similique vitae vel consequuntur consectetur tenetur repudiandae enim numquam facilis quos consequatur, fugit ea exercitationem. Excepturi ab, aut provident sed fugiat dignissimos!</p>
+    <p>Illo voluptatem earum itaque labore odio? Nobis, accusamus. Asperiores sapiente fugiat voluptate fugit aut numquam iste repellat cumque possimus deserunt qui, nemo aliquid odit, natus, et laudantium eveniet illo cupiditate?</p>
+    <p>Nam facere voluptas similique, mollitia saepe, dicta aperiam perferendis delectus vero ullam reprehenderit facilis harum alias amet atque debitis temporibus voluptatum. Excepturi rerum molestiae qui tenetur iste, voluptates quo necessitatibus.</p>
+    <p>Pariatur tempore voluptate molestiae blanditiis qui veniam similique laboriosam porro neque optio officiis, voluptates quisquam ipsum sit quos, modi vitae ab culpa, repudiandae debitis reiciendis nesciunt natus tempora sapiente. Impedit.</p>
+    <p>Ratione commodi quod cupiditate rem, fugit consequatur officia quis enim delectus, exercitationem, ullam incidunt veniam. Praesentium, incidunt enim quisquam mollitia accusamus dolore minima recusandae corporis temporibus necessitatibus reprehenderit dolores perspiciatis.</p>
+    <p>Totam velit est ipsam quae exercitationem animi eos omnis adipisci, praesentium rem, dolor eligendi sit delectus quas laudantium eius recusandae? Aliquid nostrum ad repellat maxime natus dolore numquam, obcaecati hic.</p>
+    <p>Commodi in dolores reprehenderit! Facere fugiat, asperiores corporis ad ab cupiditate beatae porro pariatur architecto itaque error modi illo alias voluptatem, quis quisquam in minus autem inventore repellendus excepturi temporibus!</p>
+    <p>Doloribus placeat neque illum debitis dolore eveniet similique quidem. Cupiditate molestiae earum consequatur quasi in aspernatur vitae autem nihil optio ipsam magni quod saepe, nostrum culpa obcaecati! Sunt, consequuntur iste.</p>
+    <p>Optio autem error eum qui nulla libero! Modi fugit debitis doloribus, eveniet quisquam officiis nostrum itaque vitae nam vel, repellat ad assumenda omnis quis commodi architecto quam molestiae maiores aspernatur!</p>
+  </section>
+</main> -->
+    <script type="module" src="./script.js"></script>
+
+  </body>
+  
+</html>

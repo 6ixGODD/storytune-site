@@ -1,6 +1,6 @@
 import styles from './text-reveal.module.scss';
 
-const TAGLINES = ['Every invitation is a world of its own.', 'Motion. Music. Memory.', 'Not a link. An experience.'];
+const TAGLINES = ['Every invitation is a world of its own.', 'Not a link. An experience.'];
 
 export default function TextReveal() {
     return (

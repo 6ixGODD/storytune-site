@@ -4,6 +4,14 @@
 // Wrapped in @layer site so Tailwind utility classes (from the admin panel's
 // global.css) take precedence. CSS Cascade Layers: unlayered > later layers >
 // earlier layers, so Tailwind's base/components/utilities beat this layer.
+
+// @property must be at global scope (not inside a CSS Module or @layer)
+@property --clip-fill {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
+}
+
 @layer site {
     html {
         color-scheme: dark only;

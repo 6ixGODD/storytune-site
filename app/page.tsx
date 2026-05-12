@@ -1,3 +1,4 @@
+import ClipReveal from '@/components/home/clip-reveal';
 import Cta from '@/components/home/cta';
 import GalleryPreview from '@/components/home/gallery-preview';
 import Hero from '@/components/home/hero';
@@ -19,6 +20,7 @@ export default function HomePage() {
                 <Hero />
                 <ScrollVerb />
                 <TextReveal />
+                <ClipReveal />
                 <Pricing />
                 <Process />
                 <GalleryPreview />

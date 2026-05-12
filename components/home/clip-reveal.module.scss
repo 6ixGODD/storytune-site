@@ -1,0 +1,77 @@
+// ClipReveal — scroll-driven text fill + clip-path hover reveal
+// Adapted from css text-scroll-and-hover-effect-with-gsap-and-clip codepen.
+// Uses @property (declared globally in main.scss) for animatable background-size.
+
+.section {
+    padding: clamp(4rem, 8vw, 10rem) var(--gutter, 5vw);
+}
+
+.container {
+    max-width: min(80vw, 1200px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    --fill-color: hsl(0 0% 92%);
+    --dim-color: hsl(0 0% 88% / 0.14);
+
+    font-size: clamp(2.2rem, 4.5vw, 5.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 0;
+    width: 100%;
+
+    // Start dim; the animated background-clip sweeps in the bright fill
+    color: var(--dim-color);
+    background: linear-gradient(to right, var(--fill-color), var(--fill-color)) no-repeat left center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-size: var(--clip-fill) 100%;
+
+    padding: clamp(0.9rem, 2vw, 1.75rem) 0;
+    border-bottom: 1px solid hsl(0 0% 100% / 0.07);
+
+    position: relative;
+    cursor: default;
+
+    @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+            animation: clipFill linear both;
+            animation-timeline: view();
+            animation-range: entry 20% cover 65%;
+        }
+    }
+}
+
+.hoverSpan {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+
+    background-color: var(--hover-bg, hsl(0 0% 94%));
+    color: var(--hover-color, hsl(0 0% 8%));
+
+    font-size: clamp(2.2rem, 4.5vw, 5.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+
+    clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%);
+    transition: clip-path 0.42s cubic-bezier(0.1, 0.5, 0.5, 1);
+    pointer-events: none;
+
+    .row:hover & {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+    }
+}
+
+@keyframes clipFill {
+    to {
+        --clip-fill: 100%;
+        color: transparent; // let only the gradient show once fully filled
+    }
+}
