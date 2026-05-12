@@ -27,6 +27,8 @@ export const DB_COLLECTIONS = {
     CARDS: 'cards',
     /** Collection storing admin user accounts. */
     ADMINS: 'admins',
+    /** Collection storing curated inspiration / directions records. */
+    INSPIRATIONS: 'inspirations',
 } as const;
 
 /**
@@ -42,3 +44,17 @@ export const CARD_STATUS = {
 
 /** Union type derived from `CARD_STATUS` values. */
 export type CardStatus = (typeof CARD_STATUS)[keyof typeof CARD_STATUS];
+
+/**
+ * Allowed values for the `status` field on an inspiration document.
+ * Inspirations are soft-deleted only — the `DELETED` status replaces hard removal.
+ */
+export const INSPIRATION_STATUS = {
+    /** Inspiration is live and visible in the gallery. */
+    ACTIVE: 'active',
+    /** Inspiration has been soft-deleted and must not be served. */
+    DELETED: 'deleted',
+} as const;
+
+/** Union type derived from `INSPIRATION_STATUS` values. */
+export type InspirationStatus = (typeof INSPIRATION_STATUS)[keyof typeof INSPIRATION_STATUS];

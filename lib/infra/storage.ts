@@ -130,28 +130,29 @@ export async function listInspirationSlugs(): Promise<string[]> {
 }
 
 /**
- * Atomically replace (or create) a card's dist directory from a source temp directory.
+ * Atomically replace (or create) a dist directory from a source temp directory.
  *
  * Strategy:
  * 1. If an existing directory is present, rename it to a timestamped backup.
  * 2. Rename the source temp directory into the target location.
  * 3. On success, remove the backup; on failure, restore it.
  *
- * This ensures the card is always in a consistent state even if the process is
- * interrupted partway through.
+ * This ensures the card/inspiration is always in a consistent state even if the
+ * process is interrupted partway through.
  *
- * @param slug - Card slug (used as the target directory name within `uploadedCardsPath`).
+ * @param type - Storage root: `"uploaded"` (customer cards) or `"inspiration"`.
+ * @param slug - Unique identifier used as the target directory name.
  * @param sourceTempDir - Path to the extracted dist directory to deploy.
  * @throws Rethrows any I/O error from the rename/restore step.
  */
-export async function replaceCardDir(slug: string, sourceTempDir: string): Promise<void> {
-    const basePath = config.storage.uploadedCardsPath;
+export async function replaceDistDir(type: CardStorageType, slug: string, sourceTempDir: string): Promise<void> {
+    const basePath = getBasePath(type);
     const targetDir = path.join(basePath, slug);
     const backupDir = `${targetDir}.__backup_${Date.now()}`;
 
     await fs.mkdir(basePath, { recursive: true });
 
-    const existingExists = await cardDirExists('uploaded', slug);
+    const existingExists = await cardDirExists(type, slug);
     if (existingExists) {
         await fs.rename(targetDir, backupDir);
     }
@@ -161,11 +162,20 @@ export async function replaceCardDir(slug: string, sourceTempDir: string): Promi
         if (existingExists) {
             await fs.rm(backupDir, { recursive: true, force: true });
         }
-        log.info({ slug }, 'card dist replaced');
+        log.info({ type, slug }, 'dist directory replaced');
     } catch (err) {
         if (existingExists) {
             await fs.rename(backupDir, targetDir);
         }
         throw err;
     }
+}
+
+/**
+ * Atomically replace (or create) a card's dist directory from a source temp directory.
+ *
+ * @deprecated Prefer `replaceDistDir('uploaded', slug, sourceTempDir)`.
+ */
+export async function replaceCardDir(slug: string, sourceTempDir: string): Promise<void> {
+    return replaceDistDir('uploaded', slug, sourceTempDir);
 }
