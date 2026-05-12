@@ -7,8 +7,8 @@ import styles from './navbar.module.scss';
 
 const NAV_LINKS = [
     { label: 'Directions', href: '/inspiration', id: 'nav-directions' },
-    { label: 'Pricing', href: '#pricing', id: 'nav-pricing' },
-    { label: 'Process', href: '#process', id: 'nav-process' },
+    { label: 'Pricing', href: '/#pricing', id: 'nav-pricing' },
+    { label: 'Process', href: '/#process', id: 'nav-process' },
     { label: 'Etsy', href: 'https://etsy.com', id: 'nav-etsy' },
 ];
 

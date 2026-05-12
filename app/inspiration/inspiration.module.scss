@@ -102,12 +102,12 @@
 
     span {
         display: inline-block;
-        text-shadow: 0 -1lh hsl(0 0% 90%);
+        text-shadow: 0 calc(-1lh - 0.4rem) hsl(0 0% 90%);
         transition: translate 0.2s ease-out;
     }
 
     &:hover:not(.catActive) span {
-        translate: 0 1lh;
+        translate: 0 calc(1lh + 0.4rem);
         transition-delay: 0.08s;
     }
 
