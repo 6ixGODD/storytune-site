@@ -11,6 +11,10 @@
  *
  * Ctrl-C stops Next.js; Docker containers keep running until you run:
  *   docker compose -f docker-compose.dev.yml down
+ *
+ * For a full local Docker stack (app + mongo + nginx in containers):
+ *   cp .env.local.example .env.local   # first time only
+ *   pnpm local
  */
 
 'use strict';
