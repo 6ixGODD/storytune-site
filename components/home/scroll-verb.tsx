@@ -1,27 +1,73 @@
+'use client';
+
+import React, { useEffect, useRef } from 'react';
+
 import styles from './scroll-verb.module.scss';
 
 const VERBS = [
-    { text: 'design.', color: 'hsl(38 42% 70%)' },       // warm amber
-    { text: 'animate.', color: 'hsl(162 28% 62%)' },     // sage
-    { text: 'delight.', color: 'hsl(338 30% 70%)' },     // dusty rose
-    { text: 'personalise.', color: 'hsl(252 28% 72%)' }, // soft lavender
-    { text: 'surprise.', color: 'hsl(18 40% 68%)' },     // terracotta
-    { text: 'remember.', color: 'hsl(207 28% 66%)' },    // slate blue
+    { text: 'design.', color: 'hsl(38 42% 70%)' },
+    { text: 'animate.', color: 'hsl(162 28% 62%)' },
+    { text: 'delight.', color: 'hsl(338 30% 70%)' },
+    { text: 'personalise.', color: 'hsl(252 28% 72%)' },
+    { text: 'surprise.', color: 'hsl(18 40% 68%)' },
+    { text: 'remember.', color: 'hsl(207 28% 66%)' },
 ];
 
 export default function ScrollVerb() {
+    const listRef = useRef<HTMLUListElement>(null);
+    const headerRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 640px)');
+        if (!mq.matches) return;
+
+        const list = listRef.current;
+        const header = headerRef.current;
+        if (!list || !header) return;
+
+        const items = Array.from(list.querySelectorAll<HTMLLIElement>('li'));
+
+        const update = () => {
+            const vh = window.innerHeight;
+            // lh in px from the header's computed line-height
+            const lh = parseFloat(getComputedStyle(header).lineHeight);
+            // target = centre of the bright zone on mobile (50svh + 1lh)
+            const target = vh * 0.5 + lh;
+
+            let bestIdx = 0;
+            let bestDist = Infinity;
+            items.forEach((item, i) => {
+                const { top, bottom } = item.getBoundingClientRect();
+                const dist = Math.abs((top + bottom) / 2 - target);
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    bestIdx = i;
+                }
+            });
+
+            // Only activate if within ¾ lh — prevents stale highlight when section
+            // is fully above/below the viewport or "remember" drifts into prefix zone.
+            const withinRange = bestDist < lh * 0.75;
+            items.forEach((item, i) => item.classList.toggle(styles.active, withinRange && i === bestIdx));
+        };
+
+        window.addEventListener('scroll', update, { passive: true });
+        update();
+        return () => window.removeEventListener('scroll', update);
+    }, []);
+
     return (
         <div className={styles.outer}>
-            {/* Accessible label for screen readers */}
             <span className='sr-only'>We help you {VERBS.map((v) => v.text).join(', ')}</span>
             <header
+                ref={headerRef}
                 className={styles.header}
                 style={{ '--count': VERBS.length } as React.CSSProperties}
                 aria-hidden='true'
             >
                 <div className={styles.track}>
                     <h2 className={styles.prefix}>we help you&nbsp;</h2>
-                    <ul className={styles.list}>
+                    <ul ref={listRef} className={styles.list}>
                         {VERBS.map((verb) => (
                             <li
                                 key={verb.text}
