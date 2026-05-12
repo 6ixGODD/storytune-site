@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You Are (Reluctantly) Invited</title>
+  <link rel="stylesheet" href="./assets/fonts.css">
+  <link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+
+<nav class="topbar">
+  <a href="#" class="brand" tabindex="-1">
+    <span class="brand-name">(you're invited, apparently)</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" tabindex="-1" data-action="leave">leave</a></li>
+    <li><a href="#" tabindex="-1" data-action="forget">forget</a></li>
+    <li><a href="#" tabindex="-1" data-action="close">close tab</a></li>
+  </ul>
+</nav>
+
+<main>
+  <span class="tag">
+    <span class="dot"></span>
+    <span class="tag-text scramble">Happening regardless</span>
+  </span>
+
+  <h1>
+    <span class="strike-wrap">
+      <span class="strike-text">A Party You Are Free To Skip</span>
+      <span class="strike-line"></span>
+    </span>
+    <em>A Party You Are Required To Attend</em>
+  </h1>
+
+  <p class="tagline scramble">
+    You're on the list. We checked. Twice. We're still not sure why.
+  </p>
+
+  <ul class="details">
+    <li>
+      <strong class="scramble">When</strong>
+      <span class="scramble">Saturday, June 28, 2026 · 7:00 PM</span>
+    </li>
+    <li>
+      <strong class="scramble">Where</strong>
+      <span class="scramble">The Grand Ballroom — You have no excuse.</span>
+    </li>
+    <li>
+      <strong class="scramble">Dress code</strong>
+      <span class="scramble">Something. Anything. Please, we beg you.</span>
+    </li>
+    <li>
+      <strong class="scramble">Gifts</strong>
+      <span class="scramble">Not necessary. Still expected.</span>
+    </li>
+  </ul>
+
+  <form class="signup" novalidate>
+    <div class="field">
+      <input type="text" id="rsvp-name" placeholder="your name (we know it)" autocomplete="name">
+    </div>
+    <div class="field">
+      <input type="email" id="rsvp-email" placeholder="your email (we have it)" autocomplete="email">
+    </div>
+    <div class="field field--row">
+      <input type="number" id="rsvp-guests" value="1" min="1" max="20">
+      <span class="field-label scramble">person(s) who will regret this</span>
+    </div>
+    <div class="field">
+      <textarea id="rsvp-message" placeholder="a note (optional, and will be ignored)" rows="2"></textarea>
+    </div>
+    <div class="btn-row">
+      <button type="button" class="btn-accept dodge" id="btn-accept">
+        <span>I'll Be There</span>
+      </button>
+      <button type="button" class="btn-decline" id="btn-decline">
+        I Cannot Make It
+      </button>
+    </div>
+    <p class="form-note"></p>
+  </form>
+
+  <ul class="meta">
+    <li>
+      <strong data-counter="declining">2,847</strong>
+      <span>still declining</span>
+    </li>
+    <li>
+      <strong id="dread-counter">—</strong>
+      <span>days of dread</span>
+    </li>
+    <li>
+      <strong>v1.0</strong>
+      <span>final invitation</span>
+    </li>
+  </ul>
+</main>
+
+<footer>
+  <span>&copy; The Host, 2026</span>
+  <span class="scramble">Made with reluctance.</span>
+</footer>
+
+<script type="module" src="./assets/script.js"></script>
+</body>
+</html>
