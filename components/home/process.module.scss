@@ -1,0 +1,351 @@
+// Process — faithful adaptation of exclusive-morphing-disclosure-w-details
+
+$bounce: linear(
+    0 0%,
+    0.5571 7.53%,
+    0.8252 11.98%,
+    0.9337 14.38%,
+    1.0166 16.8%,
+    1.0765 19.31%,
+    1.1146 21.97%,
+    1.1263 23.47%,
+    1.1325 25.06%,
+    1.133 26.76%,
+    1.128 28.62%,
+    1.1094 31.9%,
+    1.0484 39.77%,
+    1.0218 43.85%,
+    1.0011 48.42%,
+    0.9895 53.23%,
+    0.9861 59.8%,
+    1 81.27% 100%
+);
+
+$ease: linear(0 0%, 0.2688 9.91%, 0.4917 20.19%, 0.6705 30.93%, 0.8075 42.26%, 0.9022 53.93%, 0.9812 73.4%, 1 100%);
+
+$bounce-dur: 1s;
+$dur: 0.26s;
+$border: color-mix(in lch, var(--fg) 20%, transparent);
+$bg: hsl(0 0% 4%);
+$hover-bg: hsl(0 0% 8%);
+$border-w: 1px;
+$open-local-border: color-mix(in lch, var(--fg) 45%, transparent);
+$open-border: color-mix(in lch, var(--fg) 50%, transparent);
+
+.section {
+    padding: var(--section-pad) var(--gutter);
+}
+
+.inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: block;
+}
+
+.sectionHead {
+    margin-bottom: 3rem;
+}
+
+.body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 clamp(2rem, 4vw, 5rem);
+    align-items: start;
+
+    @media (max-width: 800px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.eyebrow {
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: hsl(35 25% 55%);
+    margin-bottom: 0.75rem;
+}
+
+.heading {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+
+// ── Disclosure group ───────────────────────────────────────────────────────────
+
+.disclosure {
+    // Enable allow-keywords for height: fit-content animation
+    interpolate-size: allow-keywords;
+}
+
+// ── Right timeline ─────────────────────────────────────────────────────────────
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 8rem;
+    padding-top: 0.25rem;
+
+    @media (max-width: 800px) {
+        display: none;
+    }
+}
+
+.timelineStep {
+    display: flex;
+    gap: 1.25rem;
+    opacity: 0.18;
+    transition: opacity 0.35s ease;
+}
+
+// Highlight timeline step matching the open details (via :has() on .body)
+.body:has(.details:nth-child(1)[open]) .timelineStep:nth-child(1),
+.body:has(.details:nth-child(2)[open]) .timelineStep:nth-child(2),
+.body:has(.details:nth-child(3)[open]) .timelineStep:nth-child(3),
+.body:has(.details:nth-child(4)[open]) .timelineStep:nth-child(4) {
+    opacity: 1;
+}
+
+.timelineTrack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 1rem;
+    padding-top: 0.2rem;
+}
+
+.timelineDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1.5px solid var(--fg);
+    flex-shrink: 0;
+}
+
+.timelineConnector {
+    flex: 1;
+    width: 1px;
+    background: color-mix(in lch, var(--fg) 30%, transparent);
+    min-height: 3.25rem;
+    margin: 0.35rem 0;
+}
+
+.timelineInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-bottom: 3.25rem;
+
+    .timelineStep:last-child & {
+        padding-bottom: 0;
+    }
+}
+
+.timelineNum {
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: color-mix(in lch, var(--fg) 50%, var(--bg));
+}
+
+.timelineTitle {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--fg);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+}
+
+.details {
+    --local-border: #{$border};
+    background: $bg;
+    border-inline: $border-w solid var(--local-border);
+    position: relative;
+    transition-property: border-radius, margin, background-color, border-color, translate;
+    transition-duration: $dur;
+    transition-timing-function: $ease;
+
+    &:first-of-type {
+        border-radius: 1rem 1rem 0 0;
+    }
+
+    &:last-of-type {
+        border-radius: 0 0 1rem 1rem;
+    }
+
+    &:has(+ .details[open]) {
+        border-bottom-left-radius: 1rem;
+        border-bottom-right-radius: 1rem;
+    }
+
+    &[open] + .details {
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+    }
+
+    &:has(~ .details[open]) {
+        translate: 0 -0.5rem;
+    }
+
+    &[open] ~ .details {
+        translate: 0 0.5rem;
+    }
+
+    &[open] {
+        --local-border: #{$open-local-border};
+        margin-block: 1rem;
+        border-radius: 1rem;
+        border-block: $border-w solid $open-border;
+        border-inline: $border-w solid $open-border;
+        translate: 0 0;
+        z-index: 2;
+
+        &:first-of-type {
+            margin-block-start: 0;
+        }
+
+        &:last-of-type {
+            margin-block-end: 0;
+        }
+    }
+
+    &:has(.summary:hover) {
+        background: $hover-bg;
+    }
+}
+
+// Border lines (top / bottom)
+.details {
+    border-block-end: $border-w solid var(--local-border);
+    border-block-start: 0 solid transparent;
+
+    &:first-of-type {
+        border-block-start: $border-w solid var(--local-border);
+    }
+
+    &:has(+ .details[open]) {
+        border-block-end: $border-w solid var(--local-border);
+    }
+
+    &[open] + .details {
+        border-block-start: $border-w solid var(--local-border);
+    }
+
+    &[open] {
+        border-block: $border-w solid $open-border;
+    }
+}
+
+// ::details-content height animation (bounce easing)
+.details,
+.details::details-content {
+    interpolate-size: allow-keywords;
+}
+
+.details::details-content {
+    height: 0;
+    overflow: hidden;
+    transition-property: content-visibility, height;
+    transition-behavior: allow-discrete;
+    transition-duration: $bounce-dur;
+    transition-timing-function: $bounce;
+}
+
+.details[open]::details-content {
+    @supports (interpolate-size: allow-keywords) {
+        height: fit-content;
+    }
+}
+
+// ── Summary row ────────────────────────────────────────────────────────────────
+
+.summary {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    list-style: none;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+
+    &::marker {
+        font-size: 0;
+    }
+
+    // Full-area click target
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        border-radius: inherit;
+    }
+}
+
+.stepId {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: color-mix(in lch, var(--fg) 35%, var(--bg));
+    font-variant-numeric: tabular-nums;
+    width: 1.5rem;
+}
+
+.stepTitle {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+}
+
+.plusIcon {
+    opacity: 0.5;
+    transition-property: rotate, opacity;
+    transition-duration: $dur;
+    transition-timing-function: $ease;
+
+    .summary:hover & {
+        opacity: 1;
+    }
+}
+
+// Plus → × when open
+.details[open] .plusIcon {
+    rotate: 225deg;
+    opacity: 1;
+}
+
+// ── Content panel ──────────────────────────────────────────────────────────────
+
+.content {
+    padding: 0 1.5rem 1.25rem;
+    // Animate in: blur + slide + opacity
+    translate: 0 1rem;
+    opacity: 0.4;
+    filter: blur(4px);
+    transition-property: translate, opacity, filter;
+    transition-duration: $dur;
+    transition-timing-function: $ease;
+    color: color-mix(in lch, var(--fg) 65%, var(--bg));
+    font-size: 0.9375rem;
+    font-weight: 300;
+    line-height: 1.65;
+
+    p {
+        margin: 0;
+    }
+}
+
+// Content revealed when parent is open
+.details[open] .content {
+    translate: 0 0;
+    opacity: 1;
+    filter: blur(0);
+}

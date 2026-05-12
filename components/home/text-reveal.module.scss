@@ -1,0 +1,121 @@
+// TextReveal — faithful adaptation of css-responsive-scroll-driven-text-reveals-chrome-115
+// Each .block is 200vh tall; the inner .sticky stays at viewport top while text fills in
+
+.block {
+    height: 200vh;
+    // Named view timeline — each block has its own; nearest ancestor wins
+    view-timeline-name: --text-reveal;
+}
+
+.sticky {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    width: 100%;
+    display: grid;
+    place-items: center;
+}
+
+.text {
+    position: relative;
+    max-width: 80vw;
+    overflow: hidden;
+    padding: clamp(2rem, 5vw, 8ch);
+    margin: 0;
+}
+
+.span {
+    // Three background layers applied to text:
+    // 1. Highlight sweep (brighter strip at leading edge)
+    // 2. Fill sweep (gray → white fill across text)
+    // 3. Static underline baseline
+    --underline-block-width: 200vmax;
+    --underline-width: 1lh;
+
+    font-size: clamp(2.5rem, 4vw + 1rem, 8rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+
+    background-image:
+        linear-gradient(90deg, transparent calc(100% - 8ch), var(--fg) calc(100% - 8ch)),
+        linear-gradient(90deg, hsl(0 0% 50%), hsl(0 0% 50%)),
+        linear-gradient(90deg, hsl(0 0% 100% / 0.15), hsl(0 0% 100% / 0.15));
+    background-size:
+        var(--underline-block-width) var(--underline-width),
+        var(--underline-block-width) var(--underline-width),
+        100% var(--underline-width);
+    background-repeat: no-repeat;
+    background-position-x: 0;
+    background-position-y: 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    // Fallback (no animation support): text is white
+    color: var(--fg);
+}
+
+.glow {
+    position: absolute;
+    inset: clamp(2rem, 5vw, 8ch);
+    font-size: clamp(2.5rem, 4vw + 1rem, 8rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    color: transparent;
+    filter: drop-shadow(0 0 4px rgb(255 255 255 / 0.6)) drop-shadow(0 0 8px rgb(255 255 255 / 0.4))
+        drop-shadow(0 0 16px rgb(255 255 255 / 0.2));
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .span {
+            // Start with fill layers off-screen to the left; underline stays
+            background-position-x: calc(var(--underline-block-width) * -1), calc(var(--underline-block-width) * -1), 0;
+            color: transparent;
+            animation-name: text-fill-up, text-color-in;
+            animation-fill-mode: both;
+            animation-timing-function: linear;
+            // Linked to nearest ancestor .block's view timeline
+            animation-timeline: --text-reveal;
+            // entry 100% = fully entered viewport; cover 50% = halfway through
+            // exit 0%   = just started exiting; ensures text is visible at peak
+            animation-range:
+                entry 100% cover 50%,
+                cover 50% exit 0%;
+        }
+
+        .glow {
+            animation-name: glow-fade-in;
+            animation-fill-mode: both;
+            animation-timing-function: linear;
+            animation-timeline: --text-reveal;
+            animation-range: entry 100% cover 50%;
+        }
+
+        @keyframes text-fill-up {
+            to {
+                background-position-x: 0, 0, 0;
+            }
+        }
+
+        @keyframes text-color-in {
+            to {
+                color: var(--fg);
+            }
+        }
+
+        @keyframes glow-fade-in {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    }
+}

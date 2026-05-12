@@ -1,0 +1,70 @@
+// ScrollVerb — faithful adaptation of progressive-scroll-tricks
+// The header collapses as you scroll, revealing verbs one by one at 50svh
+
+.outer {
+    // Container provides scrollable height for the sticky header to work against
+    position: relative;
+    // Enough space to scroll through all items + the initial padding
+    padding-bottom: 30svh;
+}
+
+.header {
+    position: sticky;
+    // As --count items scroll up, top shifts so only last 1lh remains visible
+    top: calc((var(--count, 6) - 1) * -1lh);
+    font-size: clamp(2.5rem, 6vw, 7rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    width: 100%;
+}
+
+.track {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 0 var(--gutter);
+    max-width: var(--max);
+    margin: 0 auto;
+    // Push the track down so the first item starts at viewport center
+    padding-top: calc(50svh - 0.5lh);
+}
+
+.prefix {
+    // Sticky at 50svh — stays put while list items scroll past
+    position: sticky;
+    top: calc(50svh - 0.5lh);
+    font-size: inherit;
+    font-weight: inherit;
+    color: var(--fg);
+    height: fit-content;
+    white-space: nowrap;
+    display: inline-block;
+    margin: 0;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-weight: inherit;
+}
+
+.item {
+    // Fixed-attachment gradient: bright at 50svh, dim above and below
+    --dimmed: color-mix(in oklch, var(--fg), #0000 80%);
+    background: linear-gradient(
+        180deg,
+        var(--dimmed) 0 calc(50svh - 0.5lh),
+        var(--fg) calc(50svh - 0.55lh) calc(50svh + 0.55lh),
+        var(--dimmed) calc(50svh + 0.5lh)
+    );
+    background-attachment: fixed;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    // Snap the active verb to the center of the viewport
+    scroll-snap-align: center;
+}

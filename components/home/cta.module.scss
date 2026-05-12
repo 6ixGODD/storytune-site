@@ -1,0 +1,51 @@
+.section {
+    padding: var(--section-pad) var(--gutter);
+    border-top: 1px solid color-mix(in lch, var(--fg) 10%, transparent);
+}
+
+.inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.heading {
+    font-size: clamp(2.5rem, 6vw, 6rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    // Gradient: white → dim
+    background: linear-gradient(180deg, var(--fg), color-mix(in lch, var(--fg) 50%, var(--bg)));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.sub {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-weight: 300;
+    color: color-mix(in lch, var(--fg) 50%, var(--bg));
+    max-width: 52ch;
+    line-height: 1.65;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.875rem 2rem;
+    background: var(--fg);
+    color: var(--bg);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+
+    &:hover {
+        opacity: 0.85;
+    }
+}
