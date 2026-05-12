@@ -1,0 +1,327 @@
+/* @import 'normalize.css' layer(normalize); */
+
+@import url('https://unpkg.com/normalize.css') layer(normalize);
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+
+@layer normalize, base, demo, stick, effect, srollbar, debug;
+
+@layer debug {
+  [data-debug='true'] li {
+    outline: 0.05em dashed currentColor;
+  }
+  [data-debug='true'] :is(h2, li:last-of-type) {
+    outline: 0.05em dashed canvasText;
+  }
+}
+
+@layer stick {
+  :root {
+    --start: 50vh;
+    --space: 50vh;
+    --hue: 280;
+    --accent: light-dark(hsl(var(--hue) 100% 50%), hsl(var(--hue) 90% 75%));
+    /* --accent: oklch(200 10 10); */
+    --switch: canvas;
+  }
+  [data-theme='dark'] {
+    --switch: #000;
+  }
+  [data-theme='light'] {
+    --switch: #fff;
+  }
+  header {
+    --font-level: 4;
+    --font-size-min: 24;
+    position: sticky;
+    top: calc((var(--count) - 1) * -1lh);
+    line-height: 1.2;
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: var(--space);
+  }
+
+  li {
+    --dimmed: color-mix(in oklch, canvasText, #0000 80%);
+    background: linear-gradient(
+      180deg,
+      var(--dimmed) 0 calc(var(--start) - 0.5lh),
+      var(--accent) calc(var(--start) - 0.55lh) calc(var(--start) + 0.55lh),
+      var(--dimmed) calc(var(--start) + 0.5lh)
+    );
+    background-attachment: fixed;
+    color: #0000;
+    background-clip: text;
+  }
+
+  header section:first-of-type {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: calc(var(--start) - 0.5lh);
+  }
+  
+  html {
+    scroll-snap-type: y proximity;
+  }
+  li {
+    scroll-snap-align: center;
+  }
+
+  main {
+    display: flex;
+    place-items: center;
+    justify-content: center;
+  }
+
+  @supports (animation-timeline: view()) {
+    [data-animate='true'] {
+      main {
+        border-radius: 1rem;
+        view-timeline: --section;
+
+        &::before {
+          transform-origin: 50% 100%;
+          scale: 0.9;
+          animation: grow both ease-in-out;
+          animation-timeline: --section;
+          animation-range: entry 50%;
+        }
+      }
+      main section p {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%;
+        animation: reveal both ease-in-out;
+        animation-timeline: --section;
+        animation-range: entry 50%;
+      }
+
+      main .bear-link {
+        animation: switch both ease-in-out;
+        animation-timeline: --section;
+        animation-range: entry 50%;
+      }
+    }
+    [data-animate='false'] {
+      main section {
+        display: grid;
+        place-items: center;
+      }
+    }
+
+    main::before {
+      border-radius: 1rem 1rem 0 0;
+    }
+
+    @keyframes switch {
+      100% {
+        color: var(--switch);
+      }
+    }
+
+    @keyframes reveal {
+      0% {
+        opacity: 0;
+      }
+    }
+    @keyframes grow {
+      100% {
+        scale: 1;
+        border-radius: 0;
+      }
+    }
+  }
+
+  main section {
+    --font-level: 4;
+    --font-size-min: 20;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    place-items: center;
+
+    a:not(.bear-link) {
+      color: var(--accent);
+      text-decoration: none;
+      text-underline-offset: 0.1lh;
+
+      &:is(:focus-visible, :hover) {
+        text-decoration: underline;
+      }
+    }
+
+    p {
+      margin: 0;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+  }
+  main {
+    width: 100%;
+    height: 100vh;
+    z-index: 2;
+    position: relative;
+    width: 100vw;
+    color: canvas;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: light-dark(#000, #fff);
+    }
+  }
+  header section:first-of-type h1 {
+    position: sticky;
+    top: calc(var(--start) - 0.5lh);
+    font-size: inherit;
+    margin: 0;
+    display: inline-block;
+    height: fit-content;
+    font-weight: 600;
+  }
+  ul {
+    font-weight: 600;
+    padding-inline: 0;
+    margin: 0;
+    list-style-type: none;
+  }
+}
+
+@layer demo {
+  footer {
+    padding-block: 2rem;
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: color-mix(in hsl, canvas, #0000 35%);
+    text-align: center;
+    width: 100%;
+    background: light-dark(#000, #fff);
+    position: relative;
+  }
+}
+
+@layer base {
+  :root {
+    --font-size-min: 14;
+    --font-size-max: 20;
+    --font-ratio-min: 1.1;
+    --font-ratio-max: 1.33;
+    --font-width-min: 375;
+    --font-width-max: 1500;
+  }
+
+  html {
+    color-scheme: light dark;
+    scrollbar-color: var(--accent) #0000;
+  }
+
+  [data-theme='light'] {
+    color-scheme: light only;
+  }
+
+  [data-theme='dark'] {
+    color-scheme: dark only;
+  }
+
+  :where(.fluid) {
+    --fluid-min: calc(
+      var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0))
+    );
+    --fluid-max: calc(
+      var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0))
+    );
+    --fluid-preferred: calc(
+      (var(--fluid-max) - var(--fluid-min)) /
+        (var(--font-width-max) - var(--font-width-min))
+    );
+    --fluid-type: clamp(
+      (var(--fluid-min) / 16) * 1rem,
+      ((var(--fluid-min) / 16) * 1rem) -
+        (((var(--fluid-preferred) * var(--font-width-min)) / 16) * 1rem) +
+        (var(--fluid-preferred) * var(--variable-unit, 100vi)),
+      (var(--fluid-max) / 16) * 1rem
+    );
+    font-size: var(--fluid-type);
+  }
+
+  *,
+  *:after,
+  *:before {
+    box-sizing: border-box;
+  }
+
+  body {
+    /* display: grid; */
+    place-items: center;
+    background: light-dark(white, black);
+    /* min-height: 100vh; */
+    font-family: 'Geist', 'SF Pro Text', 'SF Pro Icons', 'AOS Icons',
+      'Helvetica Neue', Helvetica, Arial, sans-serif, system-ui;
+  }
+
+  body::before {
+    --size: 45px;
+    --line: color-mix(in hsl, canvasText, transparent 80%);
+    content: '';
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    background: linear-gradient(
+          90deg,
+          var(--line) 1px,
+          transparent 1px var(--size)
+        )
+        calc(var(--size) * 0.36) 50% / var(--size) var(--size),
+      linear-gradient(var(--line) 1px, transparent 1px var(--size)) 0%
+        calc(var(--size) * 0.32) / var(--size) var(--size);
+    mask: linear-gradient(-20deg, transparent 50%, white);
+    top: 0;
+    transform-style: flat;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .bear-link {
+    color: canvasText;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    width: 48px;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    opacity: 0.8;
+  }
+
+  :where(.x-link, .bear-link):is(:hover, :focus-visible) {
+    opacity: 1;
+  }
+
+  .bear-link svg {
+    width: 75%;
+  }
+
+  /* Utilities */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+div.tp-dfwv {
+  position: fixed;
+  z-index: 9999;
+  width: 280px;
+}

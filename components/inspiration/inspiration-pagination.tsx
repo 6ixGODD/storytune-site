@@ -33,7 +33,7 @@ export default function InspirationPagination({ currentPage, totalPages, searchP
     return (
         <nav className={styles.pagination} aria-label='Pagination'>
             {prevHref ? (
-                <Link href={prevHref} className={styles.pageArrow} aria-label='Previous page'>
+                <Link href={prevHref} scroll={false} className={styles.pageArrow} aria-label='Previous page'>
                     ←
                 </Link>
             ) : (
@@ -51,6 +51,7 @@ export default function InspirationPagination({ currentPage, totalPages, searchP
                     <Link
                         key={p}
                         href={buildHref(p, searchParams)}
+                        scroll={false}
                         className={`${styles.pageLink}${p === currentPage ? ` ${styles.pageActive}` : ''}`}
                         aria-current={p === currentPage ? 'page' : undefined}
                     >
@@ -60,7 +61,7 @@ export default function InspirationPagination({ currentPage, totalPages, searchP
             )}
 
             {nextHref ? (
-                <Link href={nextHref} className={styles.pageArrow} aria-label='Next page'>
+                <Link href={nextHref} scroll={false} className={styles.pageArrow} aria-label='Next page'>
                     →
                 </Link>
             ) : (

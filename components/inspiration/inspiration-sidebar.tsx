@@ -23,6 +23,7 @@ export default function InspirationSidebar({ categories, activeCategory, q }: In
             <nav className={styles.catList}>
                 <Link
                     href={buildCategoryHref(null, q)}
+                    scroll={false}
                     className={`${styles.catLink}${!activeCategory ? ` ${styles.catActive}` : ''}`}
                 >
                     <span>All</span>
@@ -31,6 +32,7 @@ export default function InspirationSidebar({ categories, activeCategory, q }: In
                     <Link
                         key={cat}
                         href={buildCategoryHref(cat, q)}
+                        scroll={false}
                         className={`${styles.catLink}${activeCategory === cat ? ` ${styles.catActive}` : ''}`}
                     >
                         <span>{cat}</span>
