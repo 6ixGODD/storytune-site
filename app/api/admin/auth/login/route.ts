@@ -5,6 +5,9 @@ import { LoginSchema } from '@/lib/schemas/auth';
 import { authService } from '@/lib/services/auth.service';
 
 export async function POST(req: NextRequest) {
+    // Seed the first admin account on first login attempt (idempotent).
+    await authService.seedIfNeeded();
+
     const body = await req.json().catch(() => null);
     const parsed = LoginSchema.safeParse(body);
     if (!parsed.success) {
