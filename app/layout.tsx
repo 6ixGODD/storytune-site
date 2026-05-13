@@ -2,7 +2,9 @@ import '@/app/styles/main.scss';
 
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
+
+import GoogleAnalytics from '@/components/analytics/google-analytics';
 
 const geist = localFont({
     src: [
@@ -34,7 +36,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html lang='en' className={geist.variable}>
-            <body>{children}</body>
+            <body>
+                <Suspense>
+                    <GoogleAnalytics />
+                </Suspense>
+                {children}
+            </body>
         </html>
     );
 }
