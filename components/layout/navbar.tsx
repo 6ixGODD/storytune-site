@@ -16,12 +16,17 @@ export default function Navbar() {
     const navRef = useRef<HTMLElement>(null);
     const ulRef = useRef<HTMLUListElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
+    const hamburgerRef = useRef<HTMLButtonElement>(null);
     const [isOpen, setIsOpen] = useState(false);
 
-    // Close mobile menu on outside click
+    // Close mobile menu on outside click, but not when clicking the hamburger itself
+    // (the hamburger's own onClick handles toggling)
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+            const target = e.target as Node;
+            const inMenu = menuRef.current?.contains(target) ?? false;
+            const inHamburger = hamburgerRef.current?.contains(target) ?? false;
+            if (!inMenu && !inHamburger) {
                 setIsOpen(false);
             }
         };
@@ -107,6 +112,7 @@ export default function Navbar() {
 
                 {/* Mobile hamburger button */}
                 <button
+                    ref={hamburgerRef}
                     className={styles.hamburger}
                     aria-label={isOpen ? 'Close menu' : 'Open menu'}
                     aria-expanded={isOpen}

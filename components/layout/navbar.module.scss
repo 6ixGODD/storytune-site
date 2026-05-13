@@ -213,8 +213,8 @@ $easing: linear(
     top: calc(100% + 8px);
     left: var(--gutter);
     right: var(--gutter);
-    background: color-mix(in lch, var(--bg) 85%, var(--fg));
-    border: 1px solid color-mix(in lch, var(--fg) 12%, transparent);
+    background: hsl(0 0% 7%);
+    border: 1px solid color-mix(in lch, var(--fg) 15%, transparent);
     border-radius: 16px;
     padding: 0.5rem;
     overflow: hidden;
