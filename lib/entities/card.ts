@@ -10,12 +10,36 @@
  */
 import { randomBytes } from 'node:crypto';
 
-import { CARD_STATUS, CardStatus } from '@/lib/constants';
+import { CARD_STATUS, CardStatus, DEFAULT_CARD_QUOTA, DEFAULT_CARD_RATE_LIMIT } from '@/lib/constants';
 
 /** A single invitee entry associated with a card. */
 export interface Invitee {
     name?: string;
     email: string;
+}
+
+/**
+ * Per-card rate-limit configuration.
+ *
+ * Requests to the card's public endpoints are measured in fixed time windows.
+ * When the count within a window exceeds `maxRequests` the server returns 429.
+ */
+export interface CardRateLimit {
+    /** Length of the rate-limit window in milliseconds. */
+    windowMs: number;
+    /** Maximum number of qualifying requests allowed per window. */
+    maxRequests: number;
+}
+
+/**
+ * Per-card quota configuration.
+ *
+ * The quota caps the **lifetime** total of qualifying requests for a card.
+ * Once `requestCount` reaches `maxRequests` the server returns 429.
+ */
+export interface CardQuota {
+    /** Maximum number of lifetime requests allowed for this card. */
+    maxRequests: number;
 }
 
 /** Plain-data bag used to construct or reconstruct a `Card` instance. */
@@ -31,6 +55,12 @@ export interface CardProps {
     inviteeCount: number;
     invitees: Invitee[];
     status: CardStatus;
+    /** Rate-limit settings for public endpoints of this card. */
+    rateLimit: CardRateLimit;
+    /** Lifetime quota settings for this card. */
+    quota: CardQuota;
+    /** Running total of qualifying requests served for this card (persisted in DB). */
+    requestCount: number;
     createdAt: Date;
     updatedAt: Date;
     deletedAt?: Date;
@@ -54,6 +84,9 @@ export class Card {
     readonly inviteeCount: number;
     readonly invitees: Invitee[];
     readonly status: CardStatus;
+    readonly rateLimit: CardRateLimit;
+    readonly quota: CardQuota;
+    readonly requestCount: number;
     readonly createdAt: Date;
     readonly updatedAt: Date;
     readonly deletedAt?: Date;
@@ -70,6 +103,9 @@ export class Card {
         this.inviteeCount = props.inviteeCount;
         this.invitees = props.invitees;
         this.status = props.status;
+        this.rateLimit = props.rateLimit;
+        this.quota = props.quota;
+        this.requestCount = props.requestCount;
         this.createdAt = props.createdAt;
         this.updatedAt = props.updatedAt;
         this.deletedAt = props.deletedAt;
@@ -79,7 +115,8 @@ export class Card {
      * Instantiate a brand-new active card.
      *
      * Generates a random ID, sets the canonical `cardUrl`, computes `inviteeCount`,
-     * and stamps both `createdAt` and `updatedAt` to `now`.
+     * stamps both `createdAt` and `updatedAt` to `now`, and applies the global
+     * default rate-limit and quota constants.
      *
      * @param input - Required and optional fields for the new card.
      * @returns A new `Card` instance with `status = ACTIVE`.
@@ -103,6 +140,9 @@ export class Card {
             invitees,
             inviteeCount: invitees.length,
             status: CARD_STATUS.ACTIVE,
+            rateLimit: { ...DEFAULT_CARD_RATE_LIMIT },
+            quota: { ...DEFAULT_CARD_QUOTA },
+            requestCount: 0,
             createdAt: now,
             updatedAt: now,
         });
@@ -115,6 +155,15 @@ export class Card {
      */
     isActive(): boolean {
         return this.status === CARD_STATUS.ACTIVE;
+    }
+
+    /**
+     * Check whether this card has exceeded its lifetime quota.
+     *
+     * @returns `true` when `requestCount` has reached or exceeded `quota.maxRequests`.
+     */
+    isQuotaExceeded(): boolean {
+        return this.requestCount >= this.quota.maxRequests;
     }
 
     /**
@@ -141,7 +190,12 @@ export class Card {
      * @returns New `Card` instance with the patch applied.
      */
     withUpdates(
-        patch: Partial<Pick<CardProps, 'clientName' | 'clientEmail' | 'title' | 'eventType' | 'notes' | 'invitees'>>,
+        patch: Partial<
+            Pick<
+                CardProps,
+                'clientName' | 'clientEmail' | 'title' | 'eventType' | 'notes' | 'invitees' | 'rateLimit' | 'quota'
+            >
+        >,
     ): Card {
         const invitees = patch.invitees ?? this.invitees;
 
@@ -167,6 +221,9 @@ export class Card {
             inviteeCount: this.inviteeCount,
             invitees: this.invitees,
             status: this.status,
+            rateLimit: this.rateLimit,
+            quota: this.quota,
+            requestCount: this.requestCount,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
             deletedAt: this.deletedAt,
@@ -180,5 +237,16 @@ export class Card {
  */
 export type CardSummary = Pick<
     Card,
-    'slug' | 'clientName' | 'clientEmail' | 'inviteeCount' | 'cardUrl' | 'status' | 'createdAt' | 'title' | 'eventType'
+    | 'slug'
+    | 'clientName'
+    | 'clientEmail'
+    | 'inviteeCount'
+    | 'cardUrl'
+    | 'status'
+    | 'createdAt'
+    | 'title'
+    | 'eventType'
+    | 'rateLimit'
+    | 'quota'
+    | 'requestCount'
 >;
