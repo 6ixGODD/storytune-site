@@ -297,7 +297,110 @@ if (updateAdmin) {
     patches['STORYTUNE__ADMIN_PASSWORD'] = adminPass;
 }
 
-// ── 7. Write .env.prod ────────────────────────────────────────────────────────
+// ── 7. Log targets ────────────────────────────────────────────────────────────
+
+const existingLogTargets = current['STORYTUNE__LOG_TARGETS'];
+const existingLogLevel = current['STORYTUNE__LOG_LEVEL'];
+
+const configLogs = g(
+    await confirm({
+        message: 'Configure log targets?',
+        initialValue: !existingLogTargets || existingLogTargets.includes('stdout'),
+    }),
+);
+
+if (configLogs) {
+    // Log level
+    const logLevel = g(
+        await select({
+            message: 'Minimum log level',
+            options: [
+                { value: 'info', label: 'info', hint: 'recommended for production' },
+                { value: 'warn', label: 'warn', hint: 'errors and warnings only' },
+                { value: 'debug', label: 'debug', hint: 'verbose — use for troubleshooting' },
+                { value: 'error', label: 'error', hint: 'errors only' },
+            ],
+            initialValue: existingLogLevel?.trim() || 'info',
+        }),
+    );
+    patches['STORYTUNE__LOG_LEVEL'] = logLevel;
+
+    // Build targets array interactively
+    /** @type {Array<{type:string, path?:string, maxSizeMb?:number}>} */
+    const targets = [];
+    let addingTargets = true;
+
+    log.info('Add one or more log targets. Choose "Done" when finished.');
+
+    while (addingTargets) {
+        const currentList =
+            targets.length === 0
+                ? '(none yet)'
+                : targets.map((t) => (t.type === 'file' ? `file → ${t.path} (${t.maxSizeMb} MB)` : t.type)).join(', ');
+
+        const targetType = g(
+            await select({
+                message: `Add target  [current: ${currentList}]`,
+                options: [
+                    { value: 'stdout', label: 'stdout', hint: 'write to standard output' },
+                    { value: 'stderr', label: 'stderr', hint: 'write to standard error' },
+                    { value: 'file', label: 'file', hint: 'write to a file with size-based rotation' },
+                    { value: 'done', label: '✓ Done', hint: 'finish adding targets' },
+                ],
+            }),
+        );
+
+        if (targetType === 'done') {
+            if (targets.length === 0) {
+                log.warn('No targets added — defaulting to stdout.');
+                targets.push({ type: 'stdout' });
+            }
+            addingTargets = false;
+        } else if (targetType === 'stdout' || targetType === 'stderr') {
+            const already = targets.some((t) => t.type === targetType);
+            if (already) {
+                log.warn(`${targetType} is already in the list — skipped.`);
+            } else {
+                targets.push({ type: targetType });
+                log.success(`Added: ${targetType}`);
+            }
+        } else if (targetType === 'file') {
+            const filePath = g(
+                await text({
+                    message: 'Log file path (absolute)',
+                    placeholder: '/var/log/storytune/app.log',
+                    defaultValue: '/var/log/storytune/app.log',
+                    validate: (v) => {
+                        const t = v.trim();
+                        if (!t) return 'Path is required';
+                        if (!t.startsWith('/')) return 'Path must be absolute (start with /)';
+                    },
+                }),
+            );
+
+            const maxSizeRaw = g(
+                await text({
+                    message: 'Rotate when file exceeds (MB)',
+                    placeholder: '100',
+                    defaultValue: '100',
+                    validate: (v) => {
+                        const n = parseInt(v, 10);
+                        if (isNaN(n) || n < 1) return 'Must be a positive integer';
+                    },
+                }),
+            );
+
+            const maxSizeMb = parseInt(maxSizeRaw, 10);
+            targets.push({ type: 'file', path: filePath.trim(), maxSizeMb });
+            log.success(`Added: file → ${filePath.trim()} (rotate at ${maxSizeMb} MB)`);
+        }
+    }
+
+    patches['STORYTUNE__LOG_TARGETS'] = JSON.stringify(targets);
+    log.success(`Log targets set: ${patches['STORYTUNE__LOG_TARGETS']}`);
+}
+
+// ── 8. Write .env.prod ────────────────────────────────────────────────────────
 
 if (Object.keys(patches).length > 0) {
     writeEnvFile(ENV_PROD, patches);
@@ -315,7 +418,7 @@ note(
 
 g(await text({ message: 'Press Enter to start building…', defaultValue: '' }));
 
-// ── 8. Build Docker image ─────────────────────────────────────────────────────
+// ── 9. Build Docker image ─────────────────────────────────────────────────────
 
 log.step('Building Docker image (no-cache) — this may take a few minutes…');
 console.log();
@@ -332,7 +435,7 @@ if (buildResult.status !== 0) {
 
 log.success('Docker image built.');
 
-// ── 9. Staging area ───────────────────────────────────────────────────────────
+// ── 10. Staging area ──────────────────────────────────────────────────────────
 
 const timestamp = new Date()
     .toISOString()
@@ -361,7 +464,7 @@ if (saveResult.status !== 0) {
 }
 saveSpin.stop('Docker image saved.');
 
-// Copy deployment artifacts
+// ── 11. Copy deployment artifacts ─────────────────────────────────────────────
 const copyArtifact = (relSrc, relDest) => {
     const src = path.join(root, relSrc);
     const dst = path.join(stagingDir, relDest ?? relSrc);
@@ -380,7 +483,7 @@ copyArtifact('.env.prod', '.env'); // bake .env.prod as .env in the archive
 copyArtifact('nginx');
 copyArtifact('emails/templates', 'emails/templates');
 
-// ── 10. deploy.sh ─────────────────────────────────────────────────────────────
+// ── 12. deploy.sh ─────────────────────────────────────────────────────────────
 
 const deployScript = `#!/usr/bin/env bash
 # StoryTune — one-shot deployment script
@@ -428,7 +531,7 @@ echo ""
 
 fs.writeFileSync(path.join(stagingDir, 'deploy.sh'), deployScript, { mode: 0o755 });
 
-// ── 11. README ────────────────────────────────────────────────────────────────
+// ── 13. README ────────────────────────────────────────────────────────────────
 
 const readme = `# StoryTune — Deployment Package
 
@@ -457,7 +560,7 @@ Re-upload the new package, extract, and run \`bash deploy.sh\` again.
 
 fs.writeFileSync(path.join(stagingDir, 'README.md'), readme);
 
-// ── 12. Create archive ────────────────────────────────────────────────────────
+// ── 14. Create archive ────────────────────────────────────────────────────────
 
 const archiveSpin = spinner();
 archiveSpin.start('Creating archive…');
