@@ -1,3 +1,5 @@
+import { ArrowUpRight } from '@/components/ui/arrow-up-right';
+
 import styles from './cta.module.scss';
 
 export default function Cta() {
@@ -14,7 +16,7 @@ export default function Cta() {
                     Remembered long after the event ends.
                 </p>
                 <a href='https://etsy.com' target='_blank' rel='noreferrer' className={styles.btn}>
-                    Start on Etsy ↗
+                    Start on Etsy <ArrowUpRight />
                 </a>
             </div>
         </section>
