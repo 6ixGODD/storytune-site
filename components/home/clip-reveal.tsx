@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+
 import styles from './clip-reveal.module.scss';
 
 const ROWS = [
@@ -28,14 +32,38 @@ const ROWS = [
 ] as const;
 
 export default function ClipReveal() {
+    const sectionRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 640px)');
+        if (!mq.matches) return;
+
+        const section = sectionRef.current;
+        if (!section) return;
+
+        const rows = Array.from(section.querySelectorAll<HTMLElement>(`.${styles.row}`));
+
+        const update = () => {
+            const vh = window.innerHeight;
+            const center = vh * 0.5;
+            rows.forEach((row) => {
+                const { top, bottom } = row.getBoundingClientRect();
+                const rowCenter = (top + bottom) / 2;
+                const halfHeight = (bottom - top) * 0.6;
+                row.classList.toggle(styles.inView, Math.abs(rowCenter - center) < halfHeight);
+            });
+        };
+
+        window.addEventListener('scroll', update, { passive: true });
+        update();
+        return () => window.removeEventListener('scroll', update);
+    }, []);
+
     return (
-        <section className={styles.section}>
+        <section ref={sectionRef} className={styles.section}>
             <div className={styles.container}>
                 {ROWS.map((row) => (
-                    <p
-                        key={row.primary}
-                        className={styles.row}
-                    >
+                    <p key={row.primary} className={styles.row}>
                         {row.primary}
                         <span
                             className={styles.hoverSpan}

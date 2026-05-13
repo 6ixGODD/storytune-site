@@ -67,6 +67,24 @@
     .row:hover & {
         clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
     }
+
+    // Mobile: triggered by viewport-center JS instead of :hover
+    .row.inView & {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+    }
+}
+
+// ── Mobile overrides ────────────────────────────────────────────────────────────
+
+@media (max-width: 640px) {
+    .row {
+        // No scroll-driven fill animation on mobile — just use solid white text
+        color: hsl(0 0% 88%);
+        background: none;
+        -webkit-background-clip: unset;
+        background-clip: unset;
+        animation: none;
+    }
 }
 
 @keyframes clipFill {
