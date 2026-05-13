@@ -76,46 +76,52 @@ nginx uses `nginx/conf.d/storytune.local.conf` (HTTP only, port 80, proxy → ap
 
 ## Production deployment
 
-Use `scripts/pack.js` to build a self-contained deployment archive:
+Use `pnpm pack` to build a fully interactive, self-contained deployment archive:
 
 ```bash
 pnpm pack
 ```
 
-This builds the Docker image, saves it as a `.tar`, and bundles all deployment files into
-`storytune-deploy-<timestamp>.tar.gz`. Transfer to the server:
+The interactive CLI will:
+
+1. Check Docker is running and SSL certificates exist under `nginx/ssl/`
+2. Prompt for all secrets (MongoDB password, JWT secret, Resend API key, admin credentials)
+3. Write/update `.env.prod`
+4. Build the Docker image (`no-cache`)
+5. Bundle everything into `storytune-deploy-<timestamp>.tar.gz`
+
+Transfer to the server and deploy in one step:
 
 ```bash
 scp storytune-deploy-*.tar.gz user@server:/opt/storytune/
+ssh user@server "cd /opt/storytune && tar -xzf storytune-deploy-*.tar.gz --one-top-level=deploy && bash deploy/deploy.sh"
 ```
 
-On the server:
+`deploy.sh` automatically detects whether the stack is already running, brings it down, loads the new image, and starts all services.
 
-```bash
-tar -xzf storytune-deploy-*.tar.gz
-cd storytune-deploy/
+---
 
-docker load -i images/storytune-app.tar
+## Scripts reference
 
-# Fill in secrets (MONGO_PASSWORD, JWT_SECRET, RESEND_API_KEY, …)
-nano .env
-
-# Place SSL certificates
-cp /path/to/fullchain.pem nginx/ssl/story-tune.com.pem
-cp /path/to/privkey.pem   nginx/ssl/story-tune.com.key
-
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-```
-
-To update without downtime:
-
-```bash
-docker load -i images/storytune-app.tar
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-deps app
-```
-
-nginx config: `nginx/conf.d/prod/storytune.conf` — HTTP→HTTPS redirect, www→apex, TLS 1.2/1.3, HSTS, gzip,
-`/_next/static/` immutable cache, proxy → app:3000.
+| Command              | Description                                                      |
+| -------------------- | ---------------------------------------------------------------- |
+| `pnpm dev`           | Start dev server (MongoDB in Docker + `next dev`)                |
+| `pnpm build`         | Build Docker image via `docker compose build`                    |
+| `pnpm local`         | Start full local stack (app + mongo + nginx, HTTP)               |
+| `pnpm local:down`    | Tear down local stack                                            |
+| `pnpm lint`          | Run ESLint (flat config, typescript-eslint, simple-import-sort)  |
+| `pnpm format`        | Run Prettier on all source files (write mode)                    |
+| `pnpm format:check`  | Run Prettier in check mode (no writes, CI-friendly)              |
+| `pnpm test`          | Run Vitest unit tests (Testcontainers spins real MongoDB)        |
+| `pnpm test:watch`    | Vitest in watch mode                                             |
+| `pnpm test:coverage` | Vitest coverage via v8                                           |
+| `pnpm pack`          | Interactive deployment packager → `storytune-deploy-*.tar.gz`    |
+| `pnpm release`       | Interactive version bump → VERSION + package.json + git tag/push |
+| `pnpm clean`         | Remove `.next` build cache                                       |
+| `pnpm clean:dev`     | Tear down dev Docker stack and volumes                           |
+| `pnpm clean:local`   | Tear down local Docker stack, remove images and volumes          |
+| `pnpm clean:images`  | Remove all `storytune-app*` Docker images                        |
+| `pnpm clean:all`     | Run all of the above clean targets                               |
 
 ---
 
@@ -193,7 +199,8 @@ nginx/conf.d/
 nginx/ssl/                              # certs (gitignored; .gitkeep tracks dir)
 scripts/
   dev.js                                # pnpm dev launcher
-  pack.js                               # deployment packager
+  pack.mjs                              # interactive deployment packager
+  release.mjs                           # interactive version release helper
 ```
 
 ---
@@ -216,10 +223,69 @@ All responses: `{ success: true, data: … }` or `{ success: false, error: "…"
 
 ---
 
+## Commit conventions
+
+This project follows **Conventional Commits** (`type(scope): description`).
+
+### Types
+
+| Type       | When to use                                                              |
+| ---------- | ------------------------------------------------------------------------ |
+| `feat`     | A new user-facing feature                                                |
+| `fix`      | A bug fix                                                                |
+| `docs`     | Documentation only (README, comments, GUIDE.md, etc.)                    |
+| `style`    | Formatting, whitespace — no logic change                                 |
+| `refactor` | Code restructuring that neither adds a feature nor fixes a bug           |
+| `perf`     | A change that improves performance                                       |
+| `test`     | Adding or updating tests                                                 |
+| `chore`    | Build process, dependency updates, tooling, scripts (no production code) |
+| `ci`       | CI/CD workflow changes                                                   |
+| `revert`   | Reverts a previous commit                                                |
+
+### Scopes (optional but recommended)
+
+Use the area of the codebase: `admin`, `api`, `auth`, `cards`, `inspirations`, `rsvp`, `gallery`, `landing`,
+`email`, `db`, `config`, `scripts`, `examples`, `docker`, `nginx`.
+
+### Examples
+
+```
+feat(cards): add soft-delete with status=deleted
+fix(auth): refresh JWT cookie expiry on activity
+docs: update deployment instructions in README
+chore(deps): bump next to 16.2.3
+refactor(db): extract repository layer from route handlers
+test(rsvp): add integration test for duplicate submission
+perf(gallery): compress inspiration images to WebP
+chore(release): bump version to 1.1.0
+style: run prettier on all source files
+```
+
+### Breaking changes
+
+Append `!` after the type/scope and add a `BREAKING CHANGE:` footer:
+
+```
+feat(api)!: change RSVP response body shape
+
+BREAKING CHANGE: `data.id` renamed to `data.rsvpId` in POST /api/rsvps response.
+```
+
+### Co-authored-by trailer
+
+Always include the Copilot trailer on AI-assisted commits:
+
+```
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+```
+
+---
+
 ## Code quality
 
 ```bash
 pnpm lint          # ESLint (flat config, typescript-eslint, simple-import-sort)
+pnpm format        # Prettier (write)
 pnpm test          # Vitest unit tests (Testcontainers spins real MongoDB)
 pnpm test:coverage # coverage via v8
 ```

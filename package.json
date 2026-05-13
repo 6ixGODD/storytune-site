@@ -10,11 +10,19 @@
     "local:down": "docker compose -f docker-compose.yml -f docker-compose.local.yml down",
     "start": "next start",
     "lint": "eslint",
-    "prepare": "husky install",
-    "pack": "node scripts/pack.mjs",
+    "format": "prettier --write \"**/*.{js,mjs,cjs,jsx,ts,tsx,css,scss,sass,json,md,yml,yaml}\" --ignore-path .gitignore",
+    "format:check": "prettier --check \"**/*.{js,mjs,cjs,jsx,ts,tsx,css,scss,sass,json,md,yml,yaml}\" --ignore-path .gitignore",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "pack": "node scripts/pack.mjs",
+    "release": "node scripts/release.mjs",
+    "clean": "rimraf .next",
+    "clean:dev": "docker compose -f docker-compose.dev.yml down --volumes --remove-orphans",
+    "clean:local": "docker compose -f docker-compose.yml -f docker-compose.local.yml down --rmi local --volumes --remove-orphans",
+    "clean:images": "docker images --filter=reference='storytune-app*' -q | xargs -r docker rmi -f",
+    "clean:all": "pnpm clean && pnpm clean:dev && pnpm clean:local && pnpm clean:images",
+    "prepare": "husky install"
   },
   "dependencies": {
     "adm-zip": "^0.5.17",
@@ -43,6 +51,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@clack/prompts": "^1.4.0",
     "@eslint/css": "^1.1.0",
     "@eslint/js": "^9.39.0",
     "@eslint/json": "^1.2.0",
@@ -69,6 +78,7 @@
     "husky": "^8.0.0",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.2",
+    "rimraf": "^6.1.3",
     "serve": "^14.2.6",
     "tailwindcss": "^4.3.0",
     "testcontainers": "^11.14.0",
