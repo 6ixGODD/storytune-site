@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { CARD_STATUS } from '@/lib/constants';
+import { CARD_STATUS, DEFAULT_CARD_QUOTA, DEFAULT_CARD_RATE_LIMIT } from '@/lib/constants';
 import { Card } from '@/lib/entities/card';
 
 describe('Card entity', () => {
@@ -71,6 +71,21 @@ describe('Card entity', () => {
             const card = Card.create({ slug: 's', clientName: 'N', clientEmail: 'n@e.com' });
             expect(card.deletedAt).toBeUndefined();
         });
+
+        it('applies default rate limit from constants', () => {
+            const card = Card.create({ slug: 's', clientName: 'N', clientEmail: 'n@e.com' });
+            expect(card.rateLimit).toEqual(DEFAULT_CARD_RATE_LIMIT);
+        });
+
+        it('applies default quota from constants', () => {
+            const card = Card.create({ slug: 's', clientName: 'N', clientEmail: 'n@e.com' });
+            expect(card.quota).toEqual(DEFAULT_CARD_QUOTA);
+        });
+
+        it('initialises requestCount to zero', () => {
+            const card = Card.create({ slug: 's', clientName: 'N', clientEmail: 'n@e.com' });
+            expect(card.requestCount).toBe(0);
+        });
     });
 
     describe('isActive()', () => {
@@ -82,6 +97,24 @@ describe('Card entity', () => {
         it('returns false for a soft-deleted card', () => {
             const card = Card.create({ slug: 's', clientName: 'N', clientEmail: 'n@e.com' });
             expect(card.softDelete().isActive()).toBe(false);
+        });
+    });
+
+    describe('isQuotaExceeded()', () => {
+        it('returns false when requestCount is below quota', () => {
+            const card = Card.create({ slug: 's', clientName: 'N', clientEmail: 'n@e.com' });
+            expect(card.isQuotaExceeded()).toBe(false);
+        });
+
+        it('returns true when requestCount equals quota.maxRequests', () => {
+            const base = Card.create({ slug: 's', clientName: 'N', clientEmail: 'n@e.com' });
+            const card = new (base.constructor as typeof Card)({
+                ...Object.assign({}, base),
+                quota: { maxRequests: 5 },
+                requestCount: 5,
+                invitees: base.invitees,
+            });
+            expect(card.isQuotaExceeded()).toBe(true);
         });
     });
 
@@ -127,6 +160,12 @@ describe('Card entity', () => {
             expect(deleted.id).toBe(card.id);
             expect(deleted.slug).toBe(card.slug);
             expect(deleted.clientName).toBe(card.clientName);
+        });
+
+        it('preserves rateLimit and quota', () => {
+            const deleted = card.softDelete();
+            expect(deleted.rateLimit).toEqual(card.rateLimit);
+            expect(deleted.quota).toEqual(card.quota);
         });
     });
 
@@ -184,6 +223,16 @@ describe('Card entity', () => {
             expect(updated.slug).toBe(card.slug);
             expect(updated.id).toBe(card.id);
             expect(updated.status).toBe(card.status);
+        });
+
+        it('applies rateLimit patch', () => {
+            const updated = card.withUpdates({ rateLimit: { windowMs: 30_000, maxRequests: 50 } });
+            expect(updated.rateLimit).toEqual({ windowMs: 30_000, maxRequests: 50 });
+        });
+
+        it('applies quota patch', () => {
+            const updated = card.withUpdates({ quota: { maxRequests: 500_000 } });
+            expect(updated.quota).toEqual({ maxRequests: 500_000 });
         });
     });
 });

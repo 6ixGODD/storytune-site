@@ -106,6 +106,33 @@ describe('CardUpdateSchema', () => {
         const result = CardUpdateSchema.safeParse({ invitees: [{ email: 'x@y.com' }] });
         expect(result.success).toBe(true);
     });
+
+    it('accepts valid rateLimit patch', () => {
+        const result = CardUpdateSchema.safeParse({ rateLimit: { windowMs: 60_000, maxRequests: 100 } });
+        expect(result.success).toBe(true);
+        expect(result.data?.rateLimit).toEqual({ windowMs: 60_000, maxRequests: 100 });
+    });
+
+    it('rejects rateLimit with windowMs below 1000', () => {
+        const result = CardUpdateSchema.safeParse({ rateLimit: { windowMs: 500, maxRequests: 100 } });
+        expect(result.success).toBe(false);
+    });
+
+    it('rejects rateLimit with maxRequests below 1', () => {
+        const result = CardUpdateSchema.safeParse({ rateLimit: { windowMs: 60_000, maxRequests: 0 } });
+        expect(result.success).toBe(false);
+    });
+
+    it('accepts valid quota patch', () => {
+        const result = CardUpdateSchema.safeParse({ quota: { maxRequests: 500_000 } });
+        expect(result.success).toBe(true);
+        expect(result.data?.quota).toEqual({ maxRequests: 500_000 });
+    });
+
+    it('rejects quota with maxRequests below 1', () => {
+        const result = CardUpdateSchema.safeParse({ quota: { maxRequests: 0 } });
+        expect(result.success).toBe(false);
+    });
 });
 
 describe('CardsListQuerySchema', () => {

@@ -21,7 +21,7 @@ describe('validateDistDir()', () => {
         const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'vtest-'));
         await fs.writeFile(path.join(tmpDir, 'index.html'), '<html></html>');
 
-        await expect(validateDistDir(tmpDir)).resolves.toBeUndefined();
+        await expect(validateDistDir(tmpDir)).resolves.toBe(tmpDir);
         await fs.rm(tmpDir, { recursive: true, force: true });
     });
 
