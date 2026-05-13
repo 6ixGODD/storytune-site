@@ -8,23 +8,25 @@ import ScrollVerb from '@/components/home/scroll-verb';
 import TextReveal from '@/components/home/text-reveal';
 import Footer from '@/components/layout/footer';
 import Navbar from '@/components/layout/navbar';
+import { siteContentService } from '@/lib/services/site-content.service';
 
-// GalleryPreview fetches from MongoDB; opt out of static generation.
 export const dynamic = 'force-dynamic';
 
-export default function HomePage() {
+export default async function HomePage() {
+    const cms = await siteContentService.getAll();
+
     return (
         <>
-            <Navbar />
+            <Navbar content={cms.nav} />
             <main>
-                <Hero />
-                <ScrollVerb />
-                <TextReveal />
-                <ClipReveal />
-                <Pricing />
-                <Process />
-                <GalleryPreview />
-                <Cta />
+                <Hero content={cms['home.hero']} />
+                <ScrollVerb content={cms['home.scroll_verb']} />
+                <TextReveal content={cms['home.text_reveal']} />
+                <ClipReveal content={cms['home.clip_reveal']} />
+                <Pricing content={cms['home.pricing']} />
+                <Process content={cms['home.process']} />
+                <GalleryPreview content={cms['home.gallery']} />
+                <Cta content={cms['home.cta']} />
             </main>
             <Footer />
         </>

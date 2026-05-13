@@ -132,3 +132,36 @@
         @apply border-border outline-ring/50;
     }
 }
+
+/*
+ * Scrollbar — prevent layout-shift jitter and apply a slim, theme-aware scrollbar.
+ * scrollbar-gutter: stable reserves space even when scrollbar is absent, eliminating
+ * the "width jump" when content height crosses the overflow threshold.
+ */
+.admin-root {
+    scrollbar-gutter: stable;
+}
+
+.admin-root ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+.admin-root ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-root ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 99px;
+}
+
+.admin-root ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+}
+
+/* Firefox */
+.admin-root * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}

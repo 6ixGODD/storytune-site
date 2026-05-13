@@ -1,4 +1,4 @@
-import { Compass, LayoutGrid } from 'lucide-react';
+import { Compass, FileText, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 
 import { AdminShell } from '@/components/admin/admin-shell';
@@ -18,26 +18,34 @@ const SECTIONS = [
         title: 'Directions',
         description: 'Manage the inspiration gallery — templates, categories, and featured previews.',
     },
+    {
+        href: '/admin/cms',
+        icon: FileText,
+        title: 'Content',
+        description: 'Edit website text, navigation links, pricing, and all page content.',
+    },
 ];
 
 export default async function AdminPage() {
     await requirePageAuth();
     return (
-        <AdminShell title="Dashboard">
+        <AdminShell title='Dashboard'>
             <div>
-                <h1 className="text-2xl font-semibold">Dashboard</h1>
-                <p className="text-sm text-muted-foreground mt-0.5">Choose a section to manage.</p>
+                <h1 className='text-2xl font-semibold'>Dashboard</h1>
+                <p className='text-sm text-muted-foreground mt-1'>Choose a section to manage.</p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 max-w-2xl">
+            <div className='grid gap-5 sm:grid-cols-2 lg:grid-cols-3 max-w-3xl'>
                 {SECTIONS.map(({ href, icon: Icon, title, description }) => (
-                    <Link key={href} href={href} className="group block">
-                        <Card className="h-full transition-colors group-hover:border-primary">
-                            <CardHeader>
-                                <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                    <Icon className="h-5 w-5 text-muted-foreground" />
+                    <Link key={href} href={href} className='group block'>
+                        <Card className='h-full transition-colors group-hover:border-primary/60'>
+                            <CardHeader className='gap-4'>
+                                <div className='flex h-11 w-11 items-center justify-center rounded-xl bg-muted'>
+                                    <Icon className='h-5 w-5 text-muted-foreground' />
                                 </div>
-                                <CardTitle className="text-base">{title}</CardTitle>
-                                <CardDescription>{description}</CardDescription>
+                                <div>
+                                    <CardTitle className='text-base mb-1'>{title}</CardTitle>
+                                    <CardDescription className='leading-relaxed'>{description}</CardDescription>
+                                </div>
                             </CardHeader>
                         </Card>
                     </Link>

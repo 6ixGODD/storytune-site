@@ -3,27 +3,25 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
+import { defaultNavContent } from '@/lib/defaults/site-content';
+import { NavContent } from '@/lib/entities/site-content';
+
 import styles from './navbar.module.scss';
 
-const NAV_LINKS = [
-    { label: 'Directions', href: '/inspiration', id: 'nav-directions' },
-    { label: 'Pricing', href: '/#pricing', id: 'nav-pricing' },
-    { label: 'Process', href: '/#process', id: 'nav-process' },
-    { label: 'Etsy', href: 'https://etsy.com', id: 'nav-etsy' },
-];
+interface NavbarProps {
+    content?: NavContent;
+}
 
-export default function Navbar() {
+export default function Navbar({ content = defaultNavContent }: NavbarProps) {
     const navRef = useRef<HTMLElement>(null);
     const ulRef = useRef<HTMLUListElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
     const hamburgerRef = useRef<HTMLButtonElement>(null);
     const [isOpen, setIsOpen] = useState(false);
 
-    // Close mobile menu on outside click, but not when clicking the hamburger itself
-    // (the hamburger's own onClick handles toggling)
     useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            const target = e.target as Node;
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as Node;
             const inMenu = menuRef.current?.contains(target) ?? false;
             const inHamburger = hamburgerRef.current?.contains(target) ?? false;
             if (!inMenu && !inHamburger) {
@@ -34,7 +32,6 @@ export default function Navbar() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isOpen]);
 
-    // Desktop anchor-position hover effect
     useEffect(() => {
         const nav = navRef.current;
         const ul = ulRef.current;
@@ -48,18 +45,18 @@ export default function Navbar() {
         const anchors = Array.from(ul.querySelectorAll('a'));
 
         const calibrate = () => {
-            anchors.forEach((anchor, i) => {
-                anchor.style.setProperty('view-transition-name', `nav-item-${i + 1}`);
+            anchors.forEach((anchor, index) => {
+                anchor.style.setProperty('view-transition-name', `nav-item-${index + 1}`);
             });
         };
         calibrate();
 
         const setActiveVars = (anchor: HTMLAnchorElement) => {
-            const b = anchor.getBoundingClientRect();
-            ul.style.setProperty('--item-active-y', String(b.top));
-            ul.style.setProperty('--item-active-x', String(b.left));
-            ul.style.setProperty('--item-active-width', String(b.width));
-            ul.style.setProperty('--item-active-height', String(b.height));
+            const bounds = anchor.getBoundingClientRect();
+            ul.style.setProperty('--item-active-y', String(bounds.top));
+            ul.style.setProperty('--item-active-x', String(bounds.left));
+            ul.style.setProperty('--item-active-width', String(bounds.width));
+            ul.style.setProperty('--item-active-height', String(bounds.height));
         };
 
         const handlers: Array<() => void> = [];
@@ -84,12 +81,12 @@ export default function Navbar() {
         }
 
         return () => {
-            anchors.forEach((anchor, i) => anchor.removeEventListener('pointerenter', handlers[i]));
+            anchors.forEach((anchor, index) => anchor.removeEventListener('pointerenter', handlers[index]));
             nav.removeEventListener('pointerleave', deactivate);
             nav.removeEventListener('blur', deactivate, true);
             window.removeEventListener('resize', calibrate);
         };
-    }, []);
+    }, [content.links]);
 
     return (
         <header className={styles.header}>
@@ -99,9 +96,8 @@ export default function Navbar() {
                     <img src='/logo.svg' alt='StoryTune' height={42} />
                 </Link>
 
-                {/* Desktop nav links */}
                 <ul ref={ulRef} className={styles.list}>
-                    {NAV_LINKS.map((link) => (
+                    {content.links.map((link) => (
                         <li key={link.id} className={styles.item}>
                             <Link href={link.href} id={link.id} className={styles.link}>
                                 {link.label}
@@ -110,13 +106,12 @@ export default function Navbar() {
                     ))}
                 </ul>
 
-                {/* Mobile hamburger button */}
                 <button
                     ref={hamburgerRef}
                     className={styles.hamburger}
                     aria-label={isOpen ? 'Close menu' : 'Open menu'}
                     aria-expanded={isOpen}
-                    onClick={() => setIsOpen((v) => !v)}
+                    onClick={() => setIsOpen((open) => !open)}
                 >
                     <span className={styles.bar} />
                     <span className={styles.bar} />
@@ -124,14 +119,13 @@ export default function Navbar() {
                 </button>
             </nav>
 
-            {/* Mobile menu panel */}
             <div
                 ref={menuRef}
                 className={`${styles.mobileMenu} ${isOpen ? styles.mobileMenuOpen : ''}`}
                 aria-hidden={!isOpen}
             >
                 <ul className={styles.mobileList}>
-                    {NAV_LINKS.map((link) => (
+                    {content.links.map((link) => (
                         <li key={link.id}>
                             <Link href={link.href} className={styles.mobileLink} onClick={() => setIsOpen(false)}>
                                 {link.label}

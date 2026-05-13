@@ -43,28 +43,28 @@ export default function LoginPage() {
     }
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg-muted/30'>
-            <Card className='w-full max-w-sm shadow-lg'>
-                <CardHeader className='pb-4'>
-                    <div className='flex flex-col items-center gap-1 mb-2'>
+        <div className='min-h-screen flex items-center justify-center bg-muted/20'>
+            <Card className='w-full max-w-sm shadow-xl border-border/60'>
+                <CardHeader className='pb-2 pt-8 px-8'>
+                    <div className='flex flex-col items-center gap-1 mb-4'>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src='/logo.svg' alt='StoryTune' className='h-8 mb-1' />
+                        <img src='/logo.svg' alt='StoryTune' className='h-8 mb-2 invert dark:invert-0' />
                         <span className='text-xs text-muted-foreground'>Admin Console</span>
                     </div>
                     <CardTitle className='text-center text-lg'>Sign in</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} noValidate className='flex flex-col gap-4'>
+                <CardContent className='px-8 pb-8'>
+                    <form onSubmit={handleSubmit} noValidate className='flex flex-col gap-5 mt-2'>
                         {error && (
                             <Alert variant='destructive'>
                                 <AlertDescription>{error}</AlertDescription>
                             </Alert>
                         )}
-                        <div className='flex flex-col gap-1.5'>
+                        <div className='flex flex-col gap-2'>
                             <Label htmlFor='username'>Username</Label>
                             <Input id='username' name='username' type='text' autoComplete='username' required />
                         </div>
-                        <div className='flex flex-col gap-1.5'>
+                        <div className='flex flex-col gap-2'>
                             <Label htmlFor='password'>Password</Label>
                             <Input
                                 id='password'
