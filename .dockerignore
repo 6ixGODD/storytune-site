@@ -1,35 +1,29 @@
-# Dependencies (reinstalled in Docker)
+# Dependencies / Package Managers
 node_modules
 .pnpm-store
 
-# Next.js build output
+# Build Outputs
 .next
 out
+coverage
 
-# Local dev environment
+# Environment Variables
 .env
 .env.*
 !.env.example
-local-storage
-# Examples (dev/test only)
-examples
-# Sample assets (dev/test only)
-samples
 
-# Version control
+# Git / Repository Metadata
 .git
 .gitignore
+.github
 
-# Editor / IDE
+# Editor / IDE Files
 .idea
 .vscode
 *.swp
 *.swo
 
-# Codepen experiments (UI reference only, not part of build)
-.codepen
-
-# OS artifacts
+# OS / System Junk
 .DS_Store
 Thumbs.db
 
@@ -38,17 +32,31 @@ Thumbs.db
 npm-debug.log*
 pnpm-debug.log*
 
-# Scripts (only needed locally)
+# Local Development / Experimental
+.codepen
+examples
+local-storage
+samples
 scripts
+tests
 
-# Docker files themselves
-Dockerfile*
-docker-compose*.yml
+# Docker / Container
 .dockerignore
+docker-compose*.yml
+Dockerfile*
+*.tar
+*.tar.gz
 
-# CI/CD
-.github
+# Tooling / Formatting / Linting
+.editorconfig
+.gitattributes
+.prettierignore
+.prettierrc
+eslint.config.*
+vite.config.*
 
-# Docs
+# Git Hooks
+.husky
+
+# Documentation
 README.md
-REQUIREMENTS.md
