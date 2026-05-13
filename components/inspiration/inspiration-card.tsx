@@ -1,19 +1,62 @@
-import Image from 'next/image';
+'use client';
 
+import Image from 'next/image';
+import { useEffect, useRef } from 'react';
+
+import { track } from '@/lib/analytics';
 import { InspirationSummary } from '@/lib/entities/inspiration';
 
 import styles from './inspiration-card.module.scss';
 
 interface InspirationCardProps {
     item: InspirationSummary;
+    positionIndex?: number;
 }
 
-export default function InspirationCard({ item }: InspirationCardProps) {
+export default function InspirationCard({ item, positionIndex }: InspirationCardProps) {
     const coverUrl = `/inspiration/${item.slug}/${item.coverPath}`;
+    const cardRef = useRef<HTMLElement>(null);
+    const viewedRef = useRef(false);
+
+    useEffect(() => {
+        const el = cardRef.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && !viewedRef.current) {
+                    viewedRef.current = true;
+                    track('inspiration_card_view', {
+                        template_id: item.slug,
+                        template_title: item.title,
+                        category: item.category ?? undefined,
+                        tags: item.tags ?? undefined,
+                    });
+                }
+            },
+            { threshold: 0.4 },
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [item]);
+
+    const handleClick = () => {
+        track('inspiration_card_click', {
+            template_id: item.slug,
+            template_title: item.title,
+            category: item.category ?? undefined,
+            tags: item.tags ?? undefined,
+            position_index: positionIndex,
+        });
+    };
 
     return (
-        <article className={styles.card}>
-            <a href={item.inspirationUrl} className={styles.imageLink} aria-label={`View ${item.title}`}>
+        <article ref={cardRef} className={styles.card}>
+            <a
+                href={item.inspirationUrl}
+                className={styles.imageLink}
+                aria-label={`View ${item.title}`}
+                onClick={handleClick}
+            >
                 <div className={styles.imageWrapper}>
                     <Image
                         src={coverUrl}

@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 
 import styles from '@/app/inspiration/inspiration.module.scss';
+import { track } from '@/lib/analytics';
 
 interface InspirationSidebarProps {
     categories: string[];
@@ -17,6 +20,12 @@ function buildCategoryHref(category: string | null, q?: string): string {
 }
 
 export default function InspirationSidebar({ categories, activeCategory, q }: InspirationSidebarProps) {
+    const handleCategoryClick = (cat: string | null) => {
+        if (cat) {
+            track('inspiration_filter_change', { filter_type: 'category', filter_value: cat });
+        }
+    };
+
     return (
         <aside className={styles.sidebar}>
             <p className={styles.sidebarLabel}>Filter</p>
@@ -25,6 +34,7 @@ export default function InspirationSidebar({ categories, activeCategory, q }: In
                     href={buildCategoryHref(null, q)}
                     scroll={false}
                     className={`${styles.catLink}${!activeCategory ? ` ${styles.catActive}` : ''}`}
+                    onClick={() => handleCategoryClick(null)}
                 >
                     <span>All</span>
                 </Link>
@@ -34,6 +44,7 @@ export default function InspirationSidebar({ categories, activeCategory, q }: In
                         href={buildCategoryHref(cat, q)}
                         scroll={false}
                         className={`${styles.catLink}${activeCategory === cat ? ` ${styles.catActive}` : ''}`}
+                        onClick={() => handleCategoryClick(cat)}
                     >
                         <span>{cat}</span>
                     </Link>

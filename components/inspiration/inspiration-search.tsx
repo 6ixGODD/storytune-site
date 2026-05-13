@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 
+import { track } from '@/lib/analytics';
+
 import styles from './inspiration-search.module.scss';
 
 interface InspirationSearchProps {
@@ -19,6 +21,9 @@ export default function InspirationSearch({ defaultValue, currentCategory }: Ins
         const params = new URLSearchParams();
         if (q) params.set('q', q);
         if (currentCategory) params.set('category', currentCategory);
+        if (q) {
+            track('inspiration_filter_change', { filter_type: 'search', filter_value: q });
+        }
         router.replace(`/inspiration${params.size ? `?${params}` : ''}`, { scroll: false });
     };
 
