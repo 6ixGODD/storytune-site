@@ -127,6 +127,14 @@ const envSchema = z.object({
             ),
         ),
 
+    // ── Google Analytics ──────────────────────────────────────────────────────
+    /**
+     * Google Analytics 4 Measurement ID (e.g. "G-XXXXXXXXXX").
+     * Must be a NEXT_PUBLIC_ variable so it is inlined into client bundles.
+     * Leave empty to disable analytics.
+     */
+    NEXT_PUBLIC_STORYTUNE__GA_ID: z.string().default(''),
+
     // ── Admin seed ────────────────────────────────────────────────────────────
     /** Username for the first admin account, created automatically if no admins exist. */
     STORYTUNE__ADMIN_USERNAME: z.string().default('admin'),
@@ -245,6 +253,12 @@ export const config = {
          * above the configured level. Console targets are pretty-printed in dev.
          */
         targets: env['STORYTUNE__LOG_TARGETS'],
+    },
+
+    /** Google Analytics configuration. */
+    ga: {
+        /** GA4 Measurement ID. Empty string means analytics are disabled. */
+        measurementId: env['NEXT_PUBLIC_STORYTUNE__GA_ID'],
     },
 
     /** Bootstrap admin account (used for first-run seeding only). */
