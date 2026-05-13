@@ -26,7 +26,7 @@ const envSchema = z.object({
 
     // ── Application ───────────────────────────────────────────────────────────
     /** Publicly reachable base URL, used in email links and sitemap. */
-    STORYTUNE__SITE_URL: z.string().url().default('http://localhost:3000'),
+    STORYTUNE__SITE_URL: z.url().default('http://localhost:3000'),
     /** TCP port the Next.js server listens on. */
     STORYTUNE__PORT: z.coerce.number().int().min(1).max(65535).default(3000),
 
@@ -95,6 +95,38 @@ const envSchema = z.object({
      */
     STORYTUNE__LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).optional(),
 
+    /**
+     * JSON array of log output targets.
+     *
+     * Each target is one of:
+     *   - `{"type":"stdout"}` — write to process.stdout
+     *   - `{"type":"stderr"}` — write to process.stderr
+     *   - `{"type":"file","path":"/var/log/app.log","maxSizeMb":100}` — append to a file,
+     *     rotating by size (rename to `.1`, open fresh) when `maxSizeMb` is exceeded.
+     *
+     * Console targets (stdout/stderr) are pretty-printed in development and emit raw
+     * NDJSON in production. File targets always receive raw NDJSON.
+     *
+     * Defaults to `[{"type":"stdout"}]` when not set.
+     */
+    STORYTUNE__LOG_TARGETS: z
+        .string()
+        .default('[{"type":"stdout"}]')
+        .transform((s) => JSON.parse(s))
+        .pipe(
+            z.array(
+                z.discriminatedUnion('type', [
+                    z.object({ type: z.literal('stdout') }),
+                    z.object({ type: z.literal('stderr') }),
+                    z.object({
+                        type: z.literal('file'),
+                        path: z.string().min(1),
+                        maxSizeMb: z.coerce.number().int().min(1).default(100),
+                    }),
+                ]),
+            ),
+        ),
+
     // ── Admin seed ────────────────────────────────────────────────────────────
     /** Username for the first admin account, created automatically if no admins exist. */
     STORYTUNE__ADMIN_USERNAME: z.string().default('admin'),
@@ -105,7 +137,7 @@ const envSchema = z.object({
 function parseEnv() {
     const result = envSchema.safeParse(process.env);
     if (!result.success) {
-        const errors = result.error.flatten().fieldErrors;
+        const errors = z.flattenError(result.error).fieldErrors;
         throw new Error(`Invalid environment variables:
 ${JSON.stringify(errors, null, 2)}`);
     }
@@ -208,6 +240,11 @@ export const config = {
          * development and `"info"` in production.
          */
         level: env['STORYTUNE__LOG_LEVEL'],
+        /**
+         * Ordered list of output targets. Each target receives every log line at or
+         * above the configured level. Console targets are pretty-printed in dev.
+         */
+        targets: env['STORYTUNE__LOG_TARGETS'],
     },
 
     /** Bootstrap admin account (used for first-run seeding only). */
