@@ -119,3 +119,29 @@
         }
     }
 }
+
+// ── JS-driven fallback for browsers without scroll-driven animation support ───
+// .block[data-fallback] is set in text-reveal.tsx when CSS.supports check fails
+
+.block[data-fallback] .sticky {
+    opacity: var(--reveal-opacity, 0);
+    transform: translateY(var(--reveal-y, 28px));
+    transition:
+        opacity 0.08s linear,
+        transform 0.08s linear;
+    will-change: opacity, transform;
+}
+
+.block[data-fallback] .span {
+    // Show as solid white text — no background-clip fill animation
+    color: var(--fg);
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    animation: none;
+}
+
+.block[data-fallback] .glow {
+    animation: none;
+    opacity: 0.6;
+}
