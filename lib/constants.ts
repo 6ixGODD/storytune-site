@@ -45,6 +45,34 @@ export const CARD_STATUS = {
 /** Union type derived from `CARD_STATUS` values. */
 export type CardStatus = (typeof CARD_STATUS)[keyof typeof CARD_STATUS];
 
+// ── Per-card rate limiting & quota defaults ───────────────────────────────────
+
+/**
+ * Default rate-limit configuration applied to every newly created card.
+ *
+ * These values are intentionally generous — the goal is to block obvious abuse
+ * (bots, scrapers) rather than to constrain legitimate guests. Each card admin
+ * can override them via the PATCH endpoint.
+ *
+ * - `windowMs`: length of the sliding window in milliseconds (default: 1 minute).
+ * - `maxRequests`: maximum number of qualifying requests allowed within the window.
+ */
+export const DEFAULT_CARD_RATE_LIMIT = {
+    windowMs: 60_000,
+    maxRequests: 300,
+} as const;
+
+/**
+ * Default quota configuration applied to every newly created card.
+ *
+ * The quota caps the **lifetime** total of qualifying requests for a card.
+ * Set to 1 million by default — essentially unlimited for a typical invitation,
+ * but provides a hard ceiling against runaway bot traffic.
+ */
+export const DEFAULT_CARD_QUOTA = {
+    maxRequests: 1_000_000,
+} as const;
+
 /**
  * Allowed values for the `status` field on an inspiration document.
  * Inspirations are soft-deleted only — the `DELETED` status replaces hard removal.
