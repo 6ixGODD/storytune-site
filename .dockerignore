@@ -11,6 +11,10 @@ out
 .env.*
 !.env.example
 local-storage
+# Examples (dev/test only)
+examples
+# Sample assets (dev/test only)
+samples
 
 # Version control
 .git
@@ -24,9 +28,6 @@ local-storage
 
 # Codepen experiments (UI reference only, not part of build)
 .codepen
-
-# Sample assets (dev/test only)
-samples
 
 # OS artifacts
 .DS_Store
