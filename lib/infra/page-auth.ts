@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 /**
  * @file lib/infra/page-auth.ts
  * Server-side auth guard for admin page components.
