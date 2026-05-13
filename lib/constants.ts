@@ -29,6 +29,8 @@ export const DB_COLLECTIONS = {
     ADMINS: 'admins',
     /** Collection storing curated inspiration / directions records. */
     INSPIRATIONS: 'inspirations',
+    /** Collection storing editable CMS content blocks for the website. */
+    SITE_CONTENT: 'site_content',
 } as const;
 
 /**
