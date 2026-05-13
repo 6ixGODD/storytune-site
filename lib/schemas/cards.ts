@@ -44,6 +44,17 @@ export const CardUpdateSchema = z.object({
     eventType: z.string().optional(),
     notes: z.string().optional(),
     invitees: z.array(InviteeSchema).optional(),
+    rateLimit: z
+        .object({
+            windowMs: z.number().int().min(1000, 'windowMs must be at least 1000ms'),
+            maxRequests: z.number().int().min(1, 'maxRequests must be at least 1'),
+        })
+        .optional(),
+    quota: z
+        .object({
+            maxRequests: z.number().int().min(1, 'maxRequests must be at least 1'),
+        })
+        .optional(),
 });
 
 /** Query parameters for the cards list endpoint. */
