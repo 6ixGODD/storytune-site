@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { z } from 'zod';
 
 import { RsvpSchema } from '@/lib/schemas/rsvp';
 import { rsvpService } from '@/lib/services/rsvp.service';
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
     const parsed = RsvpSchema.safeParse(body);
     if (!parsed.success) {
         return Response.json(
-            { success: false, error: 'Validation failed', details: parsed.error.flatten().fieldErrors },
+            { success: false, error: 'Validation failed', details: z.flattenError(parsed.error).fieldErrors },
             { status: 400, headers: CORS_HEADERS },
         );
     }

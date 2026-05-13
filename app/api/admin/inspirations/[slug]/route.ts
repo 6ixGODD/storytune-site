@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { z } from 'zod';
 
 import { authErrorResponse, requireAuth } from '@/lib/infra/auth';
 import { InspirationUpdateSchema } from '@/lib/schemas/inspirations';
@@ -35,7 +36,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     const parsed = InspirationUpdateSchema.safeParse(body);
     if (!parsed.success) {
         return Response.json(
-            { success: false, error: 'Validation failed', details: parsed.error.flatten().fieldErrors },
+            { success: false, error: 'Validation failed', details: z.flattenError(parsed.error).fieldErrors },
             { status: 400 },
         );
     }

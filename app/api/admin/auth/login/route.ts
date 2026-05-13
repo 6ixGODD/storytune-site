@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { z } from 'zod';
 
 import { config } from '@/lib/config';
 import { LoginSchema } from '@/lib/schemas/auth';
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
     const parsed = LoginSchema.safeParse(body);
     if (!parsed.success) {
         return Response.json(
-            { success: false, error: 'Validation failed', details: parsed.error.flatten().fieldErrors },
+            { success: false, error: 'Validation failed', details: z.flattenError(parsed.error).fieldErrors },
             { status: 400 },
         );
     }
