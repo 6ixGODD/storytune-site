@@ -5,6 +5,7 @@ import InspirationSidebar from '@/components/inspiration/inspiration-sidebar';
 import Footer from '@/components/layout/footer';
 import Navbar from '@/components/layout/navbar';
 import { inspirationService } from '@/lib/services/inspiration.service';
+import { siteContentService } from '@/lib/services/site-content.service';
 
 import styles from './inspiration.module.scss';
 
@@ -22,9 +23,10 @@ export default async function DirectionsPage({ searchParams }: PageProps) {
     const category = params.category?.trim() || undefined;
     const currentPage = Math.max(1, parseInt(params.page ?? '1', 10));
 
-    const [{ items, total }, categories] = await Promise.all([
+    const [{ items, total }, categories, cms] = await Promise.all([
         inspirationService.list({ page: currentPage, pageSize: PAGE_SIZE, category, q }),
         inspirationService.getCategories(),
+        siteContentService.getAll(),
     ]);
 
     const totalPages = Math.ceil(total / PAGE_SIZE);
@@ -36,7 +38,7 @@ export default async function DirectionsPage({ searchParams }: PageProps) {
 
     return (
         <>
-            <Navbar />
+            <Navbar content={cms.nav} />
             <main className={styles.main}>
                 {/* ── Hero ── */}
                 <div className={styles.hero}>
