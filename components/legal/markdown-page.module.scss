@@ -1,0 +1,248 @@
+// markdown-page — elegant document layout
+// Sticky TOC on the left, 60ch article on the right.
+// Dark background, warm off-white text — matches the main site palette.
+
+.container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 var(--gutter, 2rem);
+    min-height: 100vh;
+    align-items: start;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// ── Sticky TOC ────────────────────────────────────────────────────────────────
+
+.toc {
+    position: sticky;
+    top: 5rem;
+    align-self: start;
+    width: 200px;
+    margin-right: 3rem;
+    padding-top: 2rem;
+    font-size: 0.8125rem;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
+}
+
+.tocLabel {
+    display: block;
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in lch, var(--fg) 30%, transparent);
+    margin-bottom: 0.75rem;
+}
+
+.tocList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-left: 1px solid color-mix(in lch, var(--fg) 10%, transparent);
+}
+
+.tocList li {
+    padding: 0;
+}
+
+.tocLink {
+    display: block;
+    padding: 0.3rem 0 0.3rem 1rem;
+    color: color-mix(in lch, var(--fg) 35%, transparent);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: color 0.22s ease;
+    border-left: 2px solid transparent;
+    margin-left: -1px;
+
+    &:hover {
+        color: var(--fg);
+    }
+}
+
+.tocLinkActive {
+    color: var(--fg);
+    border-left-color: color-mix(in lch, var(--fg) 60%, transparent);
+}
+
+.tocBack {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in lch, var(--fg) 8%, transparent);
+}
+
+.backToTop {
+    font-size: 0.6875rem;
+    color: color-mix(in lch, var(--fg) 30%, transparent);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: color 0.22s ease;
+
+    &:hover {
+        color: var(--fg);
+    }
+}
+
+// ── Article ───────────────────────────────────────────────────────────────────
+
+.article {
+    grid-column: 2;
+    max-width: 60ch;
+    width: 100%;
+    padding-bottom: 8rem;
+
+    @media (max-width: 768px) {
+        grid-column: 1;
+        max-width: 100%;
+    }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
+.header {
+    min-height: 40vh;
+    display: grid;
+    align-content: end;
+    padding-top: 8rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid color-mix(in lch, var(--fg) 8%, transparent);
+    margin-bottom: 4rem;
+}
+
+.title {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin: 0 0 0.75rem;
+    text-wrap: balance;
+}
+
+.subtitle {
+    font-size: 0.8125rem;
+    color: color-mix(in lch, var(--fg) 40%, transparent);
+    margin: 0 0 1.5rem;
+    font-weight: 300;
+}
+
+.backLink {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: color-mix(in lch, var(--fg) 35%, transparent);
+    text-decoration: none;
+    transition: color 0.22s ease;
+    margin-top: 0.5rem;
+
+    &:hover {
+        color: var(--fg);
+    }
+}
+
+// ── Body prose ────────────────────────────────────────────────────────────────
+
+.body {
+    // Group heading + following paragraphs
+    & > * + * {
+        margin-top: 1.25rem;
+    }
+}
+
+.h2 {
+    font-size: 1.0625rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 3.5rem 0 1rem;
+    scroll-margin-top: 6rem;
+    color: var(--fg);
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+.h3 {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    margin: 2rem 0 0.5rem;
+    color: color-mix(in lch, var(--fg) 80%, transparent);
+}
+
+.p {
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: color-mix(in lch, var(--fg) 72%, transparent);
+    margin: 0;
+    text-wrap: pretty;
+
+    & + .p {
+        margin-top: 0.875rem;
+    }
+}
+
+.ul,
+.ol {
+    margin: 0.5rem 0 0.5rem 1.25rem;
+    padding: 0;
+}
+
+.ol {
+    list-style: decimal;
+}
+
+.ul {
+    list-style: disc;
+}
+
+.li {
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: color-mix(in lch, var(--fg) 72%, transparent);
+    margin-bottom: 0.25rem;
+
+    // Nested lists
+    ul,
+    ol {
+        margin-top: 0.25rem;
+    }
+}
+
+.a {
+    color: var(--fg);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in lch, var(--fg) 30%, transparent);
+    transition: text-decoration-color 0.2s ease;
+
+    &:hover {
+        text-decoration-color: var(--fg);
+    }
+}
+
+.hr {
+    border: none;
+    border-top: 1px solid color-mix(in lch, var(--fg) 8%, transparent);
+    margin: 3rem 0;
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+
+.footer {
+    margin-top: 6rem;
+    padding-top: 2rem;
+    border-top: 1px solid color-mix(in lch, var(--fg) 8%, transparent);
+
+    p {
+        font-size: 0.75rem;
+        color: color-mix(in lch, var(--fg) 25%, transparent);
+    }
+}
