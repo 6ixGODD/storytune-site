@@ -2,11 +2,14 @@
  * @file lib/services/rsvp.service.ts
  * RSVP submission service.
  *
- * Validates that the target card exists and is active, then dispatches an RSVP
- * notification email to the card owner via `lib/infra/mail.ts`. All functionality
- * is exposed on the `rsvpService` module singleton.
+ * Validates that the target card exists and is active, enforces the per-card
+ * rate limit and lifetime quota, then dispatches an RSVP notification email to
+ * the card owner via `lib/infra/mail.ts`. All functionality is exposed on the
+ * `rsvpService` module singleton.
  */
 import { sendRsvpNotification } from '@/lib/infra/mail';
+import { checkQuota, recordRequest } from '@/lib/infra/quota';
+import { checkRateLimit } from '@/lib/infra/rate-limit';
 import { createLogger } from '@/lib/logger';
 import { cardRepository } from '@/lib/repositories/card.repository';
 
@@ -29,8 +32,8 @@ export const rsvpService = {
     /**
      * Process a guest RSVP submission.
      *
-     * Looks up the card by slug, rejects if inactive, then sends a notification email
-     * to the card owner.
+     * Looks up the card by slug, enforces rate limit and quota, rejects if inactive,
+     * then sends a notification email to the card owner.
      *
      * @param input - Guest RSVP data including slug, attendance status, and contact info.
      * @returns `{ success: true }` on success, or `{ success: false, error, status }` on failure.
@@ -40,6 +43,17 @@ export const rsvpService = {
         if (!card) {
             return { success: false, error: 'Invitation not found', status: 404 };
         }
+
+        if (!checkRateLimit(input.slug, card.rateLimit.windowMs, card.rateLimit.maxRequests)) {
+            return { success: false, error: 'Too many requests', status: 429 };
+        }
+
+        if (!checkQuota(card)) {
+            return { success: false, error: 'Too many requests', status: 429 };
+        }
+
+        // Persist the counter increment asynchronously — do not block the response.
+        recordRequest(input.slug);
 
         await sendRsvpNotification({
             clientName: card.clientName,
