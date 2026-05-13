@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { ArrowUpRight } from '@/components/ui/arrow-up-right';
+
 import styles from './hero.module.scss';
 
 export default function Hero() {
@@ -17,7 +19,7 @@ export default function Hero() {
                         Browse Directions
                     </Link>
                     <a href='https://etsy.com' target='_blank' rel='noreferrer' className={styles.btnSecondary}>
-                        Order on Etsy ↗
+                        Order on Etsy <ArrowUpRight />
                     </a>
                 </div>
             </div>

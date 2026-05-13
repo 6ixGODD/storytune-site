@@ -54,9 +54,18 @@
     gap: 1rem;
     flex-wrap: wrap;
 
-    @media (max-width: 380px) {
+    // Equal width on mobile so both buttons look balanced
+    @media (max-width: 600px) {
+        > a,
+        > button {
+            flex: 1;
+            justify-content: center;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 360px) {
         flex-direction: column;
-        width: 100%;
 
         a,
         button {
