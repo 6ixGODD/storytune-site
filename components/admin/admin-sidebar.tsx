@@ -1,6 +1,6 @@
 'use client';
 
-import { Compass, LayoutGrid, LogOut } from 'lucide-react';
+import { Compass, FileText, LayoutGrid, LogOut } from 'lucide-react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -17,6 +17,7 @@ import {
 const NAV_ITEMS = [
     { label: 'Cards', href: '/admin/cards', icon: LayoutGrid },
     { label: 'Directions', href: '/admin/directions', icon: Compass },
+    { label: 'Content', href: '/admin/cms', icon: FileText },
 ];
 
 export function AdminSidebar() {
@@ -30,12 +31,12 @@ export function AdminSidebar() {
 
     return (
         <Sidebar>
-            <SidebarHeader className="border-b px-4 py-5">
-                <Image src="/logo.svg" alt="StoryTune" width={120} height={28} priority />
-                <span className="text-xs text-muted-foreground mt-0.5">Admin Console</span>
+            <SidebarHeader className="px-4 py-6">
+                <Image src="/logo.svg" alt="StoryTune" width={120} height={28} priority className="invert dark:invert-0" />
+                <span className="text-xs text-muted-foreground mt-1">Admin Console</span>
             </SidebarHeader>
 
-            <SidebarContent className="pt-3">
+            <SidebarContent>
                 <SidebarMenu>
                     {NAV_ITEMS.map(({ label, href, icon: Icon }) => (
                         <SidebarMenuItem key={href}>
@@ -50,7 +51,7 @@ export function AdminSidebar() {
                 </SidebarMenu>
             </SidebarContent>
 
-            <SidebarFooter className="border-t">
+            <SidebarFooter className="pb-4">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton onClick={handleLogout} className="text-muted-foreground hover:text-foreground">
