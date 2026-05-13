@@ -65,7 +65,9 @@ export default async function DirectionsPage({ searchParams }: PageProps) {
                                         : 'No directions uploaded yet.'}
                                 </p>
                             ) : (
-                                items.map((item) => <InspirationCard key={item.slug} item={item} />)
+                                items.map((item, idx) => (
+                                    <InspirationCard key={item.slug} item={item} positionIndex={idx} />
+                                ))
                             )}
                         </div>
 
