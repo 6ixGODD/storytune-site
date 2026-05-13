@@ -247,18 +247,26 @@ $open-border: color-mix(in lch, var(--fg) 50%, transparent);
     interpolate-size: allow-keywords;
 }
 
-.details::details-content {
-    height: 0;
-    overflow: hidden;
-    transition-property: content-visibility, height;
-    transition-behavior: allow-discrete;
-    transition-duration: $bounce-dur;
-    transition-timing-function: $bounce;
+// Ensure content is visible when open on ALL browsers (no animation, just show/hide)
+.details[open]::details-content {
+    height: auto;
+    overflow: visible;
 }
 
-.details[open]::details-content {
-    @supports (interpolate-size: allow-keywords) {
+// Animated height transition when interpolate-size is supported (Chrome 129+)
+@supports (interpolate-size: allow-keywords) {
+    .details::details-content {
+        height: 0;
+        overflow: hidden;
+        transition-property: content-visibility, height;
+        transition-behavior: allow-discrete;
+        transition-duration: $bounce-dur;
+        transition-timing-function: $bounce;
+    }
+
+    .details[open]::details-content {
         height: fit-content;
+        overflow: hidden;
     }
 }
 
