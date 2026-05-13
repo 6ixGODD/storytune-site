@@ -29,7 +29,7 @@ function g(value) {
 }
 
 function run(cmd, args, opts = {}) {
-    const result = spawnSync(cmd, args, { cwd: root, shell: true, stdio: 'pipe', ...opts });
+    const result = spawnSync(cmd, args, { cwd: root, shell: false, stdio: 'pipe', ...opts });
     if (result.status !== 0) {
         const stderr = result.stderr?.toString().trim();
         throw new Error(stderr || `Command failed: ${cmd} ${args.join(' ')}`);
@@ -101,8 +101,8 @@ if (doCommit) {
         run('git', ['add', 'VERSION', 'package.json']);
         run('git', [
             'commit',
-            '-m',
-            `chore(release): bump version to ${newVersion}\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>`,
+            '-m', `chore(release): bump version to ${newVersion}`,
+            '-m', 'Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>',
         ]);
         log.success('Committed.');
     } catch (err) {
