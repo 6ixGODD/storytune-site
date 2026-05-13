@@ -16,7 +16,7 @@ export default defineConfig({
         coverage: {
             provider: 'v8',
             include: ['lib/**/*.ts'],
-            exclude: ['lib/db/**', 'lib/services/**'],
+            exclude: ['lib/db/**'],
             reporter: ['text', 'html', 'json-summary'],
             reportsDirectory: './coverage',
             thresholds: {
