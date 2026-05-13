@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { ArrowUpRight } from '@/components/ui/arrow-up-right';
+
 import styles from './pricing.module.scss';
 
 type Tier = 'template' | 'light' | 'deep';
@@ -79,7 +81,7 @@ export default function Pricing() {
                             </div>
                             <p className={styles.desc}>{activeTier.desc}</p>
                             <a href='https://etsy.com' target='_blank' rel='noreferrer' className={styles.cta}>
-                                Order on Etsy ↗
+                                Order on Etsy <ArrowUpRight />
                             </a>
                         </div>
                         <div className={styles.cardTopRight}>
