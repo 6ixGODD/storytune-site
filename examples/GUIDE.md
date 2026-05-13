@@ -6,12 +6,13 @@ This guide documents the standards for building **Cards** and **Directions** dis
 
 ## What are Cards and Directions?
 
-| Type          | Purpose                                                                                                            | Distribution  |
-| ------------- | ------------------------------------------------------------------------------------------------------------------ | ------------- |
-| **Direction** | Design template / showcase — no live backend required. Submitted in `/examples/directions/`.                       | ZIP or folder |
-| **Card**      | Personalised invitation for a specific event — calls the live RSVP API. Stored at `{UPLOADED_CARDS_PATH}/{slug}/`. | ZIP only      |
+| Type          | Purpose                                                                 | Distribution |
+| ------------- | ----------------------------------------------------------------------- | ------------ |
+| **Direction** | Design template / showcase — no live backend required.                  | ZIP          |
+| **Card**      | Personalised invitation for a specific event — calls the live RSVP API. | ZIP          |
 
-Cards are served by the platform's route handler at `/card/{slug}/` (and sub-paths for assets). Directions live under `/inspiration/{slug}/`.
+Cards are served by the platform's route handler at `/card/{slug}/` (and sub-paths for assets). Directions live under
+`/inspiration/{slug}/`.
 
 ---
 
@@ -32,9 +33,12 @@ Every card or direction is a **self-contained static package**:
 
 ### Rules
 
-1. **No external network requests for assets.** No CDN links in `<script src>`, `<link href>`, or CSS `url()`. Bundle or download all dependencies into `assets/vendor/`.
-2. **Fonts must be self-hosted.** Use `@font-face` with relative paths inside `assets/fonts.css`. Google Fonts CDN is forbidden.
-3. **Images must be WebP** at quality ≤ 85 wherever possible. PNG is acceptable only when the source has transparency that cannot survive WebP conversion with acceptable visual quality.
+1. **No external network requests for assets.** No CDN links in `<script src>`, `<link href>`, or CSS `url()`. Bundle or
+   download all dependencies into `assets/vendor/`.
+2. **Fonts must be self-hosted.** Use `@font-face` with relative paths inside `assets/fonts.css`. Google Fonts CDN is
+   forbidden.
+3. **Images must be WebP** at quality ≤ 85 wherever possible. PNG is acceptable only when the source has transparency
+   that cannot survive WebP conversion with acceptable visual quality.
 4. `index.html` must load without a build step — plain HTML + vanilla JS (`type="module"` ES modules are fine).
 5. Keep the total unzipped size under **10 MB**. Aim for ≤ 5 MB.
 6. The card **must work offline** (after the initial load) — no fetch calls for content, fonts, or scripts at runtime.
@@ -43,7 +47,8 @@ Every card or direction is a **self-contained static package**:
 
 ## Event Dates
 
-**Never hardcode event dates.** All dates are dynamically generated on each page load so that the invitation is always set in the future.
+**Never hardcode event dates.** All dates are dynamically generated on each page load so that the invitation is always
+set in the future.
 
 ### Pattern
 
@@ -65,7 +70,8 @@ const eventDate = (() => {
 | Business summit  | 45       | 150      | Any weekday              |
 | Party / casual   | 30       | 120      | Any day                  |
 
-Generate the date **before** any DOM manipulation or animation initialization so that text patches reach the DOM before animations read `textContent`.
+Generate the date **before** any DOM manipulation or animation initialization so that text patches reach the DOM before
+animations read `textContent`.
 
 ---
 
@@ -84,12 +90,18 @@ For direction previews (no backend), simulate a successful response with `setTim
 
 ```json
 {
-  "slug": "string", // card slug (from URL: /card/{slug}/...)
-  "name": "string", // guest's full name
-  "email": "string", // guest's email address
-  "attending": "yes|no", // acceptance or decline
-  "guests": 1, // integer ≥ 1 (for 'yes') or 0 (for 'no')
-  "message": "string" // optional note, may be empty string
+  "slug": "string",
+  // card slug (from URL: /card/{slug}/...)
+  "name": "string",
+  // guest's full name
+  "email": "string",
+  // guest's email address
+  "attending": "yes|no",
+  // acceptance or decline
+  "guests": 1,
+  // integer ≥ 1 (for 'yes') or 0 (for 'no')
+  "message": "string"
+  // optional note, may be empty string
 }
 ```
 
@@ -97,10 +109,23 @@ For direction previews (no backend), simulate a successful response with `setTim
 
 ```json
 // Success
-{ "success": true, "data": { ... } }
+{
+  "success": true,
+  "data": {
+    ...
+  }
+}
 
 // Error
-{ "success": false, "error": "Validation failed", "details": { "field": ["message"] } }
+{
+  "success": false,
+  "error": "Validation failed",
+  "details": {
+    "field": [
+      "message"
+    ]
+  }
+}
 ```
 
 ### Slug derivation
@@ -128,14 +153,18 @@ Target: **iOS Safari 16+**, Chrome Android, desktop Chrome/Firefox/Safari.
 ### CSS
 
 - Avoid `transform-style: preserve-3d` on global `*` rules — it breaks flex layout and canvas positioning on iOS Safari.
-- Wrap hover-triggered CSS animations in `@media (hover: hover) and (pointer: fine)` to prevent flash-then-snap on iOS tap events.
+- Wrap hover-triggered CSS animations in `@media (hover: hover) and (pointer: fine)` to prevent flash-then-snap on iOS
+  tap events.
 - Use `font-size: clamp(...)` on numeric counters that can display large values (e.g. seconds-to-event).
-- Prefer `@supports` guards for CSS scroll-driven animations (`animation-timeline: view()`) — they are not yet universally supported. Provide a GSAP or IntersectionObserver fallback.
+- Prefer `@supports` guards for CSS scroll-driven animations (`animation-timeline: view()`) — they are not yet
+  universally supported. Provide a GSAP or IntersectionObserver fallback.
 
 ### JavaScript
 
-- Eagerly load all images (`loading="eager" fetchpriority="high"`) when the scroll animation depends on all images being in memory simultaneously.
-- When using Splitting.js (or other libs that restructure the DOM), wait for both `document.fonts.ready` **and** the Splitting promise before sizing canvases:
+- Eagerly load all images (`loading="eager" fetchpriority="high"`) when the scroll animation depends on all images being
+  in memory simultaneously.
+- When using Splitting.js (or other libs that restructure the DOM), wait for both `document.fonts.ready` **and** the
+  Splitting promise before sizing canvases:
 
   ```js
   const splittingReady = import('./vendor/splitting.js').then((mod) =>
@@ -147,7 +176,8 @@ Target: **iOS Safari 16+**, Chrome Android, desktop Chrome/Firefox/Safari.
   });
   ```
 
-- Setting `canvas.width` resets **all** canvas state (including `globalCompositeOperation`). Do not rely on composite mode surviving a resize.
+- Setting `canvas.width` resets **all** canvas state (including `globalCompositeOperation`). Do not rely on composite
+  mode surviving a resize.
 
 ---
 
