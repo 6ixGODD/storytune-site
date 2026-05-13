@@ -317,7 +317,6 @@ g(await text({ message: 'Press Enter to start building…', defaultValue: '' }))
 
 // ── 8. Build Docker image ─────────────────────────────────────────────────────
 
-console.log(); // breathing room before build output
 log.step('Building Docker image (no-cache) — this may take a few minutes…');
 console.log();
 
@@ -377,7 +376,7 @@ const copyArtifact = (relSrc, relDest) => {
 
 copyArtifact('docker-compose.yml');
 copyArtifact('docker-compose.prod.yml');
-copyArtifact(ENV_PROD, '.env'); // bake .env.prod as .env in the archive
+copyArtifact('.env.prod', '.env'); // bake .env.prod as .env in the archive
 copyArtifact('nginx');
 copyArtifact('emails/templates', 'emails/templates');
 
