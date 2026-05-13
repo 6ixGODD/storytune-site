@@ -1,9 +1,9 @@
-import Footer from '@/components/layout/footer';
-import Navbar from '@/components/layout/navbar';
 import InspirationCard from '@/components/inspiration/inspiration-card';
 import InspirationPagination from '@/components/inspiration/inspiration-pagination';
 import InspirationSearch from '@/components/inspiration/inspiration-search';
 import InspirationSidebar from '@/components/inspiration/inspiration-sidebar';
+import Footer from '@/components/layout/footer';
+import Navbar from '@/components/layout/navbar';
 import { inspirationService } from '@/lib/services/inspiration.service';
 
 import styles from './inspiration.module.scss';

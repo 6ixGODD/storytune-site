@@ -24,7 +24,6 @@
     *::before,
     *::after {
         box-sizing: border-box;
-        transform-style: preserve-3d;
     }
 
     html {
@@ -128,15 +127,19 @@
         }
     }
 
-    /* Hover: full animation declaration starts fresh each hover */
-    .s-hero:hover .cooking .char {
-        animation: ck-flip var(--duration) var(--delay) infinite ease;
-    }
-    .s-hero:hover .cooking .char::before {
-        animation: ck-fade var(--duration) var(--delay) infinite ease;
-    }
-    .s-hero:hover .cooking .char::after {
-        animation: ck-fade var(--duration) var(--delay) infinite ease;
+    /* Hover: full animation declaration starts fresh each hover.
+       Guard with hover+fine-pointer so touch devices never trigger the
+       flash-then-snap animation when iOS fires synthetic :hover on tap. */
+    @media (hover: hover) and (pointer: fine) {
+        .s-hero:hover .cooking .char {
+            animation: ck-flip var(--duration) var(--delay) infinite ease;
+        }
+        .s-hero:hover .cooking .char::before {
+            animation: ck-fade var(--duration) var(--delay) infinite ease;
+        }
+        .s-hero:hover .cooking .char::after {
+            animation: ck-fade var(--duration) var(--delay) infinite ease;
+        }
     }
 
     @keyframes ck-flip {
@@ -224,6 +227,8 @@
     .text-block {
         display: inline-block;
         position: relative;
+        /* Isolate from any 3D rendering context created by cooking chars */
+        transform-style: flat;
     }
 
     .date-str {

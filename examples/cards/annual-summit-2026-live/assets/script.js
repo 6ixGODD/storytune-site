@@ -6,22 +6,53 @@ const slug = (() => {
     return i !== -1 ? parts[i + 1] : 'annual-summit-2026';
 })();
 
+// ── Dynamic Event Date ─────────────────────────────────────
+const MONTHS_UPPER = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE',
+    'JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+const MONTHS_TITLE = ['January','February','March','April','May','June',
+    'July','August','September','October','November','December'];
+
+const eventDate = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 45 + Math.floor(Math.random() * 105));
+    d.setHours(19, 0, 0, 0);
+    return d;
+})();
+
+const evDay   = eventDate.getDate();
+const evMonth = eventDate.getMonth();
+const evYear  = eventDate.getFullYear();
+const evCanvasStr = `${evDay} ${MONTHS_UPPER[evMonth]}`;
+const evDateLong  = `${MONTHS_TITLE[evMonth]} ${evDay}, ${evYear}`;
+const evDeadline  = (() => {
+    const d = new Date(eventDate);
+    d.setDate(d.getDate() - 14);
+    return `${MONTHS_TITLE[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+})();
+
+const dateStrEl = document.querySelector('.date-str');
+if (dateStrEl) dateStrEl.textContent = evCanvasStr;
+
+const dateYearEl = document.querySelector('.date-year');
+if (dateYearEl) dateYearEl.textContent = String(evYear);
+
+document.querySelectorAll('.detail').forEach((detail) => {
+    const label = detail.querySelector('.label');
+    if (label?.textContent.trim() === 'WHEN') {
+        const strong = detail.querySelector('strong');
+        if (strong) strong.textContent = evDateLong;
+    }
+});
+
+const rsvpDeadlineEl = document.querySelector('.rsvp-note strong');
+if (rsvpDeadlineEl) rsvpDeadlineEl.textContent = `${evDeadline}.`;
+
 // ── Cooking Letters (Splitting.js) ────────────────────────
-// Dynamic import so the canvas still works if the CDN is unavailable.
-// Splitting runs immediately (not inside fonts.ready) to prevent a late
-// DOM restructure that would cause a layout reflow and make the eyebrow jump.
-import('./vendor/splitting.js')
-    .then((mod) => {
-        mod.default({ target: '[data-splitting]', by: 'chars' });
-    })
-    .catch(() => {
-        /* cooking animation unavailable — rest of page unaffected */
-    });
+const splittingReady = import('./vendor/splitting.js')
+    .then((mod) => { mod.default({ target: '[data-splitting]', by: 'chars' }); })
+    .catch(() => { /* cooking animation unavailable */ });
 
 // ── Canvas Concentric Circles (colorful) ──────────────────
-// Mirrors the codepen approach: draw rings onto an off-screen ringCanvas,
-// fill it with a dark background first so the text area is always fully
-// visible, then composite onto the main canvas with source-in (text mask).
 const initCanvas = () => {
     const wrap = document.querySelector('.text-block');
     if (!wrap) return;
@@ -30,100 +61,83 @@ const initCanvas = () => {
     const ctx = canvas.getContext('2d');
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    // Off-screen canvases (same pattern as codepen)
     const textCanvas = document.createElement('canvas');
     const tCtx = textCanvas.getContext('2d');
     const ringCanvas = document.createElement('canvas');
     const rCtx = ringCanvas.getContext('2d');
 
-    const resize = () => {
-        const rect = wrap.getBoundingClientRect();
-        const W = rect.width,
-            H = rect.height;
-        canvas.width = textCanvas.width = ringCanvas.width = W * dpr;
-        canvas.height = textCanvas.height = ringCanvas.height = H * dpr;
-        return { W, H };
-    };
+    let rings = null;
 
-    document.fonts.ready.then(() => {
-        const { W, H } = resize();
-        const cW = W * dpr,
-            cH = H * dpr;
-        const cx = cW / 2,
-            cy = cH / 2;
-
-        // Draw text mask onto textCanvas once
-        const str = wrap.querySelector('.date-str')?.textContent ?? '15 JUNE';
-        const fontSize = H * 0.92 * dpr;
+    const stampTextMask = (cW, cH) => {
+        const fontSize = (cH / dpr) * 0.92 * dpr;
+        tCtx.clearRect(0, 0, cW, cH);
         tCtx.fillStyle = 'white';
         tCtx.textAlign = 'center';
         tCtx.textBaseline = 'middle';
         tCtx.font = `120 ${fontSize}px 'Geist Sans', sans-serif`;
         if ('letterSpacing' in tCtx) tCtx.letterSpacing = `${(fontSize * 0.04).toFixed(1)}px`;
+        const str = wrap.querySelector('.date-str')?.textContent ?? evCanvasStr;
         tCtx.fillText(str, cW / 2, cH / 2);
-
-        // Stamp text mask onto main canvas, then lock to source-in composite
         ctx.drawImage(textCanvas, 0, 0);
         ctx.globalCompositeOperation = 'source-in';
+    };
 
-        // Rings state — max radius must reach the farthest text corner
-        const maxR  = Math.hypot(cW / 2, cH / 2);
+    const resize = () => {
+        const rect = wrap.getBoundingClientRect();
+        const W = rect.width, H = rect.height;
+        canvas.width = textCanvas.width = ringCanvas.width = W * dpr;
+        canvas.height = textCanvas.height = ringCanvas.height = H * dpr;
+        return { cW: W * dpr, cH: H * dpr };
+    };
+
+    const buildRings = (cW, cH) => {
+        const maxR = Math.hypot(cW / 2, cH / 2);
         const baseR = maxR * 0.04;
-        const rings = Array.from({ length: 48 }, (_, i) => ({
+        return Array.from({ length: 48 }, (_, i) => ({
             id: i,
             r: baseR + i * ((maxR - baseR) / 47),
             arc: Math.random() * Math.PI * 2,
             speed: 0.003 + i * 0.00015,
             dir: i % 2 === 0 ? 1 : -1,
         }));
+    };
 
-        const draw = () => {
-            // Build ring frame on off-screen canvas
-            rCtx.clearRect(0, 0, cW, cH);
-            // Dark background fill — ensures text area is always visible
-            rCtx.fillStyle = '#0d0d0d';
-            rCtx.fillRect(0, 0, cW, cH);
+    const { cW, cH } = resize();
+    stampTextMask(cW, cH);
+    rings = buildRings(cW, cH);
 
-            rings.forEach((ring) => {
-                ring.arc += ring.speed * ring.dir;
-                const hue = (ring.id * 2.4 + ring.arc * 30) % 360;
-                rCtx.beginPath();
-                rCtx.arc(cx, cy, ring.r, ring.arc, ring.arc + Math.PI * 1.85);
-                rCtx.strokeStyle = `hsl(${hue}, 50%, 58%)`;
-                rCtx.lineWidth = 1.6 * dpr;
-                rCtx.stroke();
-            });
+    const draw = () => {
+        rCtx.clearRect(0, 0, canvas.width, canvas.height);
+        rCtx.fillStyle = '#0d0d0d';
+        rCtx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Composite onto main canvas — source-in clips to text shape
-            ctx.drawImage(ringCanvas, 0, 0);
-            requestAnimationFrame(draw);
-        };
+        const cx = canvas.width / 2, cy = canvas.height / 2;
+        rings.forEach((ring) => {
+            ring.arc += ring.speed * ring.dir;
+            const hue = (ring.id * 2.4 + ring.arc * 30) % 360;
+            rCtx.beginPath();
+            rCtx.arc(cx, cy, ring.r, ring.arc, ring.arc + Math.PI * 1.85);
+            rCtx.strokeStyle = `hsl(${hue}, 50%, 58%)`;
+            rCtx.lineWidth = 1.6 * dpr;
+            rCtx.stroke();
+        });
 
+        ctx.drawImage(ringCanvas, 0, 0);
         requestAnimationFrame(draw);
-    });
+    };
+
+    requestAnimationFrame(draw);
 
     window.addEventListener('resize', () => {
-        resize();
-        // Re-stamp text mask on resize
-        document.fonts.ready.then(() => {
-            const rect = wrap.getBoundingClientRect();
-            const cW = rect.width * dpr,
-                cH = rect.height * dpr;
-            const fontSize = rect.height * 0.92 * dpr;
-            tCtx.clearRect(0, 0, cW, cH);
-            tCtx.font = `120 ${fontSize}px 'Geist Sans', sans-serif`;
-            if ('letterSpacing' in tCtx) tCtx.letterSpacing = `${(fontSize * 0.04).toFixed(1)}px`;
-            const str = wrap.querySelector('.date-str')?.textContent ?? '15 JUNE';
-            tCtx.fillText(str, cW / 2, cH / 2);
-            ctx.globalCompositeOperation = 'color';
-            ctx.clearRect(0, 0, cW, cH);
-            ctx.drawImage(textCanvas, 0, 0);
-            ctx.globalCompositeOperation = 'source-in';
-        });
+        const { cW: nW, cH: nH } = resize();
+        stampTextMask(nW, nH);
+        rings = buildRings(nW, nH);
     });
 };
 
-initCanvas();
+Promise.all([document.fonts.ready, splittingReady]).then(() => {
+    requestAnimationFrame(() => initCanvas());
+});
 
 // ── Glow Section — IntersectionObserver ───────────────────
 const glowSection = document.querySelector('.s-glow');
@@ -173,7 +187,7 @@ btnOk?.addEventListener('click', async () => {
     btnOk.setAttribute('data-adding', 'true');
 
     try {
-        const res = await fetch('http://localhost:3000/api/rsvps', {
+        const res = await fetch('/api/rsvps', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ slug, name, email, attending: 'yes', guests, message }),
@@ -183,7 +197,7 @@ btnOk?.addEventListener('click', async () => {
         if (json.success) {
             btnOk.removeAttribute('data-adding');
             btnOk.setAttribute('data-complete', 'true');
-            showNote("You're confirmed! See you on June 15 ✦", true);
+            showNote(`You're confirmed! See you on ${evDateLong} ✦`, true);
             disableForm();
         } else {
             throw new Error(json.error ?? 'Server error');
@@ -202,7 +216,7 @@ btnNo?.addEventListener('click', async () => {
     const email = document.querySelector('#rsvp-email')?.value.trim() ?? '';
 
     try {
-        await fetch('http://localhost:3000/api/rsvps', {
+        await fetch('/api/rsvps', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ slug, name, email, attending: 'no', guests: 0, message: '' }),
@@ -214,3 +228,4 @@ btnNo?.addEventListener('click', async () => {
     showNote("We'll miss you. Thank you for letting us know.", true);
     disableForm();
 });
+

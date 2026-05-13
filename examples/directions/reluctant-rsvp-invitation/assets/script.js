@@ -4,7 +4,39 @@ import { animate, createTimeline, scrambleText, $ } from './vendor/animejs.js';
 const parts = window.location.pathname.split('/').filter(Boolean);
 const slug = parts[0] === 'card' && parts[1] ? parts[1] : 'preview';
 
-// ── Scramble ──────────────────────────────────────────────────────────────────
+// ── Dynamic Event Date ─────────────────────────────────────────────────────
+// Generate a future date 30-180 days from now with a random evening time.
+// Must be patched into the DOM BEFORE intro.init() so the scramble animation
+// picks up the correct text (it scrambles from empty → textContent).
+const MONTHS = ['January','February','March','April','May','June',
+    'July','August','September','October','November','December'];
+const DAYS_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const HOURS_12 = [4, 5, 6, 7]; // 4-7 PM
+const MINUTES = [0, 15, 30];
+
+const partyDate = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 30 + Math.floor(Math.random() * 151));
+    const hr = 16 + HOURS_12[Math.floor(Math.random() * HOURS_12.length)]; // 20-23 h
+    const min = MINUTES[Math.floor(Math.random() * MINUTES.length)];
+    d.setHours(hr, min, 0, 0);
+    return d;
+})();
+
+const evDayName  = DAYS_FULL[partyDate.getDay()];
+const evDay      = partyDate.getDate();
+const evMonth    = MONTHS[partyDate.getMonth()];
+const evYear     = partyDate.getFullYear();
+const evHour12   = partyDate.getHours() > 12 ? partyDate.getHours() - 12 : partyDate.getHours();
+const evMinStr   = partyDate.getMinutes() === 0 ? '00' : String(partyDate.getMinutes());
+const evTimeStr  = `${evHour12}:${evMinStr} PM`;
+const evDateStr  = `${evDayName}, ${evMonth} ${evDay}, ${evYear} · ${evTimeStr}`;
+
+// Patch the "WHEN" span before the scramble intro fires
+const whenEl = document.querySelector('.details-list span.scramble');
+if (whenEl) whenEl.textContent = evDateStr;
+
+
 // Exactly mirrors the anime-js-scramble-text-playground pattern:
 //   · All .scramble elements enter via the intro timeline (from empty)
 //   · pointerenter + pointerdown replay the scramble on hover/tap
@@ -61,23 +93,19 @@ setInterval(() => {
 }, 5500);
 
 // ── Counters ──────────────────────────────────────────────────────────────────
+// STILL DECLINING: live seconds-until-event countdown, updated every second.
 const decliningEl = document.querySelector('[data-counter="declining"]');
-let declining = 2847;
-setInterval(() => {
-    if (declining > 0) {
-        declining -= 1;
-        decliningEl.textContent = declining.toLocaleString();
-    }
-}, 2000);
-
-const partyDate = new Date('2026-06-28T19:00:00');
 const dreadEl = document.getElementById('dread-counter');
-const updateDread = () => {
-    const days = Math.max(0, Math.ceil((partyDate - Date.now()) / 86400000));
-    dreadEl.textContent = days.toLocaleString();
+
+const updateCounters = () => {
+    const now = Date.now();
+    const secsLeft = Math.max(0, Math.floor((partyDate - now) / 1000));
+    const daysLeft = Math.max(0, Math.ceil((partyDate - now) / 86400000));
+    if (decliningEl) decliningEl.textContent = secsLeft.toLocaleString();
+    if (dreadEl) dreadEl.textContent = daysLeft.toLocaleString();
 };
-updateDread();
-setInterval(updateDread, 60000);
+updateCounters();
+setInterval(updateCounters, 1000);
 
 // ── Nav links ─────────────────────────────────────────────────────────────────
 document.querySelectorAll('.nav-links a').forEach((link) => {

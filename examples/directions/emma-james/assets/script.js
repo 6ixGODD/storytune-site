@@ -2,7 +2,52 @@
 const pathParts = window.location.pathname.split('/').filter(Boolean);
 const slug = pathParts[1] || 'wedding-01';
 
-// ── RSVP form ──────────────────────────────────────────────────────────────
+// ── Dynamic Event Date ─────────────────────────────────────────────────────
+// Generate a future Saturday 60-180 days from today for a wedding feel.
+const MONTHS = ['January','February','March','April','May','June',
+    'July','August','September','October','November','December'];
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+const eventDate = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 60 + Math.floor(Math.random() * 121));
+    // Advance to next Saturday
+    const dow = d.getDay();
+    if (dow !== 6) d.setDate(d.getDate() + (6 - dow));
+    d.setHours(16, 0, 0, 0); // Ceremony at 4:00 PM
+    return d;
+})();
+
+const evDay   = eventDate.getDate();
+const evMonth = MONTHS[eventDate.getMonth()];
+const evYear  = eventDate.getFullYear();
+const evDateShort = `${evDay < 10 ? '0' + evDay : evDay} ${evMonth.slice(0, 3).toUpperCase()}`;
+const evDateLong  = `${evDay < 10 ? '0' + evDay : evDay} ${evMonth} ${evYear}`;
+const evDateFull  = `${DAYS[eventDate.getDay()]} · ${evMonth} ${evDay}, ${evYear}`;
+
+// Deadline = 30 days before event
+const evDeadline = (() => {
+    const d = new Date(eventDate);
+    d.setDate(d.getDate() - 30);
+    return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+})();
+
+// Patch static date text nodes
+const heroDateEl = document.querySelector('.hero-date');
+if (heroDateEl) heroDateEl.textContent = `Saturday · ${evMonth} ${evDay}, ${evYear}`;
+
+const detailWhenVal = document.querySelector('.detail-item .detail-value');
+if (detailWhenVal) detailWhenVal.textContent = `${evMonth} ${evDay}, ${evYear}`;
+
+const rsvpDeadlineEl = document.querySelector('.rsvp-deadline');
+if (rsvpDeadlineEl) rsvpDeadlineEl.textContent = `Please respond by ${evDeadline}`;
+
+const titleEl = document.querySelector('title');
+if (titleEl) titleEl.textContent = `Emma & James — ${evMonth} ${evDay}, ${evYear}`;
+
+const footerEl = document.querySelector('.s-footer p');
+if (footerEl) footerEl.textContent = `Emma & James · ${evMonth} ${evDay}, ${evYear} · Cliffside Estate, Malibu`;
+
 
 const form = /** @type {HTMLFormElement} */ (document.getElementById('rsvp-form'));
 const statusEl = document.getElementById('form-status');

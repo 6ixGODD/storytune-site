@@ -425,7 +425,7 @@ h1 em {
 .meta strong {
     font-family: 'Fraunces', serif;
     font-weight: 300;
-    font-size: 1.5rem;
+    font-size: clamp(0.85rem, 3.5vw, 1.5rem);
     letter-spacing: -0.01em;
     color: var(--fg);
     font-variant-numeric: tabular-nums;
