@@ -1,7 +1,9 @@
 import { NextRequest } from 'next/server';
 
-import { getDb } from '@/lib/db/client';
+import { checkQuota, recordRequest } from '@/lib/infra/quota';
+import { checkRateLimit } from '@/lib/infra/rate-limit';
 import { readCardFile } from '@/lib/infra/storage';
+import { cardRepository } from '@/lib/repositories/card.repository';
 
 interface RouteParams {
     params: Promise<{ slug: string; path?: string[] }>;
@@ -10,13 +12,28 @@ interface RouteParams {
 export async function GET(_req: NextRequest, { params }: RouteParams) {
     const { slug, path: pathSegments } = await params;
     const filePath = pathSegments?.join('/');
+    const isEntryPoint = !filePath; // only index.html (empty path) counts toward limits
 
     try {
-        const db = await getDb();
-        const card = await db.collection('cards').findOne({ slug });
+        const card = await cardRepository.findActiveBySlug(slug);
 
-        if (!card || card.status !== 'active') {
+        if (!card) {
             return new Response('Not Found', { status: 404 });
+        }
+
+        // Rate-limit and quota checks apply only to the card entry-point (index.html),
+        // not to every individual asset, to keep overhead proportional to page loads.
+        if (isEntryPoint) {
+            if (!checkRateLimit(slug, card.rateLimit.windowMs, card.rateLimit.maxRequests)) {
+                return new Response('Too Many Requests', { status: 429 });
+            }
+
+            if (!checkQuota(card)) {
+                return new Response('Too Many Requests', { status: 429 });
+            }
+
+            // Fire-and-forget: persist the incremented counter without blocking the response.
+            recordRequest(slug);
         }
 
         const { buffer, mimeType } = await readCardFile('uploaded', slug, filePath);
