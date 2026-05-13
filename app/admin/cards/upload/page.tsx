@@ -105,33 +105,33 @@ export default function UploadPage() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1.5">
                             <Label htmlFor="clientName">Client Name *</Label>
-                            <Input id="clientName" name="clientName" required />
+                            <Input id="clientName" name="clientName" required aria-label="Client Name" />
                         </div>
                         <div className="flex flex-col gap-1.5">
                             <Label htmlFor="clientEmail">Client Email *</Label>
-                            <Input id="clientEmail" name="clientEmail" type="email" required />
+                            <Input id="clientEmail" name="clientEmail" type="email" required aria-label="Client Email" />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1.5">
                             <Label htmlFor="slug">Slug <span className="text-muted-foreground text-xs">(leave blank to auto-generate)</span></Label>
-                            <Input id="slug" name="slug" placeholder="alice-wedding-2026" />
+                            <Input id="slug" name="slug" placeholder="alice-wedding-2026" aria-label="Slug" />
                         </div>
                         <div className="flex flex-col gap-1.5">
                             <Label htmlFor="eventType">Event Type</Label>
-                            <Input id="eventType" name="eventType" placeholder="Wedding, Birthday…" />
+                            <Input id="eventType" name="eventType" placeholder="Wedding, Birthday…" aria-label="Event Type" />
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-1.5">
                         <Label htmlFor="title">Card Title</Label>
-                        <Input id="title" name="title" placeholder="Alice & Bob Wedding Invitation" />
+                        <Input id="title" name="title" placeholder="Alice & Bob Wedding Invitation" aria-label="Card Title" />
                     </div>
 
                     <div className="flex flex-col gap-1.5">
                         <Label htmlFor="notes">Notes</Label>
-                        <Textarea id="notes" name="notes" rows={3} />
+                        <Textarea id="notes" name="notes" rows={3} aria-label="Notes" placeholder="Any additional info or instructions for the card owner." />
                     </div>
 
                     <div className="flex flex-col gap-1.5">
@@ -142,6 +142,7 @@ export default function UploadPage() {
                             rows={4}
                             className="font-mono text-xs"
                             placeholder={'[{"name": "John Doe", "email": "john@example.com"}]'}
+                            aria-label="Invitees JSON"
                         />
                     </div>
 
