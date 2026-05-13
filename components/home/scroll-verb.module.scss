@@ -79,6 +79,16 @@
         z-index: 2;
     }
 
+    // Add vertical rhythm between verbs so each one takes more scroll distance
+    .list {
+        gap: 2rem;
+    }
+
+    // Extra bottom space so the last verb has room to settle at the hot zone
+    .outer {
+        padding-bottom: 60svh;
+    }
+
     .item {
         background: none;
         -webkit-background-clip: unset;
