@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { CarouselItem, GalleryCarousel } from '@/components/home/gallery-carousel';
+import { ArrowUpRight } from '@/components/ui/arrow-up-right';
 import { inspirationService } from '@/lib/services/inspiration.service';
 
 import styles from './gallery-preview.module.scss';
@@ -28,7 +29,7 @@ export default async function GalleryPreview() {
 
                 <div className={styles.footer}>
                     <Link href='/inspiration' className={styles.galleryLink}>
-                        View all directions ↗
+                    View all directions <ArrowUpRight />
                     </Link>
                 </div>
             </div>

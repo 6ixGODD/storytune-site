@@ -232,6 +232,8 @@
 }
 
 .galleryLink {
+    display: inline-flex;
+    align-items: center;
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--fg);
@@ -245,7 +247,6 @@
         border-color: var(--fg);
     }
 }
-
 
 .track {
     list-style: none;
