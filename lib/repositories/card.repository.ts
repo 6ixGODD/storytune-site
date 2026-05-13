@@ -11,9 +11,9 @@
  */
 import { ObjectId } from 'mongodb';
 
-import { CARD_STATUS, CardStatus, DB_COLLECTIONS } from '@/lib/constants';
+import { CARD_STATUS, CardStatus, DB_COLLECTIONS, DEFAULT_CARD_QUOTA, DEFAULT_CARD_RATE_LIMIT } from '@/lib/constants';
 import { getDb } from '@/lib/db/client';
-import { Card, CardSummary, Invitee } from '@/lib/entities/card';
+import { Card, CardQuota, CardRateLimit, CardSummary, Invitee } from '@/lib/entities/card';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('card.repository');
@@ -30,6 +30,9 @@ interface CardDocument {
     inviteeCount: number;
     invitees: Invitee[];
     status: string;
+    rateLimit: CardRateLimit;
+    quota: CardQuota;
+    requestCount: number;
     createdAt: Date;
     updatedAt: Date;
     deletedAt?: Date;
@@ -48,6 +51,9 @@ function toEntity(doc: CardDocument): Card {
         inviteeCount: doc.inviteeCount,
         invitees: doc.invitees,
         status: doc.status as CardStatus,
+        rateLimit: doc.rateLimit ?? { ...DEFAULT_CARD_RATE_LIMIT },
+        quota: doc.quota ?? { ...DEFAULT_CARD_QUOTA },
+        requestCount: doc.requestCount ?? 0,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
         deletedAt: doc.deletedAt,
@@ -98,6 +104,9 @@ const SUMMARY_PROJECTION = {
     createdAt: 1,
     title: 1,
     eventType: 1,
+    rateLimit: 1,
+    quota: 1,
+    requestCount: 1,
 } as const;
 
 export const cardRepository = {
@@ -146,6 +155,9 @@ export const cardRepository = {
             cardUrl: `/card/${input.slug}`,
             inviteeCount: input.invitees.length,
             status: CARD_STATUS.ACTIVE,
+            rateLimit: { ...DEFAULT_CARD_RATE_LIMIT },
+            quota: { ...DEFAULT_CARD_QUOTA },
+            requestCount: 0,
             createdAt: now,
             updatedAt: now,
         };
@@ -191,5 +203,18 @@ export const cardRepository = {
         );
         if (result.matchedCount > 0) logger.info({ slug }, 'card soft-deleted');
         return result.matchedCount > 0;
+    },
+
+    /**
+     * Atomically increment the lifetime request counter for a card.
+     *
+     * Fires-and-forgets: callers should not `await` this when it is on the hot path.
+     * The counter persists across process restarts, providing accurate quota tracking.
+     *
+     * @param slug - Unique card slug.
+     */
+    async incrementRequestCount(slug: string): Promise<void> {
+        const c = await col();
+        await c.updateOne({ slug }, { $inc: { requestCount: 1 } });
     },
 };
