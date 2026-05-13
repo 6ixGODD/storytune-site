@@ -55,4 +55,9 @@ next-env.d.ts
 
 .codepen/
 .idea/
+
+# Samples
 samples/
+
+# Deploy artifacts
+storytune-deploy-*.tar.gz
