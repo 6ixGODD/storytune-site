@@ -25,3 +25,19 @@
 .copy {
     font-size: 0.75rem;
 }
+
+.legal {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.legalLink {
+    font-size: 0.75rem;
+    color: color-mix(in lch, var(--fg) 35%, transparent);
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: var(--fg);
+    }
+}
