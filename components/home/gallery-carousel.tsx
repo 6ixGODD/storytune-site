@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 
 import styles from './gallery-preview.module.scss';
 
@@ -45,6 +45,12 @@ const ChevronLeft = () => (
 export function GalleryCarousel({ items }: { items: CarouselItem[] }) {
     const trackRef = useRef<HTMLUListElement>(null);
     const [active, setActive] = useState(0);
+    // null = not yet detected, true/false = detected
+    const supportsViewTimeline = useSyncExternalStore(
+        () => () => {},
+        () => CSS.supports('view-timeline-name', '--test'),
+        () => null,
+    );
 
     useEffect(() => {
         const track = trackRef.current;
@@ -83,6 +89,13 @@ export function GalleryCarousel({ items }: { items: CarouselItem[] }) {
                             fill
                             sizes='(max-width: 768px) 100vw, 1200px'
                             className={styles.coverImg}
+                            // When view-timeline is not supported (Safari), control opacity via JS
+                            // so images don't all stack visibly on top of each other
+                            style={
+                                supportsViewTimeline === false
+                                    ? { opacity: i === active ? 1 : 0, transition: 'opacity 0.4s ease' }
+                                    : undefined
+                            }
                             unoptimized
                         />
                     </li>
