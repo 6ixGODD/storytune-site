@@ -1,37 +1,17 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { CSSProperties, useEffect, useRef } from 'react';
+
+import { defaultClipRevealContent } from '@/lib/defaults/site-content';
+import { ClipRevealContent } from '@/lib/entities/site-content';
 
 import styles from './clip-reveal.module.scss';
 
-const ROWS = [
-    {
-        primary: 'Invitations that actually move.',
-        hover: 'Animated. Interactive. Unforgettable.',
-        hoverBg: 'hsl(220 15% 94%)',
-        hoverColor: 'hsl(220 8% 10%)',
-    },
-    {
-        primary: 'We design it. You send it.',
-        hover: 'No creative skills needed.',
-        hoverBg: 'hsl(160 12% 92%)',
-        hoverColor: 'hsl(160 15% 8%)',
-    },
-    {
-        primary: 'One link. Every guest.',
-        hover: 'Works on any phone, anywhere.',
-        hoverBg: 'hsl(30 12% 93%)',
-        hoverColor: 'hsl(30 15% 8%)',
-    },
-    {
-        primary: 'Motion. Music. Memory.',
-        hover: 'Your story, permanently told.',
-        hoverBg: 'hsl(280 12% 93%)',
-        hoverColor: 'hsl(280 10% 10%)',
-    },
-] as const;
+interface ClipRevealProps {
+    content?: ClipRevealContent;
+}
 
-export default function ClipReveal() {
+export default function ClipReveal({ content = defaultClipRevealContent }: ClipRevealProps) {
     const sectionRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
@@ -57,13 +37,13 @@ export default function ClipReveal() {
         window.addEventListener('scroll', update, { passive: true });
         update();
         return () => window.removeEventListener('scroll', update);
-    }, []);
+    }, [content.rows]);
 
     return (
         <section ref={sectionRef} className={styles.section}>
             <div className={styles.container}>
-                {ROWS.map((row) => (
-                    <p key={row.primary} className={styles.row}>
+                {content.rows.map((row, index) => (
+                    <p key={`${row.primary}-${index}`} className={styles.row}>
                         {row.primary}
                         <span
                             className={styles.hoverSpan}
@@ -71,7 +51,7 @@ export default function ClipReveal() {
                                 {
                                     '--hover-bg': row.hoverBg,
                                     '--hover-color': row.hoverColor,
-                                } as React.CSSProperties
+                                } as CSSProperties
                             }
                         >
                             {row.hover}

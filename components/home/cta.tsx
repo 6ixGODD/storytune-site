@@ -1,15 +1,27 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
 import { ArrowUpRight } from '@/components/ui/arrow-up-right';
 import { track } from '@/lib/analytics';
+import { defaultCtaContent } from '@/lib/defaults/site-content';
+import { CtaContent } from '@/lib/entities/site-content';
 
 import styles from './cta.module.scss';
 
-export default function Cta() {
+interface CtaProps {
+    content?: CtaContent;
+}
+
+function isExternalHref(href: string) {
+    return /^https?:\/\//.test(href);
+}
+
+export default function Cta({ content = defaultCtaContent }: CtaProps) {
     const sectionRef = useRef<HTMLElement>(null);
     const enteredRef = useRef(false);
+    const buttonIsExternal = isExternalHref(content.btnHref);
 
     useEffect(() => {
         const el = sectionRef.current;
@@ -31,23 +43,30 @@ export default function Cta() {
         <section ref={sectionRef} className={styles.section}>
             <div className={styles.inner}>
                 <h2 className={styles.heading}>
-                    Your event deserves
+                    {content.heading1}
                     <br />
-                    something unforgettable.
+                    {content.heading2}
                 </h2>
-                <p className={styles.sub}>
-                    Every invitation we make is a unique, animated digital experience — Designed to be opened slowly.
-                    Remembered long after the event ends.
-                </p>
-                <a
-                    href='https://etsy.com'
-                    target='_blank'
-                    rel='noreferrer'
-                    className={styles.btn}
-                    onClick={() => track('home_cta_click', { cta_name: 'create_invitation', section_name: 'cta' })}
-                >
-                    Start on Etsy <ArrowUpRight />
-                </a>
+                <p className={styles.sub}>{content.sub}</p>
+                {buttonIsExternal ? (
+                    <a
+                        href={content.btnHref}
+                        target='_blank'
+                        rel='noreferrer'
+                        className={styles.btn}
+                        onClick={() => track('home_cta_click', { cta_name: 'create_invitation', section_name: 'cta' })}
+                    >
+                        {content.btnLabel} <ArrowUpRight />
+                    </a>
+                ) : (
+                    <Link
+                        href={content.btnHref}
+                        className={styles.btn}
+                        onClick={() => track('home_cta_click', { cta_name: 'create_invitation', section_name: 'cta' })}
+                    >
+                        {content.btnLabel} <ArrowUpRight />
+                    </Link>
+                )}
             </div>
         </section>
     );

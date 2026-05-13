@@ -1,19 +1,17 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import { CSSProperties, useEffect, useRef } from 'react';
+
+import { defaultScrollVerbContent } from '@/lib/defaults/site-content';
+import { ScrollVerbContent } from '@/lib/entities/site-content';
 
 import styles from './scroll-verb.module.scss';
 
-const VERBS = [
-    { text: 'design.', color: 'hsl(38 18% 72%)' },
-    { text: 'animate.', color: 'hsl(162 22% 62%)' },
-    { text: 'delight.', color: 'hsl(338 24% 68%)' },
-    { text: 'personalise.', color: 'hsl(252 22% 72%)' },
-    { text: 'surprise.', color: 'hsl(18 22% 66%)' },
-    { text: 'remember.', color: 'hsl(207 22% 66%)' },
-];
+interface ScrollVerbProps {
+    content?: ScrollVerbContent;
+}
 
-export default function ScrollVerb() {
+export default function ScrollVerb({ content = defaultScrollVerbContent }: ScrollVerbProps) {
     const listRef = useRef<HTMLUListElement>(null);
     const headerRef = useRef<HTMLElement>(null);
 
@@ -29,50 +27,51 @@ export default function ScrollVerb() {
 
         const update = () => {
             const vh = window.innerHeight;
-            // lh in px from the header's computed line-height
             const lh = parseFloat(getComputedStyle(header).lineHeight);
-            // target = centre of the bright zone on mobile (50svh + 1lh)
             const target = vh * 0.5 + lh;
 
             let bestIdx = 0;
             let bestDist = Infinity;
-            items.forEach((item, i) => {
+            items.forEach((item, index) => {
                 const { top, bottom } = item.getBoundingClientRect();
                 const dist = Math.abs((top + bottom) / 2 - target);
                 if (dist < bestDist) {
                     bestDist = dist;
-                    bestIdx = i;
+                    bestIdx = index;
                 }
             });
 
-            // Only activate if within ¾ lh — prevents stale highlight when section
-            // is fully above/below the viewport or "remember" drifts into prefix zone.
             const withinRange = bestDist < lh * 0.75;
-            items.forEach((item, i) => item.classList.toggle(styles.active, withinRange && i === bestIdx));
+            items.forEach((item, index) => item.classList.toggle(styles.active, withinRange && index === bestIdx));
         };
 
         window.addEventListener('scroll', update, { passive: true });
         update();
         return () => window.removeEventListener('scroll', update);
-    }, []);
+    }, [content.verbs]);
 
     return (
         <div className={styles.outer}>
-            <span className='sr-only'>We help you {VERBS.map((v) => v.text).join(', ')}</span>
+            <span className='sr-only'>
+                {content.prefix} {content.verbs.map((verb) => verb.text).join(', ')}
+            </span>
             <header
                 ref={headerRef}
                 className={styles.header}
-                style={{ '--count': VERBS.length } as React.CSSProperties}
+                style={{ '--count': content.verbs.length } as CSSProperties}
                 aria-hidden='true'
             >
                 <div className={styles.track}>
-                    <h2 className={styles.prefix}>we help you&nbsp;</h2>
+                    <h2 className={styles.prefix}>
+                        {content.prefix}
+                        &nbsp;
+                    </h2>
                     <ul ref={listRef} className={styles.list}>
-                        {VERBS.map((verb) => (
+                        {content.verbs.map((verb) => (
                             <li
-                                key={verb.text}
+                                key={`${verb.text}-${verb.color}`}
                                 className={styles.item}
-                                style={{ '--verb-color': verb.color } as React.CSSProperties}
+                                style={{ '--verb-color': verb.color } as CSSProperties}
                             >
                                 {verb.text}
                             </li>

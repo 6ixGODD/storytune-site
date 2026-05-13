@@ -1,41 +1,24 @@
+import { defaultProcessContent } from '@/lib/defaults/site-content';
+import { ProcessContent } from '@/lib/entities/site-content';
+
 import styles from './process.module.scss';
 
-const STEPS = [
-    {
-        id: '01',
-        title: 'Choose a direction',
-        body: 'Browse the inspiration gallery and pick a template, or describe your vision from scratch. All orders placed through our Etsy shop.',
-    },
-    {
-        id: '02',
-        title: 'Share your story',
-        body: "After ordering, fill in the event details — names, date, venue, any special notes. We'll use them to personalise every element.",
-    },
-    {
-        id: '03',
-        title: 'We craft the experience',
-        body: 'Our team builds your animated digital invitation — motion, sound, personalised content. Light and deep custom orders include two revision rounds.',
-    },
-    {
-        id: '04',
-        title: 'Delivered as a living invitation',
-        body: 'You receive a private link. Share it directly with guests — no app needed, works on every device. Template orders ship within 24 hours.',
-    },
-];
+interface ProcessProps {
+    content?: ProcessContent;
+}
 
-export default function Process() {
+export default function Process({ content = defaultProcessContent }: ProcessProps) {
     return (
         <section id='process' className={styles.section}>
             <div className={styles.inner}>
                 <header className={styles.sectionHead}>
-                    <p className={styles.eyebrow}>Process</p>
-                    <h2 className={styles.heading}>From Idea to Atmosphere</h2>
+                    <p className={styles.eyebrow}>{content.eyebrow}</p>
+                    <h2 className={styles.heading}>{content.heading}</h2>
                 </header>
 
                 <div className={styles.body}>
-                    {/* Left: morphing disclosure */}
                     <div className={styles.disclosure}>
-                        {STEPS.map((step) => (
+                        {content.steps.map((step) => (
                             <details key={step.id} name='morph' className={styles.details}>
                                 <summary className={styles.summary}>
                                     <span className={styles.stepId}>{step.id}</span>
@@ -63,13 +46,12 @@ export default function Process() {
                         ))}
                     </div>
 
-                    {/* Right: visual step timeline */}
                     <div className={styles.panel} aria-hidden='true'>
-                        {STEPS.map((step, i) => (
+                        {content.steps.map((step, index) => (
                             <div key={step.id} className={styles.timelineStep}>
                                 <div className={styles.timelineTrack}>
                                     <div className={styles.timelineDot} />
-                                    {i < STEPS.length - 1 && <div className={styles.timelineConnector} />}
+                                    {index < content.steps.length - 1 && <div className={styles.timelineConnector} />}
                                 </div>
                                 <div className={styles.timelineInfo}>
                                     <span className={styles.timelineNum}>{step.id}</span>

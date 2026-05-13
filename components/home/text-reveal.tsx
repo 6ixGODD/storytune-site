@@ -2,15 +2,19 @@
 
 import { useEffect, useRef } from 'react';
 
+import { defaultTextRevealContent } from '@/lib/defaults/site-content';
+import { TextRevealContent } from '@/lib/entities/site-content';
+
 import styles from './text-reveal.module.scss';
 
-const TAGLINES = ['Every invitation is a world of its own.', 'Not a link. An experience.'];
+interface TextRevealProps {
+    content?: TextRevealContent;
+}
 
-export default function TextReveal() {
+export default function TextReveal({ content = defaultTextRevealContent }: TextRevealProps) {
     const blocksRef = useRef<(HTMLDivElement | null)[]>([]);
 
     useEffect(() => {
-        // Native scroll-driven animation (Chrome 115+) — no JS needed
         if (CSS.supports('animation-timeline', 'scroll()')) return;
 
         const blocks = blocksRef.current.filter(Boolean) as HTMLDivElement[];
@@ -26,11 +30,9 @@ export default function TextReveal() {
 
                 const rect = block.getBoundingClientRect();
                 const blockHeight = block.offsetHeight;
-                // progress: 0 when block top enters viewport, 1 when block bottom exits
                 const progress = -rect.top / (blockHeight - vh);
                 const p = Math.max(0, Math.min(1, progress));
 
-                // 0–0.25: fade+slide in, 0.25–0.75: fully visible, 0.75–1.0: fade+slide out
                 let opacity: number;
                 let translateY: number;
                 if (p < 0.25) {
@@ -52,17 +54,16 @@ export default function TextReveal() {
         window.addEventListener('scroll', handleScroll, { passive: true });
         handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [content.taglines]);
 
     return (
         <>
-            {TAGLINES.map((text, i) => (
-                // Each block is 200vh — provides scroll distance for the animation
+            {content.taglines.map((text, index) => (
                 <div
-                    key={text}
+                    key={`${text}-${index}`}
                     className={styles.block}
-                    ref={(el) => {
-                        blocksRef.current[i] = el;
+                    ref={(element) => {
+                        blocksRef.current[index] = element;
                     }}
                 >
                     <section className={styles.sticky}>
