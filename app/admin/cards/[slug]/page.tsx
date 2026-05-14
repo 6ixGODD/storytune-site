@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { SubmitEvent, useEffect, useState } from 'react';
+import { DragEvent, SubmitEvent, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { AdminShell } from '@/components/admin/admin-shell';
@@ -34,6 +34,11 @@ export default function CardDetailPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [zipFile, setZipFile] = useState<File | null>(null);
+    const [zipDragging, setZipDragging] = useState(false);
+    const [zipUploading, setZipUploading] = useState(false);
+    const [zipError, setZipError] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         fetch(`/api/admin/cards/${slug}`)
@@ -101,6 +106,38 @@ export default function CardDetailPage() {
             setError('Network error.');
         } finally {
             setDeleting(false);
+        }
+    }
+
+    function acceptZip(file: File | null) {
+        if (!file) return;
+        if (!file.name.endsWith('.zip')) {
+            setZipError('Only .zip files are accepted.');
+            return;
+        }
+        setZipError('');
+        setZipFile(file);
+    }
+
+    async function handleZipReplace() {
+        if (!zipFile) return;
+        setZipError('');
+        setZipUploading(true);
+        const formData = new FormData();
+        formData.set('zip', zipFile);
+        try {
+            const res = await fetch(`/api/admin/cards/${slug}/zip`, { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                toast.success('Card files replaced!');
+                setZipFile(null);
+            } else {
+                setZipError(data.error ?? 'Replace failed');
+            }
+        } catch {
+            setZipError('Network error.');
+        } finally {
+            setZipUploading(false);
         }
     }
 
@@ -188,6 +225,64 @@ export default function CardDetailPage() {
                             )}
                         </div>
                     </form>
+
+                    {/* ── Replace dist files ─────────────────────────────── */}
+                    <div className='mt-8 pt-6 border-t flex flex-col gap-3'>
+                        <div>
+                            <h2 className='text-base font-semibold'>Replace Card Files</h2>
+                            <p className='text-sm text-muted-foreground'>
+                                Drop a new ZIP to replace the current dist — metadata stays unchanged.
+                            </p>
+                        </div>
+
+                        {zipError && (
+                            <Alert variant='destructive'>
+                                <AlertDescription>{zipError}</AlertDescription>
+                            </Alert>
+                        )}
+
+                        <div
+                            role='button'
+                            tabIndex={0}
+                            onClick={() => fileInputRef.current?.click()}
+                            onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+                            onDragOver={(e: DragEvent<HTMLDivElement>) => { e.preventDefault(); setZipDragging(true); }}
+                            onDragLeave={() => setZipDragging(false)}
+                            onDrop={(e: DragEvent<HTMLDivElement>) => { e.preventDefault(); setZipDragging(false); acceptZip(e.dataTransfer.files?.[0] ?? null); }}
+                            className={[
+                                'flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-6 py-8 text-center cursor-pointer transition-colors select-none',
+                                zipDragging
+                                    ? 'border-primary bg-primary/5 text-primary'
+                                    : 'border-border text-muted-foreground hover:border-primary/60 hover:bg-muted/40',
+                            ].join(' ')}
+                        >
+                            {zipFile ? (
+                                <>
+                                    <span className='text-2xl'>📦</span>
+                                    <p className='text-sm font-medium text-foreground'>{zipFile.name}</p>
+                                    <p className='text-xs'>{(zipFile.size / 1024 / 1024).toFixed(2)} MB — click to replace</p>
+                                </>
+                            ) : (
+                                <>
+                                    <span className='text-2xl'>⬆️</span>
+                                    <p className='text-sm font-medium'>Drop new ZIP here or click to browse</p>
+                                    <p className='text-xs'>.zip only</p>
+                                </>
+                            )}
+                        </div>
+                        <input
+                            ref={fileInputRef}
+                            type='file'
+                            accept='.zip'
+                            className='sr-only'
+                            onChange={(e) => acceptZip(e.target.files?.[0] ?? null)}
+                        />
+                        <div>
+                            <Button onClick={handleZipReplace} disabled={!zipFile || zipUploading || card.status === 'deleted'}>
+                                {zipUploading ? 'Replacing…' : 'Replace Files'}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             )}
         </AdminShell>
