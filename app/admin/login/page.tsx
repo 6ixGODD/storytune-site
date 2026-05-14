@@ -46,11 +46,6 @@ export default function LoginPage() {
         <div className='min-h-screen flex items-center justify-center bg-muted/20'>
             <Card className='w-full max-w-sm shadow-xl border-border/60'>
                 <CardHeader className='pb-2 pt-8 px-8'>
-                    <div className='flex flex-col items-center gap-1 mb-4'>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src='/logo.svg' alt='StoryTune' className='h-8 mb-2 invert dark:invert-0' />
-                        <span className='text-xs text-muted-foreground'>Admin Console</span>
-                    </div>
                     <CardTitle className='text-center text-lg'>Sign in</CardTitle>
                 </CardHeader>
                 <CardContent className='px-8 pb-8'>
@@ -62,7 +57,7 @@ export default function LoginPage() {
                         )}
                         <div className='flex flex-col gap-2'>
                             <Label htmlFor='username'>Username</Label>
-                            <Input id='username' name='username' type='text' autoComplete='username' required />
+                            <Input id='username' name='username' type='text' autoComplete='username' required aria-label="Username" />
                         </div>
                         <div className='flex flex-col gap-2'>
                             <Label htmlFor='password'>Password</Label>
@@ -72,6 +67,7 @@ export default function LoginPage() {
                                 type='password'
                                 autoComplete='current-password'
                                 required
+                                aria-label='Password'
                             />
                         </div>
                         <Button type='submit' disabled={loading} className='w-full mt-1'>
