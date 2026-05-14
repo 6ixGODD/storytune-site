@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ColorInput } from '@/components/ui/color-input';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -95,14 +96,14 @@ export function ClipRevealForm({ initialContent }: CmsFormProps<'home.clip_revea
                         </div>
                         <div className='space-y-2'>
                             <Label htmlFor={`clip-hover-bg-${index}`}>Hover background</Label>
-                            <Input
+                            <ColorInput
                                 id={`clip-hover-bg-${index}`}
                                 value={row.hoverBg}
-                                onChange={(event) =>
+                                onChange={(value) =>
                                     setContent((current) => ({
                                         ...current,
                                         rows: current.rows.map((item, itemIndex) =>
-                                            itemIndex === index ? { ...item, hoverBg: event.target.value } : item,
+                                            itemIndex === index ? { ...item, hoverBg: value } : item,
                                         ),
                                     }))
                                 }
@@ -110,14 +111,14 @@ export function ClipRevealForm({ initialContent }: CmsFormProps<'home.clip_revea
                         </div>
                         <div className='space-y-2'>
                             <Label htmlFor={`clip-hover-color-${index}`}>Hover text color</Label>
-                            <Input
+                            <ColorInput
                                 id={`clip-hover-color-${index}`}
                                 value={row.hoverColor}
-                                onChange={(event) =>
+                                onChange={(value) =>
                                     setContent((current) => ({
                                         ...current,
                                         rows: current.rows.map((item, itemIndex) =>
-                                            itemIndex === index ? { ...item, hoverColor: event.target.value } : item,
+                                            itemIndex === index ? { ...item, hoverColor: value } : item,
                                         ),
                                     }))
                                 }

@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ColorInput } from '@/components/ui/color-input';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -95,14 +96,14 @@ export function ScrollVerbForm({ initialContent }: CmsFormProps<'home.scroll_ver
                         </div>
                         <div className='space-y-2'>
                             <Label htmlFor={`verb-color-${index}`}>Color</Label>
-                            <Input
+                            <ColorInput
                                 id={`verb-color-${index}`}
                                 value={verb.color}
-                                onChange={(event) =>
+                                onChange={(value) =>
                                     setContent((current) => ({
                                         ...current,
                                         verbs: current.verbs.map((item, itemIndex) =>
-                                            itemIndex === index ? { ...item, color: event.target.value } : item,
+                                            itemIndex === index ? { ...item, color: value } : item,
                                         ),
                                     }))
                                 }
