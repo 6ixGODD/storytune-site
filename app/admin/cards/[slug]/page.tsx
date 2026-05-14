@@ -40,8 +40,6 @@ export default function CardDetailPage() {
     const [zipDragging, setZipDragging] = useState(false);
     const [zipUploading, setZipUploading] = useState(false);
     const [zipError, setZipError] = useState('');
-    // Computed once on mount; empty string during SSR (text isn't in the DOM so no hydration mismatch).
-    const [siteOrigin] = useState(() => (typeof window !== 'undefined' ? window.location.origin : ''));
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -154,7 +152,7 @@ export default function CardDetailPage() {
                     <CopyButton text={slug} label='Copy slug' successLabel='Slug copied!' />
                     {card && (
                         <CopyButton
-                            text={`${siteOrigin}${card.cardUrl}`}
+                            text={card.cardUrl}
                             label='Copy link'
                             successLabel='Link copied!'
                             icon='link'

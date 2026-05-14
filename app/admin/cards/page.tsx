@@ -96,7 +96,7 @@ export default async function CardsPage({ searchParams }: { searchParams: Promis
                                     <div className="flex items-center justify-end gap-1">
                                         <CopyButton text={card.slug} label='Copy slug' successLabel='Slug copied!' />
                                         <CopyButton
-                                            text={`${config.app.baseUrl}/card/${card.slug}`}
+                                            text={card.cardUrl}
                                             label='Copy link'
                                             successLabel='Link copied!'
                                             icon='link'

@@ -22,7 +22,8 @@ export function CopyButton({ text, label = 'Copy', successLabel = 'Copied!', ico
 
     async function handleCopy() {
         try {
-            await navigator.clipboard.writeText(text);
+            const value = text.startsWith('/') ? `${window.location.origin}${text}` : text;
+            await navigator.clipboard.writeText(value);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch {
