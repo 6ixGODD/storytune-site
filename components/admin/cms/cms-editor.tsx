@@ -7,6 +7,7 @@ import { ClipRevealForm } from './clip-reveal-form';
 import { CtaForm } from './cta-form';
 import { GalleryForm } from './gallery-form';
 import { HeroForm } from './hero-form';
+import { LegalForm } from './legal-form';
 import { NavForm } from './nav-form';
 import { PricingForm } from './pricing-form';
 import { ProcessForm } from './process-form';
@@ -30,6 +31,8 @@ export function CmsEditor({ content }: CmsEditorProps) {
                 <TabsTrigger value='pricing'>Pricing</TabsTrigger>
                 <TabsTrigger value='process'>Process</TabsTrigger>
                 <TabsTrigger value='gallery'>Gallery</TabsTrigger>
+                <TabsTrigger value='privacy'>Privacy</TabsTrigger>
+                <TabsTrigger value='terms'>Terms</TabsTrigger>
             </TabsList>
 
             <TabsContent value='navigation'>
@@ -58,6 +61,12 @@ export function CmsEditor({ content }: CmsEditorProps) {
             </TabsContent>
             <TabsContent value='gallery'>
                 <GalleryForm initialContent={content['home.gallery']} />
+            </TabsContent>
+            <TabsContent value='privacy'>
+                <LegalForm contentKey='legal.privacy' initialContent={content['legal.privacy']} label='Privacy Policy' />
+            </TabsContent>
+            <TabsContent value='terms'>
+                <LegalForm contentKey='legal.terms' initialContent={content['legal.terms']} label='Terms of Service' />
             </TabsContent>
         </Tabs>
     );
