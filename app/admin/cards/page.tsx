@@ -1,6 +1,8 @@
 import Link from 'next/link';
 
 import { AdminShell } from '@/components/admin/admin-shell';
+import { CopyButton } from '@/components/admin/cards/copy-button';
+import { QrCodePanel } from '@/components/admin/cards/qr-code-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -91,7 +93,15 @@ export default async function CardsPage({ searchParams }: { searchParams: Promis
                                     {new Date(card.createdAt).toLocaleDateString()}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <div className="flex items-center justify-end gap-2">
+                                    <div className="flex items-center justify-end gap-1">
+                                        <CopyButton text={card.slug} label='Copy slug' successLabel='Slug copied!' />
+                                        <CopyButton
+                                            text={`${config.app.baseUrl}/card/${card.slug}`}
+                                            label='Copy link'
+                                            successLabel='Link copied!'
+                                            icon='link'
+                                        />
+                                        <QrCodePanel slug={card.slug} cardUrl={card.cardUrl} />
                                         <Button asChild variant="ghost" size="sm">
                                             <a href={card.cardUrl} target="_blank" rel="noopener noreferrer">View ↗</a>
                                         </Button>

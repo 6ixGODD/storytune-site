@@ -5,6 +5,8 @@ import { DragEvent, SubmitEvent, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { AdminShell } from '@/components/admin/admin-shell';
+import { CopyButton } from '@/components/admin/cards/copy-button';
+import { QrCodePanel } from '@/components/admin/cards/qr-code-panel';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -38,6 +40,8 @@ export default function CardDetailPage() {
     const [zipDragging, setZipDragging] = useState(false);
     const [zipUploading, setZipUploading] = useState(false);
     const [zipError, setZipError] = useState('');
+    // Computed once on mount; empty string during SSR (text isn't in the DOM so no hydration mismatch).
+    const [siteOrigin] = useState(() => (typeof window !== 'undefined' ? window.location.origin : ''));
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -144,11 +148,21 @@ export default function CardDetailPage() {
     return (
         <AdminShell>
             <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-3'>
+                <div className='flex items-center gap-2'>
                     <h1 className='text-2xl font-semibold font-mono'>{slug}</h1>
                     {card && <Badge variant={card.status === 'active' ? 'default' : 'secondary'}>{card.status}</Badge>}
+                    <CopyButton text={slug} label='Copy slug' successLabel='Slug copied!' />
+                    {card && (
+                        <CopyButton
+                            text={`${siteOrigin}${card.cardUrl}`}
+                            label='Copy link'
+                            successLabel='Link copied!'
+                            icon='link'
+                        />
+                    )}
                 </div>
                 <div className='flex gap-2'>
+                    {card && <QrCodePanel slug={slug} cardUrl={card.cardUrl} />}
                     {card && (
                         <Button asChild variant='outline' size='sm'>
                             <a href={card.cardUrl} target='_blank' rel='noopener noreferrer'>
