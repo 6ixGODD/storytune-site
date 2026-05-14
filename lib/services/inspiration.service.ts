@@ -54,6 +54,32 @@ export const inspirationService = {
         return inspirationRepository.update(slug, input);
     },
 
+    /**
+     * Replace only the dist files for an existing inspiration without touching metadata.
+     *
+     * @param slug - Slug of the inspiration to update.
+     * @param zipBuffer - Raw bytes of the replacement ZIP archive.
+     * @throws If the inspiration does not exist, or if extraction/validation/storage fails.
+     */
+    async replaceZip(slug: string, zipBuffer: Buffer): Promise<Inspiration> {
+        let tempDir: string | null = null;
+        try {
+            const existing = await inspirationRepository.findBySlug(slug);
+            if (!existing) throw new Error('Inspiration not found');
+            tempDir = await extractZip(zipBuffer);
+            const effectiveDir = await validateDistDir(tempDir);
+            await replaceDistDir('inspiration', slug, effectiveDir);
+            tempDir = null;
+            const inspiration = await inspirationRepository.update(slug, {});
+            logger.info({ slug }, 'inspiration dist replaced');
+            return inspiration!;
+        } catch (err) {
+            if (tempDir) await cleanupTempDir(tempDir);
+            logger.error({ slug, err }, 'inspiration dist replacement failed');
+            throw err;
+        }
+    },
+
     /** Return all distinct active categories for the sidebar filter. */
     async getCategories(): Promise<string[]> {
         return inspirationRepository.findCategories();

@@ -42,6 +42,32 @@ export const cardService = {
         return cardRepository.update(slug, input);
     },
 
+    /**
+     * Replace only the dist files for an existing card without touching metadata.
+     *
+     * @param slug - Slug of the card to update.
+     * @param zipBuffer - Raw bytes of the replacement ZIP archive.
+     * @throws If the card does not exist, or if extraction/validation/storage fails.
+     */
+    async replaceZip(slug: string, zipBuffer: Buffer): Promise<Card> {
+        let tempDir: string | null = null;
+        try {
+            const existing = await cardRepository.findBySlug(slug);
+            if (!existing) throw new Error('Card not found');
+            tempDir = await extractZip(zipBuffer);
+            const effectiveDir = await validateDistDir(tempDir);
+            await replaceCardDir(slug, effectiveDir);
+            tempDir = null;
+            const card = await cardRepository.update(slug, {});
+            logger.info({ slug }, 'card dist replaced');
+            return card!;
+        } catch (err) {
+            if (tempDir) await cleanupTempDir(tempDir);
+            logger.error({ slug, err }, 'card dist replacement failed');
+            throw err;
+        }
+    },
+
     /** Soft-delete a card by slug. Returns `false` if the card was not found. */
     async softDelete(slug: string): Promise<boolean> {
         return cardRepository.softDelete(slug);
