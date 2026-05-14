@@ -8,6 +8,7 @@
     "build": "docker compose build",
     "local": "docker compose -f docker-compose.yml -f docker-compose.local.yml up --build -d",
     "local:down": "docker compose -f docker-compose.yml -f docker-compose.local.yml down",
+    "local:logs": "docker compose -f docker-compose.yml -f docker-compose.local.yml logs app -f --tail=100",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{js,mjs,cjs,jsx,ts,tsx,css,scss,sass,json,md,yml,yaml}\" --ignore-path .gitignore",
