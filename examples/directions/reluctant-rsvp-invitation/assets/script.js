@@ -1,5 +1,3 @@
-// Copyright © 2026 Story Tune. All rights reserved.
-
 import { animate, createTimeline, scrambleText, $ } from './vendor/animejs.js';
 
 // ── Slug derivation (works under /card/{slug}/ or as standalone preview) ─────

@@ -1,4 +1,3 @@
-<!-- Copyright © 2026 Story Tune. All rights reserved. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,17 +85,17 @@
     <!-- Right: form -->
     <form class="rsvp-form" novalidate>
       <div class="rsvp-field">
-        <input type="text" id="rsvp-name" placeholder="Full name" autocomplete="name">
+        <input type="text" id="rsvp-name" placeholder="Full name" autocomplete="name" aria-label="Full name for RSVP">
       </div>
       <div class="rsvp-field">
-        <input type="email" id="rsvp-email" placeholder="Email address" autocomplete="email">
+        <input type="email" id="rsvp-email" placeholder="Email address" autocomplete="email" aria-label="Email address for RSVP">
       </div>
       <div class="rsvp-field rsvp-field--row">
-        <input type="number" id="rsvp-guests" value="1" min="1" max="20">
+        <input type="number" id="rsvp-guests" value="1" min="1" max="20" aria-label="Number of guests attending, including yourself">
         <span class="rsvp-field-label">guest(s) attending</span>
       </div>
       <div class="rsvp-field">
-        <textarea id="rsvp-message" placeholder="A note (optional)" rows="2"></textarea>
+        <textarea id="rsvp-message" placeholder="A note (optional)" rows="2" aria-label="Optional note for the host"></textarea>
       </div>
 
       <div class="btn-wrap">
@@ -125,6 +124,7 @@
   <footer class="s-footer">
     <p>events@apexcorp.com &nbsp;·&nbsp; +1 (800) 000-0000</p>
     <p class="brand">APEX CORPORATION &nbsp;·&nbsp; EST. 1984</p>
+    <p>&copy; Story Tune, 2026</p>
   </footer>
 
   <script type="module" src="assets/script.js"></script>
