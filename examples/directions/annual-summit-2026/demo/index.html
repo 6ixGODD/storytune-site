@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Annual Summit 2026 鈥?You Are Invited</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+  <!-- 鈶?HERO 鈥?Cooking Letters -->
+  <section class="s-hero" id="s-hero">
+    <p class="eyebrow">APEX CORPORATION &nbsp;路&nbsp; CORDIALLY INVITES YOU TO</p>
+    <div class="hero-titles">
+      <p data-splitting class="fluid cooking" style="--idx: 0">ANNUAL</p>
+      <p data-splitting class="fluid cooking" style="--idx: 1">SUMMIT</p>
+      <p data-splitting class="fluid cooking" style="--idx: 2">2026</p>
+    </div>
+    <p class="hero-hint">hover to animate &nbsp;路&nbsp; scroll to explore</p>
+    <p class="scroll-hint" aria-hidden="true">鈫?/p>
+  </section>
+
+  <!-- 鈶?TAGLINE 鈥?Glow Text -->
+  <section class="s-glow" id="s-glow">
+    <h2 class="fluid glow-heading">
+      <span>where vision</span>
+      <span aria-hidden="true">where vision</span>
+    </h2>
+    <h2 class="fluid glow-heading">
+      <span>meets action.</span>
+      <span aria-hidden="true">meets action.</span>
+    </h2>
+    <p class="glow-sub">Shape the future of global business.</p>
+  </section>
+
+  <!-- 鈶?DATE 鈥?Concentric Circles Canvas -->
+  <section class="s-date" id="s-date">
+    <p class="label">SAVE THE DATE</p>
+    <div class="date-wrap">
+      <span class="text-block">
+        <span class="date-str">15 JUNE</span>
+        <canvas aria-hidden="true"></canvas>
+      </span>
+    </div>
+    <p class="date-year">2026</p>
+  </section>
+
+  <!-- 鈶?DETAILS -->
+  <section class="s-details" id="s-details">
+    <hr class="divider">
+    <div class="detail-grid">
+      <div class="detail">
+        <span class="label">WHEN</span>
+        <strong>June 15, 2026</strong>
+        <span>7:00 PM 鈥?Midnight</span>
+      </div>
+      <div class="detail">
+        <span class="label">WHERE</span>
+        <strong>The Grand Hall</strong>
+        <span>One Infinite Loop 路 Cupertino, CA</span>
+      </div>
+      <div class="detail">
+        <span class="label">ATTIRE</span>
+        <strong>Black Tie</strong>
+        <span>Business Formal Required</span>
+      </div>
+    </div>
+    <hr class="divider">
+  </section>
+
+  <!-- 鈶?RSVP 鈥?Form + Rainbow Border Button -->
+  <section class="s-rsvp" id="s-rsvp">
+
+    <!-- Left: guidance copy -->
+    <div class="rsvp-left">
+      <p class="label">RSVP</p>
+      <h2 class="rsvp-heading">Confirm Your<br>Attendance</h2>
+      <p class="rsvp-note">
+        Seats are strictly limited.<br>
+        Kindly respond before<br><strong>June 1, 2026.</strong>
+      </p>
+      <p class="rsvp-hint">Fill in the form and click<br><em>Accept Invitation</em> to reserve your seat.</p>
+    </div>
+
+    <!-- Right: form -->
+    <form class="rsvp-form" novalidate>
+      <div class="rsvp-field">
+        <input type="text" id="rsvp-name" placeholder="Full name" autocomplete="name" aria-label="Full name for RSVP">
+      </div>
+      <div class="rsvp-field">
+        <input type="email" id="rsvp-email" placeholder="Email address" autocomplete="email" aria-label="Email address for RSVP">
+      </div>
+      <div class="rsvp-field rsvp-field--row">
+        <input type="number" id="rsvp-guests" value="1" min="1" max="20" aria-label="Number of guests attending, including yourself">
+        <span class="rsvp-field-label">guest(s) attending</span>
+      </div>
+      <div class="rsvp-field">
+        <textarea id="rsvp-message" placeholder="A note (optional)" rows="2" aria-label="Optional note for the host"></textarea>
+      </div>
+
+      <div class="btn-wrap">
+        <button type="button" class="atc" id="btn-accept" aria-label="Accept Invitation" data-adding="false">
+          <span class="atc__content">
+            <span class="atc__check" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+              </svg>
+            </span>
+            <span class="atc__text">ACCEPT INVITATION</span>
+          </span>
+          <span class="atc__border atc__border--animated"></span>
+          <span class="atc__border atc__border--static"></span>
+          <span class="atc__border atc__border--complete"></span>
+        </button>
+      </div>
+
+      <button type="button" class="btn-decline" id="btn-decline">I Cannot Attend</button>
+      <p class="form-note" role="status"></p>
+    </form>
+
+  </section>
+
+  <!-- FOOTER 鈥?not a snap target, sits below RSVP -->
+  <footer class="s-footer">
+    <p>events@apexcorp.com &nbsp;路&nbsp; +1 (800) 000-0000</p>
+    <p class="brand">APEX CORPORATION &nbsp;路&nbsp; EST. 1984</p>
+    <p>&copy; Story Tune, 2026</p>
+  </footer>
+
+  <script type="module" src="../assets/script.js"></script>
+  <script src="./demo.js" defer></script>
+</body>
+</html>
