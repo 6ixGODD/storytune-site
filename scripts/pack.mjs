@@ -7,11 +7,12 @@
  * What it does:
  *   1. Checks prerequisites (Docker daemon, SSL certificates)
  *   2. Loads existing .env.prod (or seeds from .env.example)
- *   3. Interactively prompts for the four critical secrets:
+ *   3. Interactively prompts for the critical secrets:
  *        • MONGO_PASSWORD  — auto-generate or manual (syncs MONGODB_URI)
  *        • JWT_SECRET      — auto-generate or manual (≥ 32 chars)
  *        • RESEND_API_KEY  — required, must start with re_
  *        • Admin username / password
+ *        • GA Measurement ID — optional, enables Google Analytics
  *   4. Writes .env.prod
  *   5. Builds Docker image, saves to tar
  *   6. Assembles staging directory with all deployment artifacts
@@ -400,7 +401,34 @@ if (configLogs) {
     log.success(`Log targets set: ${patches['STORYTUNE__LOG_TARGETS']}`);
 }
 
-// ── 8. Write .env.prod ────────────────────────────────────────────────────────
+// ── 8. Google Analytics ───────────────────────────────────────────────────────
+
+const existingGaId = current['NEXT_PUBLIC_STORYTUNE__GA_ID'];
+const gaIsSet = !isPlaceholder(existingGaId);
+
+const configGa = gaIsSet
+    ? g(await confirm({ message: `Google Analytics ID is already set (${existingGaId.trim()}). Overwrite?`, initialValue: false }))
+    : g(await confirm({ message: 'Enable Google Analytics? (optional)', initialValue: false }));
+
+if (configGa) {
+    const gaId = g(
+        await text({
+            message: 'Google Analytics Measurement ID',
+            placeholder: 'G-XXXXXXXXXX',
+            validate: (v) => {
+                const t = v.trim();
+                if (!t) return 'Measurement ID is required';
+                if (!/^G-[A-Z0-9]+$/i.test(t)) return 'Must be in the format G-XXXXXXXXXX';
+            },
+        }),
+    );
+    patches['NEXT_PUBLIC_STORYTUNE__GA_ID'] = gaId.trim();
+    log.success(`Google Analytics enabled: ${gaId.trim()}`);
+} else if (!gaIsSet) {
+    log.info('Google Analytics skipped — can be added later in .env.prod.');
+}
+
+// ── 9. Write .env.prod ────────────────────────────────────────────────────────
 
 if (Object.keys(patches).length > 0) {
     writeEnvFile(ENV_PROD, patches);
@@ -418,7 +446,7 @@ note(
 
 g(await text({ message: 'Press Enter to start building…', defaultValue: '' }));
 
-// ── 9. Build Docker image ─────────────────────────────────────────────────────
+// ── 10. Build Docker image ─────────────────────────────────────────────────────
 
 log.step('Building Docker image (no-cache) — this may take a few minutes…');
 console.log();
@@ -435,7 +463,7 @@ if (buildResult.status !== 0) {
 
 log.success('Docker image built.');
 
-// ── 10. Staging area ──────────────────────────────────────────────────────────
+// ── 11. Staging area ──────────────────────────────────────────────────────────
 
 const timestamp = new Date()
     .toISOString()
@@ -464,7 +492,7 @@ if (saveResult.status !== 0) {
 }
 saveSpin.stop('Docker image saved.');
 
-// ── 11. Copy deployment artifacts ─────────────────────────────────────────────
+// ── 12. Copy deployment artifacts ─────────────────────────────────────────────
 const copyArtifact = (relSrc, relDest) => {
     const src = path.join(root, relSrc);
     const dst = path.join(stagingDir, relDest ?? relSrc);
@@ -483,7 +511,7 @@ copyArtifact('.env.prod', '.env'); // bake .env.prod as .env in the archive
 copyArtifact('nginx');
 copyArtifact('emails/templates', 'emails/templates');
 
-// ── 12. deploy.sh ─────────────────────────────────────────────────────────────
+// ── 13. deploy.sh ─────────────────────────────────────────────────────────────
 
 const deployScript = `#!/usr/bin/env bash
 # StoryTune — one-shot deployment script
