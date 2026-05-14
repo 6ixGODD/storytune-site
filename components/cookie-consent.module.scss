@@ -1,0 +1,109 @@
+// Cookie consent banner — minimalist strip, B&W, site-palette.
+// Sits at the bottom of the viewport; appears with a subtle slide-up animation.
+
+.banner {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 999;
+
+    // slide up from bottom
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1rem var(--gutter, 2rem);
+    border-top: 1px solid color-mix(in lch, var(--fg) 8%, transparent);
+    background: color-mix(in lch, var(--bg) 85%, transparent);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+
+    @media (max-width: 640px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.875rem;
+    }
+}
+
+.text {
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: color-mix(in lch, var(--fg) 55%, transparent);
+
+    a {
+        color: color-mix(in lch, var(--fg) 70%, transparent);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-color: color-mix(in lch, var(--fg) 25%, transparent);
+        transition:
+            color 0.2s ease,
+            text-decoration-color 0.2s ease;
+
+        &:hover {
+            color: var(--fg);
+            text-decoration-color: color-mix(in lch, var(--fg) 50%, transparent);
+        }
+    }
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+// Accept — slightly more prominent (outlined)
+.accept {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 0.4rem 1rem;
+    border: 1px solid color-mix(in lch, var(--fg) 30%, transparent);
+    color: var(--fg);
+    background: transparent;
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        background 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+        border-color: var(--fg);
+        background: color-mix(in lch, var(--fg) 8%, transparent);
+    }
+}
+
+// Decline — ghost, secondary
+.decline {
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    padding: 0.4rem 0.75rem;
+    color: color-mix(in lch, var(--fg) 35%, transparent);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+        color: color-mix(in lch, var(--fg) 65%, transparent);
+    }
+}
