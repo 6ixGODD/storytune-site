@@ -4,14 +4,17 @@
  * @file components/analytics/google-analytics.tsx
  * Loads the GA4 gtag.js script and fires page_view + session_start events.
  *
+ * Respects cookie consent stored in localStorage (`st_cookie_consent`).
+ * GA is only loaded when the user has explicitly accepted cookies.
  * Mount this once inside RootLayout. It reads the measurement ID from the
  * NEXT_PUBLIC_STORYTUNE__GA_ID env var at build time; if the ID is empty the
  * component renders nothing and analytics is effectively disabled.
  */
 import { usePathname, useSearchParams } from 'next/navigation';
 import Script from 'next/script';
-import { useEffect, useRef } from 'react';
+import { startTransition, useEffect, useRef, useState } from 'react';
 
+import { getConsentStatus } from '@/components/cookie-consent';
 import { track } from '@/lib/analytics';
 
 const GA_ID = process.env.NEXT_PUBLIC_STORYTUNE__GA_ID ?? '';
@@ -48,10 +51,24 @@ export default function GoogleAnalytics() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const sessionFiredRef = useRef(false);
+    const [consented, setConsented] = useState(false);
 
-    // Fire page_view on every route change (pathname or query change)
+    // Resolve consent once on mount, then listen for consent changes
     useEffect(() => {
-        if (!GA_ID) return;
+        const status = getConsentStatus();
+        if (status === 'accepted') startTransition(() => setConsented(true));
+
+        const onConsentEvent = (e: Event) => {
+            const detail = (e as CustomEvent<string>).detail;
+            startTransition(() => setConsented(detail === 'accepted'));
+        };
+        window.addEventListener('st:consent', onConsentEvent);
+        return () => window.removeEventListener('st:consent', onConsentEvent);
+    }, []);
+
+    // Fire page_view on every route change when consented
+    useEffect(() => {
+        if (!GA_ID || !consented) return;
 
         track('page_view', {
             page_name: pageNameFromPath(pathname),
@@ -71,16 +88,13 @@ export default function GoogleAnalytics() {
                 ...utmParams(searchParams.toString()),
             });
         }
-    }, [pathname, searchParams]);
+    }, [pathname, searchParams, consented]);
 
-    if (!GA_ID) return null;
+    if (!GA_ID || !consented) return null;
 
     return (
         <>
-            <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-                strategy='afterInteractive'
-            />
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy='afterInteractive' />
             <Script id='ga-init' strategy='afterInteractive'>
                 {`
                     window.dataLayer = window.dataLayer || [];
@@ -92,3 +106,4 @@ export default function GoogleAnalytics() {
         </>
     );
 }
+
