@@ -42,7 +42,7 @@ export default async function CardsPage({ searchParams }: { searchParams: Promis
     const totalPages = Math.ceil(total / pageSize);
 
     return (
-        <AdminShell title="Cards">
+        <AdminShell>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-semibold">Cards</h1>

@@ -85,7 +85,7 @@ export default function UploadPage() {
     }
 
     return (
-        <AdminShell title="Upload Card">
+        <AdminShell>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-semibold">Upload Card</h1>
