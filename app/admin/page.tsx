@@ -16,7 +16,7 @@ const SECTIONS = [
         href: '/admin/directions',
         icon: Compass,
         title: 'Directions',
-        description: 'Manage the inspiration gallery — templates, categories, and featured previews.',
+        description: 'Manage the inspiration gallery ﷿﷿?templates, categories, and featured previews.',
     },
     {
         href: '/admin/cms',
@@ -29,7 +29,7 @@ const SECTIONS = [
 export default async function AdminPage() {
     await requirePageAuth();
     return (
-        <AdminShell title='Dashboard'>
+        <AdminShell>
             <div>
                 <h1 className='text-2xl font-semibold'>Dashboard</h1>
                 <p className='text-sm text-muted-foreground mt-1'>Choose a section to manage.</p>
