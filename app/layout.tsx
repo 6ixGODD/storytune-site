@@ -5,6 +5,7 @@ import localFont from 'next/font/local';
 import { ReactNode, Suspense } from 'react';
 
 import GoogleAnalytics from '@/components/analytics/google-analytics';
+import { CookieConsent } from '@/components/cookie-consent';
 
 const geist = localFont({
     src: [
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     <GoogleAnalytics />
                 </Suspense>
                 {children}
+                <CookieConsent />
             </body>
         </html>
     );
