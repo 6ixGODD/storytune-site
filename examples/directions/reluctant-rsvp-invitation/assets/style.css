@@ -16,6 +16,12 @@
 html,
 body {
     min-height: 100vh;
+    scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
 }
 
 body {
@@ -29,8 +35,13 @@ body {
     flex-direction: column;
     min-height: 100vh;
     overflow-x: hidden;
+    scrollbar-width: none;
     -webkit-font-smoothing: antialiased;
     cursor: default;
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }
 
 /* ── Nav ──────────────────────────────────────────────── */

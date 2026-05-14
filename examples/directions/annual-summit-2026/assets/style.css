@@ -28,6 +28,11 @@
 
     html {
         color-scheme: dark only;
+        scrollbar-width: none;
+    }
+
+    html::-webkit-scrollbar {
+        display: none;
     }
 
     body {
@@ -37,6 +42,11 @@
         font-family: 'Geist Sans', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
         font-weight: 160;
         overflow-x: hidden;
+        scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
     }
 
     :where(.fluid) {
