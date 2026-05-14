@@ -16,7 +16,7 @@ ENV NODE_ENV=production
 WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 USER root
-RUN mkdir -p /opt/storytune /var/log/storytune && \
+RUN mkdir -p /opt/storytune/cards /opt/storytune/inspiration /var/log/storytune && \
     chown -R nextjs:nodejs /opt/storytune /var/log/storytune && \
     chmod -R 755 /opt/storytune /var/log/storytune
 COPY --from=builder /app/public ./public
