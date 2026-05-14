@@ -86,7 +86,7 @@ export default function DirectionsUploadPage() {
     }
 
     return (
-        <AdminShell title="Upload Direction">
+        <AdminShell>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-semibold">Upload Direction</h1>

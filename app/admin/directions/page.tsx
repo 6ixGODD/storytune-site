@@ -43,7 +43,7 @@ export default async function DirectionsPage({ searchParams }: { searchParams: P
     const totalPages = Math.ceil(total / pageSize);
 
     return (
-        <AdminShell title="Directions">
+        <AdminShell>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-semibold">Directions</h1>
