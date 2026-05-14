@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 
+import { AdminBreadcrumb } from '@/components/admin/admin-breadcrumb';
 import { ThemeToggle } from '@/components/admin/theme-toggle';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
@@ -7,17 +8,16 @@ import { AdminSidebar } from './admin-sidebar';
 
 interface AdminShellProps {
     children: ReactNode;
-    title?: string;
 }
 
-export function AdminShell({ children, title }: AdminShellProps) {
+export function AdminShell({ children }: AdminShellProps) {
     return (
         <SidebarProvider>
             <AdminSidebar />
             <SidebarInset>
                 <header className='flex h-16 shrink-0 items-center gap-3 border-b border-border/50 px-6'>
                     <SidebarTrigger className='-ml-1' />
-                    {title && <span className='text-sm font-medium text-foreground/80'>{title}</span>}
+                    <AdminBreadcrumb />
                     <div className='ml-auto'>
                         <ThemeToggle />
                     </div>

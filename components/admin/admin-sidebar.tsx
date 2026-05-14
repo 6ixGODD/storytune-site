@@ -31,18 +31,17 @@ export function AdminSidebar() {
 
     return (
         <Sidebar>
-            <SidebarHeader className="px-4 py-6">
-                <Image src="/logo.svg" alt="StoryTune" width={120} height={28} priority className="invert dark:invert-0" />
-                <span className="text-xs text-muted-foreground mt-1">Admin Console</span>
+            <SidebarHeader className='px-6 py-6'>
+                <Image src='/logo.svg' alt='StoryTune' width={120} height={28} priority className='invert dark:invert-0' />
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent className='px-3'>
                 <SidebarMenu>
                     {NAV_ITEMS.map(({ label, href, icon: Icon }) => (
                         <SidebarMenuItem key={href}>
                             <SidebarMenuButton asChild isActive={pathname.startsWith(href)}>
                                 <a href={href}>
-                                    <Icon className="h-4 w-4" />
+                                    <Icon className='h-4 w-4' />
                                     <span>{label}</span>
                                 </a>
                             </SidebarMenuButton>
@@ -51,11 +50,11 @@ export function AdminSidebar() {
                 </SidebarMenu>
             </SidebarContent>
 
-            <SidebarFooter className="pb-4">
+            <SidebarFooter className='px-3 pb-6'>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton onClick={handleLogout} className="text-muted-foreground hover:text-foreground">
-                            <LogOut className="h-4 w-4" />
+                        <SidebarMenuButton onClick={handleLogout} className='text-muted-foreground hover:text-foreground'>
+                            <LogOut className='h-4 w-4' />
                             <span>Log out</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
