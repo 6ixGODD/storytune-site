@@ -1,3 +1,5 @@
+// Copyright © 2026 Story Tune. All rights reserved.
+
 // Resolve card slug from URL: /card/{slug}/... or local fallback
 const pathParts = window.location.pathname.split('/').filter(Boolean);
 const slug = pathParts[1] || 'wedding-01';

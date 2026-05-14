@@ -1,3 +1,5 @@
+// Copyright © 2026 Story Tune. All rights reserved.
+
 // ── Slug ──────────────────────────────────────────────────
 const slug = (() => {
     const parts = location.pathname.replace(/\/$/, '').split('/');
