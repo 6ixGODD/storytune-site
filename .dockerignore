@@ -60,3 +60,25 @@ vite.config.*
 
 # Documentation
 README.md
+
+# Next.js Build Output
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+*.pem
+*.key
+*.crt
+
+# env files
+.env*
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+.codepen/
+.idea/
